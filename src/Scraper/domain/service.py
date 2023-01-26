@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from .exception import ScraperNotFoundException
 from .value_object import AbstractScraper
 from typing import Dict, Union, NoReturn
 
@@ -14,3 +13,10 @@ class FactoryScraper:
             raise ScraperNotFoundException()
         else:
             return _scraper
+
+class ScraperNotFoundException(Exception):
+    def __init__(self) -> None:
+        super().__init__("Scraper não encontrado.")
+
+
+

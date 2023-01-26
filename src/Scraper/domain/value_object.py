@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Tuple
-from framework.domain.value_object import URL, ValueObject
+from framework.domain.value_object import URL, ValueObject, Money
 from abc import ABC, abstractmethod
 
 
@@ -12,5 +12,5 @@ class CategoricalUrl(URL):
 @dataclass
 class AbstractScraper(ABC, ValueObject):
     @abstractmethod
-    def get_volatile_data(self) -> Tuple[URL, str, float, int]:
+    def get_volatile_data(self) -> Tuple[URL, str, Money, int]:
         pass
