@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from app.domain.scraper.exception import ScraperNotFoundException
-from value_object import AbstractScraper
+from .exception import ScraperNotFoundException
+from .value_object import AbstractScraper
 from typing import Dict, Union, NoReturn
 
 
