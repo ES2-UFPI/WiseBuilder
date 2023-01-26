@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from .value_objects import UUID
+from value_object import UUID
+
 
 @dataclass
 class Entity:
