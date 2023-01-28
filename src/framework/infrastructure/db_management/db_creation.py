@@ -1,8 +1,10 @@
-import db_conection
-import db_structure
 from sqlalchemy_utils import database_exists, create_database
+from sqlalchemy.engine.base import Engine
 
-if not database_exists(db_conection.engine.url):
-    create_database(db_conection.engine.url)
-    
-db_structure.base.metadata.create_all(db_conection.engine)
+from .db_structure import base
+
+def create_db(engine : Engine):
+    if not database_exists(engine.url):
+        create_database(engine.url)
+        
+    base.metadata.create_all(engine)
