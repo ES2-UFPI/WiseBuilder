@@ -68,10 +68,6 @@ class CPUList(Resource):
             cpu_namespace.abort(400)
         return CPUS[-1], 201
 
-    def delete(self):
-        CPUS.clear()
-        return 204
-
 
 @cpu_namespace.route("/<int:cpu_id>")
 class CPU(Resource):

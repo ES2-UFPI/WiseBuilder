@@ -56,17 +56,13 @@ class PercistenceList(Resource):
         else:
             percistence_namespace.abort(409)
 
-    def delete(self):
-        Percistences.clear()
-        return 204
-
 
 @percistence_namespace.route("/<int:percistence_id>")
 class Percistence(Resource):
     @percistence_namespace.marshal_with(percistence)
     def get(self, percistence_id: int):
         index, percistence = search(Percistences, percistence_id)
-        if percistence is None:
+        if  percistence is None:
             percistence_namespace.abort(404)
         else:
             return percistence

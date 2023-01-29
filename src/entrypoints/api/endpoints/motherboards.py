@@ -58,15 +58,11 @@ class MotherBoardList(Resource):
     def post(self):
         motherboard = request.json
         index, _motherboard = search(MotherBoards, motherboard["id"])
-        if motherboard is None:
+        if _motherboard is None:
             MotherBoards.append(motherboard)
         else:
             motherboard_namespace.abort(409)
         return MotherBoards[-1], 201
-
-    def delete(self):
-        MotherBoards.clear()
-        return 204
 
 
 @motherboard_namespace.route("/<int:motherboard_id>")

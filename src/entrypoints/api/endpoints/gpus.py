@@ -8,29 +8,24 @@ gpu = gpu_namespace.model(
     {
         "id": fields.Integer(description="Identificador da GPU."),
         "consumption": fields.Integer(required=True, description="Consumo da GPU."),
-        "vram": fields.Integer(required=True, description="Padrão da VRAM"),
-        "vram_vel": fields.Integer(required=True, description="Velocidade da VRAM."),
+        "vram": fields.Integer(
+            required=True, description="Capacidade da memória ram da GPU."
+        ),
+        "vram_speed": fields.Integer(
+            required=True, description="Velocidade da memória ram da GPU."
+        ),
     },
 )
 
-gpu_base = gpu_namespace.model(
-    "GPU Base",
-    {
-        "id": fields.Integer(description="Identificador da GPU."),
-        "socket": fields.String(description="Socket da GPU."),
-        "cores": fields.Integer(description="Número de nucleos."),
-    },
-)
 
 GPUS = [
     {
         "id": 0,
-        "consumption": 100,
-        "vram": 1000,
-        "vram_vel": 100,
+        "consumption": 40,
+        "vram": 32,
+        "vram_speed": 3000,
     }
 ]
-
 
 id = 1
 
@@ -51,16 +46,13 @@ class GPUList(Resource):
 
     @gpu_namespace.expect(gpu)
     def post(self):
+        gpu = request.json
         index, _gpu = search(GPUS, gpu["id"])
         if _gpu is None:
             GPUS.append(gpu)
-            return GPUS[-1], 201
         else:
-            gpu_namespace.abort(409)
-
-    def delete(self):
-        GPUS.clear()
-        return 204
+            gpu_namespace.abort(400)
+        return GPUS[-1], 201
 
 
 @gpu_namespace.route("/<int:gpu_id>")

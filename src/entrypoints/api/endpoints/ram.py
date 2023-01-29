@@ -35,15 +35,11 @@ class RAMList(Resource):
     def post(self):
         ram = request.json
         index, _ram = search(RAMS, ram["id"])
-        if ram is None:
+        if _ram is None:
             RAMS.append(ram)
         else:
             ram_namespace.abort(409)
         return RAMS[-1], 201
-
-    def delete(self):
-        RAMS.clear()
-        return 204
 
 
 @ram_namespace.route("/<int:ram_id>")

@@ -41,15 +41,11 @@ class PSUList(Resource):
     def post(self):
         psu = request.json
         index, _psu = search(PSUS, psu["id"])
-        if psu is None:
+        if _psu is None:
             PSUS.append(psu)
         else:
             psu_namespace.abort(409)
         return PSUS[-1], 201
-
-    def delete(self):
-        PSUS.clear()
-        return 204
 
 
 @psu_namespace.route("/<int:psu_id>")
