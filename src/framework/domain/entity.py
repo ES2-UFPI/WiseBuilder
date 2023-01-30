@@ -1,30 +1,36 @@
 from dataclasses import dataclass, field
+from typing import List, Union
 
-from .value_object import UUID
-from .rule import Rule, BusinessRuleValidationException
+from .value_object import UUID, UUIDv4
+from .rule import BussinessAssertionExtension
+from .events import DomainEvent
 
-@dataclass
+__all__ = [ "Entity", "AggregateRoot", "UniqueObject" ]
+
+@dataclass(kw_only=True, eq=False)
 class Entity:
-    id_: UUID = field(hash=True)
+    _id: UUID
+    
+    def __eq__(self, oEntity):
+        return self._id == oEntity._id
+    
+    
+    def __hash__(self):
+        return hash(self._id)
     
     @property
-    def id_(self):
-        return self.id_
+    def uid(self):
+        return self._id
     
     
     @classmethod
     def next_id(cls) -> UUID:
-        return UUID.v4()
-    
-    
-    def check_rule(self, rule: Rule):
-        if rule.is_broken():
-            raise BusinessRuleValidationException(rule)
+        return UUIDv4()
 
 
 @dataclass
-class EntityNotFoundException(Exception):
-    entity_id: UUID
-    
-    def __repr__(self):
-        return f"{self.__class__.__name__} (Entity {self.entity_id} not found.)"
+class AggregateRoot(BussinessAssertionExtension, Entity):
+    events: List[DomainEvent] = field(default_factory=list)
+
+
+UniqueObject = Union[Entity, AggregateRoot]

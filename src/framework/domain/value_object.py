@@ -1,26 +1,42 @@
 import uuid
 from urllib.parse import urlsplit, SplitResult
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from functools import total_ordering
 from typing import Tuple
 
-from .rule import Rule, BusinessRuleValidationException
+from .rule import (
+    Rule,
+    BussinessAssertionExtension
+)
+
+__all__ =  [ 'UUID', 'UUIDv4', 
+             'ValueObject',
+             'Money', 'URL' ]
 
 UUID = uuid.UUID
-UUID.v4 = uuid.uuid4
+UUIDv4 = uuid.uuid4
 
-class ValueObject:
+class ValueObject(BussinessAssertionExtension):
     """
     Classe base de objetos valorados.
     """
-    def check_rule(self, rule: Rule):
-        if rule.is_broken():
-            raise BusinessRuleValidationException(rule)
 
 
-@dataclass(frozen=True)
+@total_ordering
+@dataclass(frozen=True, eq=False)
 class Money(ValueObject):
     amount: float = 0
     currency: str = "BRL"
+    
+    def __eq__(self, oMoney: "Money") -> bool:
+        return (self.currency == oMoney.currency and
+                self.amount == oMoney.amount)
+    
+    
+    def __lt__(self, oMoney: "Money") -> bool:
+        return (self.currency == oMoney.currency and
+                self.amount < oMoney.amount)
+    
     
     def __repr__(self):
         return f"{self.currency} {self.amount:.2f}"
@@ -32,27 +48,36 @@ class URL(ValueObject):
     Classe de URL.
     """
     url: str
-    domain: str = field(init=False)
-    path: str = field(init=False)
+    scheme: str
+    domain: str
+    path: str
     
-    def __post_init__(self, url: str):
+    @classmethod
+    def get_URL(cls, url: str) -> "URL":
         parsed_url = urlsplit(url)
         
-        self.check_rule(MinimalURLRule(parsed_url))
+        cls.check_rule(MinimalURLRule(parsed_url=parsed_url))
         
-        self.domain = parsed_url.netloc
-        self.path = parsed_url.path
+        return URL(url, parsed_url.scheme,
+                   parsed_url.netloc, parsed_url.path)
+    
+    
+    def __repr__(self) -> str:
+        return self.url
 
 
 @dataclass
 class MinimalURLRule(Rule):
     '''
-    URL must include, at least, scheme and netloc.
+    URL deve incluir, no mínimo, scheme and netloc.
     '''
     parsed_url: SplitResult
     _min_attributes: Tuple[str,...] = ("scheme", "netloc")
-    __message: str = "URL não possui atributos mínimos."
+    
+    def __post_init__(self):
+        self._message: str = "URL não possui atributos mínimos."
+    
     
     def is_broken(self):
-        return all([getattr(self.parsed_url, attr) 
+        return not all([getattr(self.parsed_url, attr) 
                     for attr in self._min_attributes])
