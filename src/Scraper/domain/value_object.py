@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from typing import Tuple
+from dataclasses import dataclass
 from framework.domain.value_object import URL, ValueObject, Money
 from abc import ABC, abstractmethod
 
