@@ -1,10 +1,8 @@
-from abc import ABC, abstractmethod
+__all__ = [ 'DomainEvent', 'Command' ]
 
 class DomainEvent:
     pass
 
 
-class EventPublisher(ABC):
-    @abstractmethod
-    def publish(self, event: DomainEvent):
-        raise NotImplementedError
+class Command:
+    pass
