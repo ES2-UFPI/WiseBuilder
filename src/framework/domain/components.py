@@ -12,13 +12,17 @@ __all__ = ['Component',
            'PersistenceComponent',
            'PSUComponent',
            
+           'EComponentType',
            'EChipsetType',
            'EBoardSize',
            'EPersistenceIOType',
            'EPSURate',
            'ERAMGeneration',
            'ESocketType',
-           'EPCIeGeneration']
+           'EPCIeGeneration',
+           'EPSUModularity',
+           
+           'component_cls_idx']
 
 
 class EComponentType(IntEnum):
