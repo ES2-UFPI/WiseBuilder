@@ -63,3 +63,28 @@ class MockRepository(AbstractRepository):
     
     def __repr__(self):
         return str(self._components)
+
+
+class SQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(self, session):
+        raise NotImplemented
+    
+    
+    @abstractmethod
+    def _add(self, component: Component):
+        raise NotImplemented
+    
+    
+    @abstractmethod
+    def _get_by_uid(self, ref: UUID):
+        raise NotImplemented
+    
+    
+    @abstractmethod
+    def _get(self, **kwargs):
+        raise NotImplemented
+    
+    
+    def __repr__(self):
+        raise NotImplemented
