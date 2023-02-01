@@ -1,5 +1,5 @@
 from flask import Flask
-from endpoints.api import blueprint
+from entrypoints.api.endpoints.api import blueprint
 
 app = Flask(__name__)
 app.register_blueprint(blueprint)

@@ -1,23 +1,41 @@
+import uuid
 from typing import List
-from flask_restx import Namespace, Resource, fields
+from uuid import UUID
 from flask import request
+from flask_restx import Namespace, Resource, fields
+from framework.domain.components import CPUComponent
+from framework.application.handler import MessageBus
+from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
+from SearchEngine.application.unit_of_work import MockUnitOfWork
+from SearchEngine.domain.repositories import (
+    EntityUIDNotFoundException,
+    EntityUIDCollisionException,
+)
+from SearchEngine.domain.commands import (
+    AddComponent,
+    ListComponentsByType,
+    GetComponentByUID,
+)
 
 cpu_namespace = Namespace("CPUs", description="Operações relacionadas à CPUs.")
-cpu = cpu_namespace.model(
+
+cpu_model = cpu_namespace.model(
     "CPU",
     {
-        "id": fields.Integer(description="Identificador da CPU."),
-        "consumption": fields.Integer(required=True, description="Consumo da CPU."),
+        "_id": fields.String(),
+        "manufacturer": fields.String(),
+        "model": fields.String(),
         "socket": fields.String(required=True, description="Socket da CPU."),
-        "cores": fields.Integer(required=True, description="Número de nucleos."),
-        "clock_base": fields.Float(
+        "n_cores": fields.Integer(required=True, description="Número de nucleos."),
+        "base_clock_spd": fields.Float(
             required=True, description="Velocidade de clock base da CPU."
         ),
-        "clock_max": fields.Float(
+        "boost_clock_spd": fields.Float(
             required=True, description="Velocidade de clock máxima da CPU."
         ),
-        "ram_max_clock": fields.Integer(required=True, description=""),
-        "intergrated_gpu": fields.String(
+        "ram_clock_max": fields.Integer(required=True, description=""),
+        "consumption": fields.Integer(required=True, description="Consumo da CPU."),
+        "integrated_gpu": fields.String(
             required=True, description="Placa de vídeo integrada."
         ),
         "overclock": fields.Boolean(
@@ -29,14 +47,16 @@ cpu = cpu_namespace.model(
 
 CPUS = [
     {
-        "id": 0,
-        "consumption": 40,
-        "socket": "sla",
-        "cores": 16,
-        "clock_base": 4.0,
-        "clock_max": 6.0,
-        "ram_max_clock": 300,
-        "intergrated_gpu": "nenhuma",
+        "_id": uuid,
+        "manufacturer": "intel",
+        "model": "i710310",
+        "socket": "lga1200",
+        "n_cores": "6",
+        "base_clock_spd": 3.8,
+        "boost_clock_spd": 4.6,
+        "ram_clock_max": 3200,
+        "consumption": 100,
+        "integrated_gpu": "",
         "overclock": True,
     }
 ]
@@ -44,55 +64,60 @@ CPUS = [
 id = 1
 
 
-def search(mat: List[dict], id: int):
-    for index, element in enumerate(mat):
-        if element["id"] == id:
-            return index, element
-    return None, None
+def _message_bus():
+    uow = MockUnitOfWork({})
+    COMMAND_HANDLER_MAPPER_CALLABLE = {}
+    for c, h in COMMAND_HANDLER_MAPPER.items():
+        COMMAND_HANDLER_MAPPER_CALLABLE[c] = h(uow)
+
+    return MessageBus(uow, {}, COMMAND_HANDLER_MAPPER_CALLABLE)
+
+
+message_bus = _message_bus()
 
 
 @cpu_namespace.route("/")
 class CPUList(Resource):
-    @cpu_namespace.doc("list_comp")
-    @cpu_namespace.marshal_list_with(cpu)
+    @cpu_namespace.marshal_list_with(cpu_model)
     def get(self):
-        return CPUS
+        _cpus = message_bus.handle(ListComponentsByType.CPU())
+        return _cpus
 
-    @cpu_namespace.expect(cpu)
+    @cpu_namespace.expect(cpu_model)
     def post(self):
-        cpu = request.json
-        index, _cpu = search(CPUS, cpu["id"])
-        if _cpu is None:
-            CPUS.append(cpu)
-        else:
-            cpu_namespace.abort(400)
-        return CPUS[-1], 201
+        body: dict = request.json
+        cpu = dict((key, body[key]) for key in list(cpu_model.keys())[1:])
+        try:
+            _ = message_bus.handle(AddComponent.buildCPU(**cpu))
+            return cpu, 201
+        except EntityUIDCollisionException as err:
+            return str(err), 409
 
 
-@cpu_namespace.route("/<int:cpu_id>")
+@cpu_namespace.route("/<cpu_id>")
 class CPU(Resource):
-    @cpu_namespace.marshal_with(cpu)
-    def get(self, cpu_id: int):
-        index, cpu = search(CPUS, cpu_id)
-        if cpu is None:
-            cpu_namespace.abort(404)
-        else:
-            return cpu
+    @cpu_namespace.marshal_with(cpu_model)
+    def get(self, cpu_id: str):
+        try:
+            component = message_bus.handle(GetComponentByUID(UUID(cpu_id)))
+            return component
+        except EntityUIDNotFoundException as err:
+            return str(err), 404
 
-    def delete(self, cpu_id: int):
-        index, cpu = search(CPUS, cpu_id)
-        if cpu is None:
-            cpu_namespace.abort(404)
-        else:
-            CPUS.pop(index)
-
-        return 204
-
-    @cpu_namespace.expect(cpu)
-    def put(self, cpu_id):
-        index, cpu = search(CPUS, cpu_id)
-        if cpu is None:
-            cpu_namespace.abort(404)
-        else:
-            CPUS[index] = request.json
-            return CPUS[index], 200
+    # def delete(self, cpu_id: int):
+    #     index, cpu = search(CPUS, cpu_id)
+    #     if cpu is None:
+    #         cpu_namespace.abort(404)
+    #     else:
+    #         CPUS.pop(index)
+    #
+    #     return 204
+    #
+    # @cpu_namespace.expect(cpu)
+    # def put(self, cpu_id):
+    #     index, cpu = search(CPUS, cpu_id)
+    #     if cpu is None:
+    #         cpu_namespace.abort(404)
+    #     else:
+    #         CPUS[index] = request.json
+    #         return CPUS[index], 200

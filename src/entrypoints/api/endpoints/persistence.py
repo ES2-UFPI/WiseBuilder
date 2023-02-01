@@ -1,86 +1,101 @@
+from uuid import UUID
 from typing import List
 from flask_restx import Namespace, Resource, fields
 from flask import request
-
-percistence_namespace = Namespace(
-    "Percistences", description="Operações relacionadas à Percistência."
+from framework.domain.components import PersistenceComponent
+from framework.application.handler import MessageBus
+from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
+from SearchEngine.application.unit_of_work import MockUnitOfWork
+from SearchEngine.domain.repositories import (
+    EntityUIDNotFoundException,
+    EntityUIDCollisionException,
 )
-percistence = percistence_namespace.model(
-    "Percistence",
+from SearchEngine.domain.commands import (
+    AddComponent,
+    ListComponentsByType,
+    GetComponentByUID,
+)
+
+persistence_namespace = Namespace(
+    "Persistences", description="Operações relacionadas à Persistência."
+)
+persistence_model = persistence_namespace.model(
+    "persistence",
     {
-        "id": fields.Integer(description="Identificador da Percistência."),
-        "type": fields.String(required=True, description="Tipo de Percistência."),
-        "storage": fields.Integer(
-            required=True, description="Capacidade de armazenamento da Percistência."
+        "_id": fields.String(description="Identificador da Persistência."),
+        "manufacturer": fields.String(
+            required=True, description="Fabricante da Persistência."
         ),
-        "speed": fields.Integer(
+        "model": fields.String(required=True, description="Modelo da PSU"),
+        "storage": fields.Integer(
+            required=True, description="Capacidade de armazenamento da Persistência."
+        ),
+        "spd": fields.Integer(
             required=True, description="Velocidade de Leitura/Escrita."
         ),
+        "io": fields.Integer(required=True),
+        "is_HDD": fields.Boolean(required=True),
     },
 )
 
 
-Percistences = [
-    {
-        "id": 0,
-        "type": "HDD",
-        "storage": 1000,
-        "speed": 500,
-    }
-]
+def _message_bus():
+    uow = MockUnitOfWork({})
+    COMMAND_HANDLER_MAPPER_CALLABLE = {}
+    for c, h in COMMAND_HANDLER_MAPPER.items():
+        COMMAND_HANDLER_MAPPER_CALLABLE[c] = h(uow)
 
-id = 1
+    return MessageBus(uow, {}, COMMAND_HANDLER_MAPPER_CALLABLE)
 
 
-def search(mat: List[dict], id: int):
-    for index, element in enumerate(mat):
-        if element["id"] == id:
-            return index, element
-    return None, None
+message_bus = _message_bus()
 
 
-@percistence_namespace.route("/")
-class PercistenceList(Resource):
-    @percistence_namespace.doc("list_comp")
-    @percistence_namespace.marshal_list_with(percistence)
+@persistence_namespace.route("/")
+class persistenceList(Resource):
+    @persistence_namespace.doc("list_comp")
+    @persistence_namespace.marshal_list_with(persistence_model)
     def get(self):
-        return Percistences
+        _persistences = message_bus.handle(ListComponentsByType.Persistence())
+        return _persistences
 
-    @percistence_namespace.expect(percistence)
+    @persistence_namespace.expect(persistence_model)
     def post(self):
-        percistence = request.json
-        index, _persistence = search(Percistences, percistence["id"])
-        if _persistence is None:
-            Percistences.append(percistence)
-            return Percistences[-1], 201
-        else:
-            percistence_namespace.abort(409)
+        body = request.json
+        persistence = dict(
+            (key, body[key]) for key in list(persistence_model.keys())[1:]
+        )
+        try:
+            _ = message_bus.handle(AddComponent.buildPersistence(**persistence))
+            return persistence, 201
+        except EntityUIDCollisionException as err:
+            return str(err), 409
 
 
-@percistence_namespace.route("/<int:percistence_id>")
-class Percistence(Resource):
-    @percistence_namespace.marshal_with(percistence)
-    def get(self, percistence_id: int):
-        index, percistence = search(Percistences, percistence_id)
-        if  percistence is None:
-            percistence_namespace.abort(404)
-        else:
-            return percistence
+@persistence_namespace.route("/<persistence_id>")
+class persistence(Resource):
+    @persistence_namespace.marshal_with(persistence_model)
+    def get(self, persistence_id: str):
+        try:
+            component = message_bus.handle(GetComponentByUID(UUID(persistence_id)))
+            return component
+        except EntityUIDNotFoundException as err:
+            return str(err), 404
 
-    def delete(self, percistence_id: int):
-        index, percistence = search(Percistences, percistence_id)
-        if percistence is None:
-            percistence_namespace.abort(404)
-        else:
-            Percistences.pop(index)
-
-        return 204
-
-    @percistence_namespace.expect(percistence)
-    def put(self, percistence_id):
-        index, percistence = search(Percistences, percistence_id)
-        if percistence is None:
-            percistence_namespace.abort(404)
-        else:
-            Percistences[index] = request.json
-            return Percistences[index], 200
+    # def delete(self, persistence_id: int):
+    #     index, persistence = search(persistences, persistence_id)
+    #     if persistence is None:
+    #         persistence_namespace.abort(404)
+    #     else:
+    #         persistences.pop(index)
+    #
+    #     return 204
+    #
+    # @persistence_namespace.expect(persistence)
+    # def put(self, persistence_id):
+    #     index, persistence = search(persistences, persistence_id)
+    #     if persistence is None:
+    #         persistence_namespace.abort(404)
+    #     else:
+    #         persistences[index] = request.json
+    #         return persistences[index], 200
