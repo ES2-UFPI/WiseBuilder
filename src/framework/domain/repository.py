@@ -1,43 +1,43 @@
 from abc import ABC, abstractmethod
 from typing import Set, List
 
-from .entity import AggregateRoot
+from .entity import UniqueObject
 from .value_object import UUID
 
 __all__ = [ 'AbstractRepository' ]
 
 class AbstractRepository(ABC):
-    seen: Set[AggregateRoot] = set()
+    seen: Set[UniqueObject] = set()
     
-    def add(self, item: AggregateRoot):
+    def add(self, item: UniqueObject):
         self._add(item)
         self.seen.add(item)
     
     
-    def get_by_uid(self, ref: UUID) -> AggregateRoot | None:
+    def get_by_uid(self, ref: UUID) -> UniqueObject | None:
         _entity = self._get_by_uid(ref)
         if _entity:
             self.seen.add(_entity)
         return _entity
     
     
-    def get(self, **kwargs) -> List[AggregateRoot]:
+    def get(self, **kwargs) -> List[UniqueObject]:
         _res = self._get(**kwargs)
         self.seen.update(_res)
         return _res
     
     
     @abstractmethod
-    def _add(self, item: AggregateRoot):
+    def _add(self, item: UniqueObject):
         raise NotImplementedError
     
     
     @abstractmethod
-    def _get_by_uid(self, ref: UUID) -> AggregateRoot | None:
+    def _get_by_uid(self, ref: UUID) -> UniqueObject | None:
         raise NotImplementedError
     
     
     @abstractmethod
-    def _get(self, **kwargs) -> List[AggregateRoot]:
+    def _get(self, **kwargs) -> List[UniqueObject]:
         raise NotImplementedError
     

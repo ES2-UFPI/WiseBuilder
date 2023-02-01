@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from ..domain.entity import AggregateRoot
 from ..domain.repository import AbstractRepository
 
 __all__ = [ "AbstractUnitOfWork" ]
@@ -30,5 +31,6 @@ class AbstractUnitOfWork(ABC):
     
     def collect_messages(self):
         for root in self.repository.seen:
-            while root.events:
-                yield root.events.pop(0)
+            if isinstance(root, AggregateRoot):
+                while root.events:
+                    yield root.events.pop(0)

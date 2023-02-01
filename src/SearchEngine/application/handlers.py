@@ -13,7 +13,12 @@ class ListComponentsByTypeHandler(MessageHandler):
     def __call__(self, cmd: ListComponentsByType):
         with self.uow:
             return self.uow.repository\
-                .get(ctype=cmd.type, qsize=10)
+                .get(
+                    ctype=cmd.ctype, qsize=cmd.qsize, 
+                    filters_eq=cmd._filters_eq,
+                    filters_gt=cmd._filters_gt,
+                    filters_lt=cmd._filters_lt
+                )
 
 
 class AddComponentHandler(MessageHandler):
