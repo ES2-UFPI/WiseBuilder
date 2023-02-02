@@ -24,7 +24,8 @@ __all__ = [
     'EPCIeGeneration',
     'EPSUModularity',
     
-    'component_cls_idx'
+    'component_cls_idx',
+    '_component_attrs_idx'
 ]
 
 
@@ -88,8 +89,8 @@ class EPSUModularity(IntEnum):
     FULL = 2
 
 
-_AttrsComponent = [ '_id', 'type' ]
-_AttrsCommon = [ 'manufacturer', 'model' ]
+_AttrsComponent = ['type', 'manufacturer', 'model']
+_AttrsCommon = ['_id']
 
 @dataclass(kw_only=True, eq=False)
 class Component(Entity):

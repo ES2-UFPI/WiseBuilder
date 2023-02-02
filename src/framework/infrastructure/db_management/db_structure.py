@@ -1,9 +1,14 @@
+from typing import List
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.dialects.mysql import INTEGER, VARCHAR, BOOLEAN, ENUM, DATE, DATETIME, FLOAT
 
 from .binaryUUID import BinaryUUID
 from ....framework.domain.components import *
+
+def get_attrs( ctype: EComponentType) -> List[str]:
+    ret = _component_attrs_idx[ctype].copy()
+    return ret
 
 base = declarative_base()
 
@@ -14,6 +19,8 @@ class UserInstance(base):
     email = Column(VARCHAR(150))
     password = Column(VARCHAR(20))
     name = Column(VARCHAR(128))
+
+_AttrsComponent = ['uid', 'type', 'manufacturer', 'model']
 
 class ComponentInstance(base):
     __tablename__ = 'components'
@@ -39,6 +46,12 @@ class PriceHistoryInstance(base):
     price_mean = Column(FLOAT(7, 2, False))
     timestamp = Column(DATE)
 
+_AttrsMotherboard = [
+    'component_uid', 'chipset', 'board_size', 'n_ram_slots', 'consumption',
+    'n_usb2', 'n_usb3x', 'n_vga', 'n_hdmi', 'n_display_port',
+    'pcie_gen', 'n_pcie_x1', 'n_pcie_x4', 'n_pcie_x8', 'n_pcie_x16'
+]
+
 class MotherboardInstance(base):
     __tablename__ = 'motherboards'
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key = True)
@@ -59,7 +72,13 @@ class MotherboardInstance(base):
     n_pcie_x4 = Column(INTEGER(1))
     n_pcie_x8 = Column(INTEGER(1))
     n_pcie_x16 = Column(INTEGER(1))
-    
+
+_AttrsCPU = [
+    'component_uid', 'socket', 'n_cores', 
+    'base_clock_spd', 'boost_clock_spd', 'ram_clock_max', 'consumption',
+    'integrated_gpu', 'overclock'
+]
+
 class CPUInstance(base):
     __tablename__ = 'CPUs'
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key = True)
@@ -72,6 +91,10 @@ class CPUInstance(base):
     integrated_gpu = Column(VARCHAR(30))
     overclock = Column(BOOLEAN())
 
+_AttrsGPU = [
+    'component_uid', 'consumption', 'vram', 'vram_spd'
+]
+
 class GPUInstance(base):
     __tablename__ = 'GPUs'
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key = True)
@@ -79,11 +102,19 @@ class GPUInstance(base):
     vram = Column(INTEGER(2))
     vram_spd = Column(INTEGER(5))
 
+_AttrsRAM = [
+    'component_uid', 'generation', 'frequency'
+]
+
 class RAMInstance(base):
     __tablename__ = 'RAMs'
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key = True)
     generation = Column(ENUM(ERAMGeneration))
     frequency = Column(INTEGER(5))
+
+_AttrsPersistence = [
+    'component_uid', 'storage', 'spd', 'io', 'is_HDD'
+]
 
 class PersistenceInstance(base):
     __tablename__ = 'persistences'
@@ -92,6 +123,10 @@ class PersistenceInstance(base):
     storage = Column(INTEGER(5))
     spd = Column(INTEGER(5))
     io = Column(ENUM(EPersistenceIOType))
+
+_AttrsPSU = [
+    'component_uid', 'power', 'rate', 'modularity'
+]
 
 class PSUInstance(base):
     __tablename__ = 'PSUs'
@@ -126,3 +161,23 @@ class CategoryUrlInstance(base):
     domain = Column(VARCHAR(100))
     path = Column(VARCHAR(150))
     type = Column(ENUM(EComponentType))
+
+component_inst_idx = [
+    ComponentInstance,
+    MotherboardInstance,
+    CPUInstance,
+    GPUInstance,
+    RAMInstance,
+    PersistenceInstance,
+    PSUInstance
+]
+
+_component_attrs_idx = [
+    _AttrsComponent,
+    _AttrsMotherboard,
+    _AttrsCPU,
+    _AttrsGPU,
+    _AttrsRAM,
+    _AttrsPersistence,
+    _AttrsPSU
+]

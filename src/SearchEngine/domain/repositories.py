@@ -65,7 +65,7 @@ class MockRepository(AbstractRepository):
         return str(self._components)
 
 
-class SQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
+class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, session):
         raise NotImplemented
