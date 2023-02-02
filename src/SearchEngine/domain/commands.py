@@ -1,9 +1,12 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple, Any
 
-from ...framework.domain.components import (
+from framework.domain.components import (
     Component, EComponentType, component_cls_idx
 )
+
+from framework.domain.value_object import UUID, UUIDv4
+from framework.domain.events import Command
 
 __all__ = ["GetComponentByUID", "ListComponentsByType", "AddComponent"]
 
@@ -19,14 +22,14 @@ class ListComponentsByType(Command):
     qsize: int = field(init=False, default=10)
     _attrs: List[str] = field(init=False)
     
-    _filters_lt: Dict[str, Any] = field(init=False)
-    _filters_eq: Dict[str, Any] = field(init=False)
-    _filters_gt: Dict[str, Any] = field(init=False)
+    _filters_lt: Dict[str, Any] = field(init=False, default_factory=dict)
+    _filters_eq: Dict[str, Any] = field(init=False, default_factory=dict)
+    _filters_gt: Dict[str, Any] = field(init=False, default_factory=dict)
     
     def __post_init__(self):
         self._attrs = Component.get_attrs(self.ctype)
-
-        
+    
+    
     @classmethod
     def Motherboard(cls) -> 'ListComponentsByType':
         return ListComponentsByType(EComponentType.MOTHERBOARD)

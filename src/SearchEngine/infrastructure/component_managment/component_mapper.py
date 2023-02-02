@@ -1,6 +1,6 @@
 from typing import List
-from ....framework.domain.components import *
-from ....framework.infrastructure.db_management.db_structure import ComponentInstance, component_inst_idx, get_attrs
+from framework.domain.components import *
+from framework.infrastructure.db_management.db_structure import ComponentInstance, component_inst_idx, get_attrs
 
 __all__ = ['component_to_bd_object', 'bd_object_to_component']
 

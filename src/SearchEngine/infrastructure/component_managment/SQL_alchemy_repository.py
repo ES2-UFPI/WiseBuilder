@@ -2,11 +2,11 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List
 
-from ....framework.domain.components import *
-from ....framework.domain.value_object import UUID
-from ....SearchEngine.domain.repositories import ISQLAlchemyRepository, EntityUIDCollisionException
-from ....framework.infrastructure.db_management.db_structure import ComponentInstance, component_inst_idx
-from ....SearchEngine.infrastructure.component_managment.component_mapper import *
+from framework.domain.components import *
+from framework.domain.value_object import UUID
+from SearchEngine.domain.repositories import ISQLAlchemyRepository, EntityUIDCollisionException, EntityUIDNotFoundException
+from framework.infrastructure.db_management.db_structure import ComponentInstance, component_inst_idx
+from SearchEngine.infrastructure.component_managment.component_mapper import *
 
 class SQLAlchemyRepository(ISQLAlchemyRepository):
 
@@ -25,8 +25,12 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
         
 
     def _get_by_uid(self, ref: UUID):
-        component = self._get(filters_eq = {'uid' : ref})[0]
-        return component
+        component = self._get(ctype = EComponentType._BASE, filters_eq = {'uid' : ref})
+
+        if len(component) == 0:
+            raise EntityUIDNotFoundException(ref)
+
+        return component[0]
 
     def _find_type_by_property_names(self, **kwargs):
 
@@ -111,5 +115,5 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
                         continue
             
             ret.extend(self._get_formed_object(filters, ct, type_inst, qsize))
-        
+
         return ret

@@ -2,10 +2,8 @@ from uuid import UUID
 from typing import List
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from framework.domain.components import MotherboardComponent
-from framework.application.handler import MessageBus
-from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
-from SearchEngine.application.unit_of_work import MockUnitOfWork
+
+from .connection_util import message_bus
 from SearchEngine.domain.repositories import (
     EntityUIDNotFoundException,
     EntityUIDCollisionException,
@@ -45,18 +43,6 @@ motherboard_model = motherboard_namespace.model(
         "n_pcie_x16": fields.Integer(required=True),
     },
 )
-
-
-def _message_bus():
-    uow = MockUnitOfWork({})
-    COMMAND_HANDLER_MAPPER_CALLABLE = {}
-    for c, h in COMMAND_HANDLER_MAPPER.items():
-        COMMAND_HANDLER_MAPPER_CALLABLE[c] = h(uow)
-
-    return MessageBus(uow, {}, COMMAND_HANDLER_MAPPER_CALLABLE)
-
-
-message_bus = _message_bus()
 
 
 @motherboard_namespace.route("/")

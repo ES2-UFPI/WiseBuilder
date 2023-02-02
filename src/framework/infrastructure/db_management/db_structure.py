@@ -4,7 +4,7 @@ from sqlalchemy import Column, ForeignKey, Table
 from sqlalchemy.dialects.mysql import INTEGER, VARCHAR, BOOLEAN, ENUM, DATE, DATETIME, FLOAT
 
 from .binaryUUID import BinaryUUID
-from ....framework.domain.components import *
+from framework.domain.components import *
 
 def get_attrs( ctype: EComponentType) -> List[str]:
     ret = _component_attrs_idx[ctype].copy()
