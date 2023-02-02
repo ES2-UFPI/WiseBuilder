@@ -22,10 +22,10 @@ cpu_namespace = Namespace("CPUs", description="Operações relacionadas à CPUs.
 cpu_model = cpu_namespace.model(
     "CPU",
     {
-        "_id": fields.String(),
-        "manufacturer": fields.String(),
-        "model": fields.String(),
-        "socket": fields.String(required=True, description="Socket da CPU."),
+        "_id": fields.String(description="Identificador da CPU."),
+        "manufacturer": fields.String(required=True, description="Fabricante da CPU."),
+        "model": fields.String(required=True, description="Modelo da CPU."),
+        "socket": fields.Integer(required=True, description="Socket da CPU."),
         "n_cores": fields.Integer(required=True, description="Número de nucleos."),
         "base_clock_spd": fields.Float(
             required=True, description="Velocidade de clock base da CPU."

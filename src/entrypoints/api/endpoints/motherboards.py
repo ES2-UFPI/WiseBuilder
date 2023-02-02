@@ -2,7 +2,7 @@ from uuid import UUID
 from typing import List
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from framework.domain.components import PSUComponent
+from framework.domain.components import MotherboardComponent
 from framework.application.handler import MessageBus
 from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
 from SearchEngine.application.unit_of_work import MockUnitOfWork

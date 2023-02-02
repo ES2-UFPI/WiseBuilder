@@ -33,8 +33,8 @@ persistence_model = persistence_namespace.model(
         "spd": fields.Integer(
             required=True, description="Velocidade de Leitura/Escrita."
         ),
-        "io": fields.Integer(required=True),
-        "is_HDD": fields.Boolean(required=True),
+        "io": fields.Integer(required=True, description="Interface da Persistência."),
+        "is_HDD": fields.Boolean(required=True, description="Se é HDD."),
     },
 )
 

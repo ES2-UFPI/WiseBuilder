@@ -20,7 +20,7 @@ gpu_namespace = Namespace("GPUs", description="Operações relacionadas à GPUs.
 gpu_model = gpu_namespace.model(
     "GPU",
     {
-        "_id": fields.String(),
+        "_id": fields.String(description="Identificador da GPU."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "consumption": fields.Integer(required=True, description="Consumo da GPU."),
@@ -32,17 +32,6 @@ gpu_model = gpu_namespace.model(
         ),
     },
 )
-
-
-GPUS = [
-    {
-        "manufacturer": "nvidia",
-        "model": "1070",
-        "consumption": 10,
-        "vram": 8,
-        "vram_spd": 4,
-    }
-]
 
 
 def _message_bus():
