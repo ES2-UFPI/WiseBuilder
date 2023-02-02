@@ -1,5 +1,8 @@
+import sys
+sys.path.insert(0, r'C:\Users\wesle\OneDrive\Documentos\UFPI\ESII\WiseBuilder\src')
+
 from flask import Flask
-from entrypoints.api.endpoints.api import blueprint
+from endpoints.api import blueprint
 
 app = Flask(__name__)
 app.register_blueprint(blueprint)

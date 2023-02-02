@@ -3,10 +3,8 @@ from typing import List
 from uuid import UUID
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from framework.domain.components import CPUComponent
-from framework.application.handler import MessageBus
-from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
-from SearchEngine.application.unit_of_work import MockUnitOfWork
+
+from .connection_util import message_bus
 from SearchEngine.domain.repositories import (
     EntityUIDNotFoundException,
     EntityUIDCollisionException,
@@ -43,38 +41,6 @@ cpu_model = cpu_namespace.model(
         ),
     },
 )
-
-
-CPUS = [
-    {
-        "_id": uuid,
-        "manufacturer": "intel",
-        "model": "i710310",
-        "socket": "lga1200",
-        "n_cores": "6",
-        "base_clock_spd": 3.8,
-        "boost_clock_spd": 4.6,
-        "ram_clock_max": 3200,
-        "consumption": 100,
-        "integrated_gpu": "",
-        "overclock": True,
-    }
-]
-
-id = 1
-
-
-def _message_bus():
-    uow = MockUnitOfWork({})
-    COMMAND_HANDLER_MAPPER_CALLABLE = {}
-    for c, h in COMMAND_HANDLER_MAPPER.items():
-        COMMAND_HANDLER_MAPPER_CALLABLE[c] = h(uow)
-
-    return MessageBus(uow, {}, COMMAND_HANDLER_MAPPER_CALLABLE)
-
-
-message_bus = _message_bus()
-
 
 @cpu_namespace.route("/")
 class CPUList(Resource):
