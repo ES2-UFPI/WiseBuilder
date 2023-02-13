@@ -139,7 +139,7 @@ function App() {
           <label>
             Suporta OverClock
           </label> 
-          {/* <Switch onChange={(value)=> setOverclock(value)} /> */}
+            <Switch isChecked={overclock} onChange={()=> overclock? setOverclock(false): setOverclock(true)} />
         </Grid>
       )}
 
