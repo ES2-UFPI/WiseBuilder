@@ -1,6 +1,8 @@
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.engine import Row
 from typing import List
+from operator import lt, gt, eq
 
 from framework.domain.components import *
 from framework.domain.value_object import UUID
@@ -10,110 +12,86 @@ from SearchEngine.infrastructure.component_managment.component_mapper import *
 
 class SQLAlchemyRepository(ISQLAlchemyRepository):
 
+    _filters_ops : dict = {
+        'filters_eq' : eq,
+        'filters_lt' : lt,
+        'filters_gt' : gt
+    }
+
     def __init__(self, session):
         self._session : Session = session
     
     def _add(self, component: Component):
-        component_instances = component_to_bd_object(component)
+        component_instance = component_to_bd_object(component)
 
-        for instance in component_instances:
-            try:
-                self._session.add(instance)
-                self._session.commit()
-            except IntegrityError:
-                raise EntityUIDCollisionException(instance.uid)
-        
+        try:
+            self._session.add(component_instance)
+            self._session.commit()
+        except IntegrityError:
+            raise EntityUIDCollisionException(component.uid)
+    
 
-    def _get_by_uid(self, ref: UUID):
-        component = self._get(ctype = EComponentType._BASE, filters_eq = {'uid' : ref})
+    def _get_by_uid(self, ref: UUID) -> Component:
+        query_filter = [ComponentInstance.uid == ref]
 
-        if len(component) == 0:
+        try:
+            ctype : Row = self._session.query(ComponentInstance.type)\
+                .filter(*query_filter)\
+                .one()
+
+            component : Component = self._session.query(component_inst_idx[ctype[0]])\
+                .filter(*query_filter)\
+                .one()
+        except NoResultFound:
             raise EntityUIDNotFoundException(ref)
+    
+        return component
 
-        return component[0]
+    def _filter_components_from_db(self, filters : List, type_inst : ComponentInstance, qsize : int | None) -> List[Component | ComponentInstance]:
+        component_instances : List[ComponentInstance] = self._session\
+                .query(type_inst)\
+                .filter(*filters)\
+                .limit(qsize)\
+                .all()
 
-    def _find_type_by_property_names(self, **kwargs):
-
-        ignore = set(['qsize', 'ctype'])
-        types = []
-
-        for k, v in kwargs.items():
-            if k in ignore:
-                continue
-
-            for ctype in EComponentType:
-                attrs = Component.get_attrs(ctype)
-                if(all(key in attrs for key in v.keys())):
-                    types.append(ctype)
-
-        return types
-
-    def _get_formed_object(self, filters : List, ctype : EComponentType, type_inst, qsize):
-        query = self._session.query(type_inst).filter(*filters)
-        
-        if qsize != 0:
-            query.limit(qsize)
-
-        components = []
-
-        for component in query:
-            base_component = None
-            specific_component = None
-
-            if ctype == EComponentType._BASE:
-                specific_table = component_inst_idx[component.type]
-
-                base_component = component
-
-                specific_component = self._session.query(specific_table)\
-                    .filter(specific_table.component_uid == component.uid)\
-                    .first()
-                        
-            else:
-                base_component = self._session.query(ComponentInstance)\
-                    .filter(ComponentInstance.uid == component.component_uid)\
-                    .first()
-
-                specific_component = component
-
-            component = bd_object_to_component(base_component, specific_component)
-            components.append(component)
+        components = [bd_object_to_component(instance) for instance in component_instances]
 
         return components
 
-
-    def _get(self, **kwargs):
-        qsize = kwargs.get('qsize', 0)
-        ctype = kwargs.get('ctype', None)
-
-        c_types = []
+    def _parse_filters(self, instance_type : ComponentInstance, **kwargs) -> List:
         ret = []
 
-        if ctype == None:
-            c_types = self._find_type_by_property_names(**kwargs)
-        else:
-            c_types.append(ctype)
+        for filter_type, filters in kwargs.items():
+            if filter_type in self._filters_ops.keys():
+                op = self._filters_ops[filter_type]
+                    
+                [ret.append(
+                    op(getattr(instance_type, prop), value)) \
+                        for prop, value in filters.items()]
 
-        for ct in c_types:
-            type_inst = component_inst_idx[ct]
-            filters = []
+        return ret
+        
 
-            for k, v in kwargs.items():
-                match k:
-                    case 'filters_eq':
-                        [filters.append(getattr(type_inst, prop) == val) \
-                            for prop, val in v.items()]
+    def _get(self, **kwargs) -> List[Component]:
+        qsize : int = kwargs.get('qsize', None)
+        ctypes : List = kwargs.get('ctype', [])
+        ret = []
 
-                    case 'filters_gt':
-                        [filters.append(getattr(type_inst, prop) > val) \
-                            for prop, val in v.items()]
+        if len(ctypes) == 0:
+            ctypes = find_type_by_property_names(**kwargs)
 
-                    case 'filters_lt':
-                        [filters.append(getattr(type_inst, prop) < val) \
-                            for prop, val in v.items()]
-                    case _:
-                        continue
+        for ctype in ctypes:
+
+            instance_cls = component_inst_idx[ctype]
+            filters = self._parse_filters(instance_cls, **kwargs)
             
-            ret.extend(self._get_formed_object(filters, ct, type_inst, qsize))
+            components = self._filter_components_from_db(filters, instance_cls, qsize)
+            ret.extend(components)
+            
+            if qsize != None:
+                qsize -= len(components)
+
+                if qsize <= 0:
+                    break
 
         return ret
