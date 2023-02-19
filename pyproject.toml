@@ -1,0 +1,6 @@
+[tool.pytest.ini_options]
+
+markers = [
+    "unit: Unit test marker.",
+    "integration: Integration test marker."
+]
