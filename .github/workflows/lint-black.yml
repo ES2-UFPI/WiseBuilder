@@ -1,13 +1,13 @@
-name: Python Lint - Black
+name: Black (python)
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: psf/black@stable
-        with:
-          options: "--check --verbose"
-          src: "./src"
+      - uses: actions/checkout@v3
+      - uses: rgasper/python-black-pull-request-action@1.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINE_LENGTH: 120
