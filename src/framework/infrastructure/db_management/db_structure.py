@@ -16,7 +16,11 @@ from framework.domain.components import *
 
 
 def get_attrs(ctype: EComponentType) -> List[str]:
-    ret = _component_attrs_idx[ctype].copy()
+    ret = _component_attrs_idx[EComponentType._BASE].copy()
+
+    if ctype != EComponentType._BASE:
+        ret.extend(_component_attrs_idx[ctype])
+
     return ret
 
 
@@ -38,6 +42,7 @@ _AttrsComponent = ["uid", "type", "manufacturer", "model"]
 class ComponentInstance(base):
     __tablename__ = "components"
     uid = Column(BinaryUUID, primary_key=True)
+    component_uid = None
     type = Column(ENUM(EComponentType))
     manufacturer = Column(VARCHAR(20))
     model = Column(VARCHAR(10))
@@ -63,7 +68,6 @@ class PriceHistoryInstance(base):
 
 
 _AttrsMotherboard = [
-    "component_uid",
     "chipset",
     "board_size",
     "n_ram_slots",
@@ -81,7 +85,7 @@ _AttrsMotherboard = [
 ]
 
 
-class MotherboardInstance(base):
+class MotherboardInstance(ComponentInstance):
     __tablename__ = "motherboards"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
@@ -106,7 +110,6 @@ class MotherboardInstance(base):
 
 
 _AttrsCPU = [
-    "component_uid",
     "socket",
     "n_cores",
     "base_clock_spd",
@@ -118,7 +121,7 @@ _AttrsCPU = [
 ]
 
 
-class CPUInstance(base):
+class CPUInstance(ComponentInstance):
     __tablename__ = "CPUs"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
@@ -133,10 +136,10 @@ class CPUInstance(base):
     overclock = Column(BOOLEAN())
 
 
-_AttrsGPU = ["component_uid", "consumption", "vram", "vram_spd"]
+_AttrsGPU = ["consumption", "vram", "vram_spd"]
 
 
-class GPUInstance(base):
+class GPUInstance(ComponentInstance):
     __tablename__ = "GPUs"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
@@ -146,10 +149,10 @@ class GPUInstance(base):
     vram_spd = Column(INTEGER(5))
 
 
-_AttrsRAM = ["component_uid", "generation", "frequency"]
+_AttrsRAM = ["generation", "frequency"]
 
 
-class RAMInstance(base):
+class RAMInstance(ComponentInstance):
     __tablename__ = "RAMs"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
@@ -158,10 +161,10 @@ class RAMInstance(base):
     frequency = Column(INTEGER(5))
 
 
-_AttrsPersistence = ["component_uid", "storage", "spd", "io", "is_HDD"]
+_AttrsPersistence = ["storage", "spd", "io", "is_HDD"]
 
 
-class PersistenceInstance(base):
+class PersistenceInstance(ComponentInstance):
     __tablename__ = "persistences"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
@@ -172,10 +175,10 @@ class PersistenceInstance(base):
     io = Column(ENUM(EPersistenceIOType))
 
 
-_AttrsPSU = ["component_uid", "power", "rate", "modularity"]
+_AttrsPSU = ["power", "rate", "modularity"]
 
 
-class PSUInstance(base):
+class PSUInstance(ComponentInstance):
     __tablename__ = "PSUs"
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
