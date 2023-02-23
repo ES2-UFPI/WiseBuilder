@@ -101,11 +101,11 @@ class Component(Entity):
     @classmethod
     def get_attrs(cls, ctype: EComponentType) -> List[str]:
         ret = _AttrsCommon.copy()
-        ret.extend(_AttrsComponent) 
+        ret.extend(_AttrsComponent)
 
         if ctype != EComponentType._BASE:
             ret.extend(_component_attrs_idx[ctype].copy())
-            
+
         return ret
 
 
