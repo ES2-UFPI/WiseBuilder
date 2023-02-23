@@ -14,6 +14,15 @@ import {
 } from '@chakra-ui/react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { Switch } from '@chakra-ui/react'
+import {
+  Flex,
+  FormControl,
+  FormLabel,
+  Stack,
+  useColorModeValue,
+  HStack,
+  IconButton,
+} from '@chakra-ui/react';
 
 function App() {
   const [tipo, setTipo] = useState<string>("");
@@ -63,123 +72,231 @@ function App() {
 
   return (
     <ChakraProvider>
-      <Center h='100px' color='black'>
-        <Heading alignContent = {'center'}>Cadastrar Componentes</Heading>
-      </Center>
-      
-      <label>
-        Tipo do Componente
-      </label>  
-      <Select onChange={(event)=> setTipo(event.target.value)} placeholder='Selecione'>
-        <option value='CPU'>CPU</option>
-        <option value='GPU'>GPU</option>
-        <option value='Placa Mãe'>Placa Mãe</option>
-        <option value='Memória RAM'>Memória RAM</option>
-        <option value='Fonte'>Fonte</option>
-      </Select>
-      {tipo === 'CPU' && (
-        <Grid>
-          <label>
-            Fabricante
-          </label> 
-          <Input onChange={(event)=> setFabricante(event.target.value)} />
+      <Flex
+      minH={'100vh'}
+      align={'center'}
+      justify={'center'}
+      bg={useColorModeValue('gray.50', 'gray.800')}>
+      <Stack
+        spacing={4}
+        w={'full'}
+        maxW={'md'}
+        bg={useColorModeValue('white', 'gray.700')}
+        rounded={'xl'}
+        boxShadow={'lg'}
+        p={6}
+        my={12}>
+        <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
+          Cadastrar Componentes
+        </Heading>
+        <FormControl id="componentes">
+          <FormLabel>Tipo do Componente</FormLabel>
+          <Select onChange={(event)=> setTipo(event.target.value)} placeholder='Selecione'>
+            <option value='CPU'>CPU</option>
+            <option value='GPU'>GPU</option>
+            <option value='Placa Mãe'>Placa Mãe</option>
+            <option value='Memória RAM'>Memória RAM</option>
+            <option value='Fonte'>Fonte</option>
+          </Select>
+        </FormControl>
+        {tipo === 'CPU' && (
+          <Stack
+            spacing={4}
+            w={'full'}
+            maxW={'md'}
+            rounded={'xl'}
+            my={12}>
+            <FormControl id="fabricante" isRequired>
+              <FormLabel>Fabricante</FormLabel>
+              <Input 
+                onChange={(event)=> setFabricante(event.target.value)}
+                placeholder="Fabricante"
+                _placeholder={{ color: 'gray.500' }}
+                type="text"
+              />
+            </FormControl>
+            
+            <FormControl id="modelo" isRequired>
+              <FormLabel>Modelo</FormLabel>
+              <Input 
+                onChange={(event)=> setModelo(event.target.value)}
+                placeholder="Modelo"
+                _placeholder={{ color: 'gray.500' }}
+                type="text"
+              />
+            </FormControl>
 
-          <label>
-            Modelo
-          </label> 
-          <Input onChange={(event)=> setModelo(event.target.value)} />
+            <FormControl id="socket" isRequired>
+            <FormLabel>Socket</FormLabel>
+              <NumberInput onChange={(value)=> setSocket(+value)}>
+                <NumberInputField placeholder="Socket" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Socket
-          </label> 
-          <NumberInput onChange={(value)=> setSocket(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="nucleos" isRequired>
+            <FormLabel>Núcleos</FormLabel>
+              <NumberInput onChange={(value)=> setCores(+value)}>
+                <NumberInputField placeholder="Núcleos" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Núcleos
-          </label>
-          <NumberInput onChange={(value)=> setCores(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="baseClock" isRequired>
+            <FormLabel>Velocidade Base do Clock da CPU</FormLabel>
+              <NumberInput onChange={(value)=> setBaseClock(+value)}>
+                <NumberInputField placeholder="Velocidade Base do CLock da CPU" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Velocidade Base do Clock da CPU
-          </label>
-          <NumberInput onChange={(value)=> setBaseClock(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="boostClock" isRequired>
+            <FormLabel>Velocidade Máxima do Clock da CPU</FormLabel>
+              <NumberInput onChange={(value)=> setBoostClock(+value)}>
+                <NumberInputField placeholder="Velocidade Máxima do Clock da CPU" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Velocidade Máxima do Clock da CPU
-          </label>
-          <NumberInput onChange={(value)=> setBoostClock(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="vramSpd" isRequired>
+            <FormLabel>Velocidade Máxima do Clock da RAM</FormLabel>
+              <NumberInput onChange={(value)=> setVramSpd(+value)}>
+                <NumberInputField placeholder="Velocidade Máxima do Clock da RAM" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Velocidade Máxima do Clock da RAM
-          </label>
-          <NumberInput onChange={(value)=> setVramSpd(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="consumo" isRequired>
+            <FormLabel>Consumo</FormLabel>
+              <NumberInput onChange={(value)=> setConsumo(+value)}>
+                <NumberInputField placeholder="Consumo" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Consumo
-          </label> 
-          <NumberInput onChange={(value)=> setConsumo(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="gpuIntegrada" isRequired>
+              <FormLabel>GPU Integrada</FormLabel>
+              <Input 
+                onChange={(event)=> setGpuIntegrada(event.target.value)}
+                placeholder="GPU Integrada"
+                _placeholder={{ color: 'gray.500' }}
+                type="text"
+              />
+            </FormControl>
 
-          <label>
-            GPU Integrada
-          </label> 
-          <Input onChange={(event)=> setGpuIntegrada(event.target.value)} />
+            <FormControl id="overclock" isRequired>
+              <FormLabel>Suporta OverClock</FormLabel>
+              <Switch isChecked={overclock} onChange={()=> overclock? setOverclock(false): setOverclock(true)} />
+            </FormControl>
+          </Stack>
+        )}
 
-          <label>
-            Suporta OverClock
-          </label> 
-            <Switch isChecked={overclock} onChange={()=> overclock? setOverclock(false): setOverclock(true)} />
-        </Grid>
-      )}
+        {tipo === 'GPU' && (
+          <Stack
+            spacing={4}
+            w={'full'}
+            maxW={'md'}
+            rounded={'xl'}
+            my={12}>
+            <FormControl id="fabricante" isRequired>
+              <FormLabel>Fabricante</FormLabel>
+              <Input 
+                onChange={(event)=> setFabricante(event.target.value)}
+                placeholder="Fabricante"
+                _placeholder={{ color: 'gray.500' }}
+                type="text"
+              />
+            </FormControl>
+            
+            <FormControl id="modelo" isRequired>
+              <FormLabel>Modelo</FormLabel>
+              <Input 
+                onChange={(event)=> setModelo(event.target.value)}
+                placeholder="Modelo"
+                _placeholder={{ color: 'gray.500' }}
+                type="text"
+              />
+            </FormControl>
 
-{tipo === 'GPU' && (
-        <Grid>
-          <label>
-            Fabricante
-          </label> 
-          <Input onChange={(event)=> setFabricante(event.target.value)} />
+            <FormControl id="consumo" isRequired>
+            <FormLabel>Consumo</FormLabel>
+              <NumberInput onChange={(value)=> setConsumo(+value)}>
+                <NumberInputField placeholder="Consumo" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Modelo
-          </label> 
-          <Input onChange={(event)=> setModelo(event.target.value)} />
+            <FormControl id="vram" isRequired>
+            <FormLabel>Capacidade da Memória RAM da CPU</FormLabel>
+              <NumberInput onChange={(value)=> setVram(+value)}>
+                <NumberInputField placeholder="Velocidade Máxima do Clock da RAM" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
 
-          <label>
-            Consumo
-          </label> 
-          <NumberInput onChange={(value)=> setConsumo(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+            <FormControl id="vramSpd" isRequired>
+            <FormLabel>Velocidade da Memória RAM da CPU</FormLabel>
+              <NumberInput onChange={(value)=> setVramSpd(+value)}>
+                <NumberInputField placeholder="Velocidade da Memória RAM da CPU" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+          </Stack>
+        )}
 
-          <label>
-            Capacidade da Memória RAM da CPU
-          </label> 
-          <NumberInput onChange={(value)=> setVram(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
+        {tipo === 'Placa Mãe' && (
+          <Stack
+          spacing={4}
+          w={'full'}
+          maxW={'md'}
+          rounded={'xl'}
+          my={12}>
+          <FormControl id="fabricante" isRequired>
+            <FormLabel>Fabricante</FormLabel>
+            <Input 
+              onChange={(event)=> setFabricante(event.target.value)}
+              placeholder="Fabricante"
+              _placeholder={{ color: 'gray.500' }}
+              type="text"
+            />
+          </FormControl>
+          
+          <FormControl id="modelo" isRequired>
+            <FormLabel>Modelo</FormLabel>
+            <Input 
+              onChange={(event)=> setModelo(event.target.value)}
+              placeholder="Modelo"
+              _placeholder={{ color: 'gray.500' }}
+              type="text"
+            />
+          </FormControl>
 
-          <label>
-            Velocidade da Memória RAM da CPU
-          </label> 
-          <NumberInput onChange={(value)=> setVramSpd(+value)} defaultValue={0}>
-            <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
-          </NumberInput>
-        </Grid>
-      )}
+          <FormControl id="chipset" isRequired>
+          <FormLabel>Chipset</FormLabel>
+            <NumberInput onChange={(value)=> setChipset(+value)}>
+              <NumberInputField placeholder="Chipset" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+            </NumberInput>
+          </FormControl>
 
-{tipo === 'Placa Mãe' && (
-        <Grid>
+          <FormControl id="tamanho" isRequired>
+          <FormLabel>Tamanho</FormLabel>
+            <NumberInput onChange={(value)=> setTamanho(+value)}>
+              <NumberInputField placeholder="Tamanho" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+            </NumberInput>
+          </FormControl>
+
+          <FormControl id="slotsRam" isRequired>
+          <FormLabel>Quantidade de Slots de RAM</FormLabel>
+            <NumberInput onChange={(value)=> setSlotsRam(+value)}>
+              <NumberInputField placeholder="Quantidade de Slots de RAM" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+            </NumberInput>
+          </FormControl>
+        
+          <FormControl id="consumo" isRequired>
+            <FormLabel>Consumo</FormLabel>
+              <NumberInput onChange={(value)=> setConsumo(+value)}>
+                <NumberInputField placeholder="Consumo" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+          </FormControl>
+
+          <FormControl id="consumo" isRequired>
+            <FormLabel>Número de Portas USB 2</FormLabel>
+              <NumberInput onChange={(value)=> setUsb2(+value)}>
+                <NumberInputField placeholder="Número de Portas USB 2" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              </NumberInput>
+          </FormControl>
+          
           <label>
             Fabricante
           </label> 
@@ -287,7 +404,7 @@ function App() {
           <NumberInput onChange={(value)=> setPci16(+value)} defaultValue={0}>
             <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
           </NumberInput>
-        </Grid>
+        </Stack>
       )}
 
 {tipo === 'Fonte' && (
@@ -345,13 +462,34 @@ function App() {
           <label>
             Frequência
           </label> 
-          <NumberInput onChange={(value)=> setFrequency(+value)} defaultValue={0}>
+          <NumberInput onChange={(value)=> setFrequency(+value)}>
             <NumberInputField /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
           </NumberInput>
         </Grid>
       )}
-
-      <Button colorScheme='blue' onClick={()=> ""}> Salvar </Button>
+        <Stack spacing={6} direction={['column', 'row']}>
+          <Button
+            bg={'red.400'}
+            color={'white'}
+            w="full"
+            _hover={{
+              bg: 'red.500',
+            }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={()=> ""}
+            bg={'blue.400'}
+            color={'white'}
+            w="full"
+            _hover={{
+              bg: 'blue.500',
+            }}>
+            Salvar
+          </Button>
+        </Stack>
+      </Stack>
+    </Flex>
     </ChakraProvider>
   );
 }
