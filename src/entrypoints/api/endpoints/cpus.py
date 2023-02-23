@@ -42,6 +42,7 @@ cpu_model = cpu_namespace.model(
     },
 )
 
+
 @cpu_namespace.route("/")
 class CPUList(Resource):
     @cpu_namespace.marshal_list_with(cpu_model)

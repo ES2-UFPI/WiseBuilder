@@ -14,9 +14,7 @@ class FactoryScraper:
         else:
             return _scraper
 
+
 class ScraperNotFoundException(Exception):
     def __init__(self) -> None:
         super().__init__("Scraper não encontrado.")
-
-
-
