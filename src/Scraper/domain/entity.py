@@ -1,6 +1,3 @@
-
-
-
 @dataclass
 class MatchesTrackedComponent(Rule):
     # Verifica se o componente é um dos componentes observados

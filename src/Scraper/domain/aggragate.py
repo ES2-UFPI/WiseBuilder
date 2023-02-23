@@ -24,7 +24,6 @@ class VolatileData(AggregateRoot):
         cost: Money,
         availability: bool,
     ):
-
         return VolatileData(
             _id=_id,
             component_id=component_id,

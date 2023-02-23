@@ -7,11 +7,12 @@ from framework.domain.repository import AbstractRepository
 from framework.domain.exception import DomainException
 from framework.domain.components import Component
 
+
 @dataclass
 class EntityUIDNotFoundException(DomainException):
     entity_id: UUID
     _message: str = field(init=False)
-    
+
     def __post_init__(self):
         self._message = f"{self.__class__.__name__}: "
         f"Componente com UID {self.entity_id} não existe."
@@ -21,7 +22,7 @@ class EntityUIDNotFoundException(DomainException):
 class EntityUIDCollisionException(DomainException):
     entity_id: UUID
     _message: str = field(init=False)
-    
+
     def __post_init__(self):
         self._message = f"{self.__class__.__name__}: "
         f"Componente com UID {self.entity_id} já existe."
@@ -30,26 +31,23 @@ class EntityUIDCollisionException(DomainException):
 class MockRepository(AbstractRepository):
     def __init__(self, components: Dict[UUID, Component]):
         self._components = components
-    
-    
+
     def _add(self, component: Component):
         if self._components.get(component.uid, None) is None:
             self._components[component.uid] = component
-        else: 
+        else:
             raise EntityUIDCollisionException(component.uid)
-    
-    
+
     def _get_by_uid(self, ref: UUID):
         ret = self._components.get(ref, None)
         if ret:
             return self._components[ref]
         raise EntityUIDNotFoundException(ref)
-    
-    
+
     def _get(self, **kwargs):
-        qsize = kwargs.get('qsize', 10)
-        ctype = kwargs.get('ctype', None)
-        
+        qsize = kwargs.get("qsize", 10)
+        ctype = kwargs.get("ctype", None)
+
         ret = list()
         if ctype:
             for c in self._components.values():
@@ -57,10 +55,9 @@ class MockRepository(AbstractRepository):
                     ret.append(c)
                 if len(ret) == qsize:
                     break
-        
+
         return ret
-    
-    
+
     def __repr__(self):
         return str(self._components)
 
@@ -69,22 +66,18 @@ class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, session):
         raise NotImplemented
-    
-    
+
     @abstractmethod
     def _add(self, component: Component):
         raise NotImplemented
-    
-    
+
     @abstractmethod
     def _get_by_uid(self, ref: UUID):
         raise NotImplemented
-    
-    
+
     @abstractmethod
     def _get(self, **kwargs):
         raise NotImplemented
-    
-    
+
     def __repr__(self):
         raise NotImplemented
