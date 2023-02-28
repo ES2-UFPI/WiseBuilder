@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing import Dict
 from abc import ABCMeta, abstractmethod
 
 from framework.domain.value_object import UUID
 from framework.domain.repository import AbstractRepository
 from framework.domain.exception import DomainException
-from framework.domain.components import Component
 from Scraper.domain.aggragate import VolatileData
 
 
@@ -19,48 +18,35 @@ class EntityUIDNotFoundException(DomainException):
         f"Componente com UID {self.entity_id} não existe."
 
 
-@dataclass
-class EntityUIDCollisionException(DomainException):
-    entity_id: UUID
-    _message: str = field(init=False)
-
-    def __post_init__(self):
-        self._message = f"{self.__class__.__name__}: "
-        f"Componente com UID {self.entity_id} já existe."
-
-
 class MockRepository(AbstractRepository):
-    def __init__(self, components: Dict[UUID, Component]):
-        self._components = components
+    def __init__(self, volatile_datas: Dict[UUID, VolatileData]):
+        self._volatile_data = volatile_datas
 
-    def _add(self, component: Component):
-        if self._components.get(component.uid, None) is None:
-            self._components[component.uid] = component
-        else:
-            raise EntityUIDCollisionException(component.uid)
+    def _add(self, volatile_data: VolatileData):
+        self._volatile_data[volatile_data.uid] = volatile_data
 
     def _get_by_uid(self, ref: UUID):
-        ret = self._components.get(ref, None)
+        ret = self._volatile_data.get(ref, None)
         if ret:
-            return self._components[ref]
+            return self._volatile_data[ref]
         raise EntityUIDNotFoundException(ref)
 
     def _get(self, **kwargs):
         qsize = kwargs.get("qsize", 10)
-        ctype = kwargs.get("ctype", None)
+        ctype = kwargs.get("availability", None)
 
         ret = list()
         if ctype:
-            for c in self._components.values():
-                if c.type == ctype:
-                    ret.append(c)
+            for v in self._volatile_data.values():
+                if v.availability == True:
+                    ret.append(v)
                 if len(ret) == qsize:
                     break
 
         return ret
 
     def __repr__(self):
-        return str(self._components)
+        return str(self._volatile_data)
 
 
 class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
@@ -69,7 +55,7 @@ class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
         raise NotImplemented
 
     @abstractmethod
-    def _add(self, component: Component):
+    def _add(self, volatile_data: VolatileData):
         raise NotImplemented
 
     @abstractmethod

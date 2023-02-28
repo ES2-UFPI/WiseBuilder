@@ -53,10 +53,18 @@ class VolatileDataInstance(base):
     url_id = Column(BinaryUUID, primary_key=True)
     url = Column(VARCHAR(255))
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
-    price = Column(FLOAT(7, 2, False))
+    cost = Column(FLOAT(7, 2, False))
     availability = Column(BOOLEAN())
     timestamp = Column(DATETIME(timezone=False, fsp=0))
 
+AttrsVolatileData = [
+    'url_id',
+    'url',
+    'component_uid',
+    'cost',
+    'availability',
+    'timestamp',
+]
 
 class PriceHistoryInstance(base):
     __tablename__ = "prices_history"

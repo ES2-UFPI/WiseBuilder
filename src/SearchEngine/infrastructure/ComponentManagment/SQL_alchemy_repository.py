@@ -15,7 +15,7 @@ from framework.infrastructure.db_management.db_structure import (
     ComponentInstance,
     component_inst_idx,
 )
-from SearchEngine.infrastructure.component_managment.component_mapper import *
+from SearchEngine.infrastructure.ComponentManagment.component_mapper import *
 
 
 class SQLAlchemyRepository(ISQLAlchemyRepository):
@@ -41,11 +41,14 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
                 self._session.query(ComponentInstance.type).filter(*query_filter).one()
             )
 
-            component: Component = (
+            component_inst: ComponentInstance = (
                 self._session.query(component_inst_idx[ctype[0]])
                 .filter(*query_filter)
                 .one()
             )
+
+            component = bd_object_to_component(component_inst)
+
         except NoResultFound:
             raise EntityUIDNotFoundException(ref)
 
