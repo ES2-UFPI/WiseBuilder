@@ -57,14 +57,16 @@ class VolatileDataInstance(base):
     availability = Column(BOOLEAN())
     timestamp = Column(DATETIME(timezone=False, fsp=0))
 
+
 AttrsVolatileData = [
-    'url_id',
-    'url',
-    'component_uid',
-    'cost',
-    'availability',
-    'timestamp',
+    "url_id",
+    "url",
+    "component_uid",
+    "cost",
+    "availability",
+    "timestamp",
 ]
+
 
 class PriceHistoryInstance(base):
     __tablename__ = "prices_history"
