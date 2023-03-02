@@ -3,7 +3,9 @@ import sys, os
 
 sys.path.insert(0, os.getcwd())
 
-from Scraper.application.ScraperOrchestration.category_URL_manager import CategoryURLManager
+from Scraper.application.ScraperOrchestration.category_URL_manager import (
+    CategoryURLManager,
+)
 from framework.infrastructure.db_management.db_connection import create_session
 from framework.infrastructure.connection_util import _get_engine
 from Scraper.application.ScraperOrchestration.Wrapper import Wrapper

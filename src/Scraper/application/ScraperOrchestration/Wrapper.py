@@ -23,6 +23,7 @@ from Scraper.application.ScraperOrchestration.category_URL_manager import (
 
 engine = _get_engine()
 
+
 class Wrapper:
     _volatile_data_manager: SQLAlchemyVolatileData
     domain: str
