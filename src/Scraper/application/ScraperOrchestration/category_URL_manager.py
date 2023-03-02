@@ -5,9 +5,8 @@ from operator import lt, gt, eq
 
 from framework.domain.value_object import UUID
 from framework.infrastructure.db_management.db_structure import CategoryUrlInstance
-from Scraper.domain.category_url import CategoryURL
+from Scraper.domain.entity import CategoryURL
 from framework.domain.value_object import URL
-from framework.domain.components import EComponentType
 from Scraper.domain.repositories import (
     ISQLAlchemyRepository,
     EntityUIDNotFoundException,

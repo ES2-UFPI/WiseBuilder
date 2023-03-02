@@ -1,11 +1,17 @@
 import asyncio
-from Scraper.infrastructure.ScraperOrchestration.category_URL_manager import (
+import sys, os
+
+sys.path.insert(0, os.getcwd())
+
+from Scraper.application.ScraperOrchestration.category_URL_manager import (
     CategoryURLManager,
 )
 from framework.infrastructure.db_management.db_connection import create_session
-from entrypoints.api.endpoints.connection_util import engine
-from Scraper.infrastructure.ScraperOrchestration.Wrapper import Wrapper
+from framework.infrastructure.connection_util import _get_engine
+from Scraper.application.ScraperOrchestration.Wrapper import Wrapper
 
+
+engine = _get_engine()
 _category_url_manager = CategoryURLManager(create_session(engine))
 _sleep_minutes = 60
 
