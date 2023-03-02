@@ -2,13 +2,14 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy import update
 
-from Scraper.domain.aggragate import VolatileData
 from framework.domain.value_object import UUID
 from framework.infrastructure.db_management.db_mapping import map_from_to
 from framework.infrastructure.db_management.db_structure import (
     VolatileDataInstance,
     AttrsVolatileData,
 )
+from Scraper.domain.events import LowerPriceRegisteredEvent
+from Scraper.domain.aggragate import VolatileData
 from Scraper.domain.repositories import (
     ISQLAlchemyRepository,
     EntityUIDNotFoundException,
@@ -65,8 +66,7 @@ class SQLAlchemyVolatileData(ISQLAlchemyRepository):
                 db_volatile_data.cost + 0.1 < current_volatile_data.cost
                 and db_volatile_data.availability
             ):
-                # TODO lançar evento de redução de preço
-                pass
+                volatile_data.events.append(LowerPriceRegisteredEvent())
 
             current_volatile_data.cost = db_volatile_data.cost
 

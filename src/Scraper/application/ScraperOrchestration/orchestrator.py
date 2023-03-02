@@ -1,14 +1,8 @@
-import sys
-
-sys.path.insert(0, r"C:\Users\wesle\OneDrive\Documentos\UFPI\ESII\WiseBuilder\src")
-
 import asyncio
-from Scraper.infrastructure.ScraperOrchestration.category_URL_manager import (
-    CategoryURLManager,
-)
+from .category_URL_manager import CategoryURLManager
 from framework.infrastructure.db_management.db_connection import create_session
 from entrypoints.api.endpoints.connection_util import engine
-from Scraper.infrastructure.ScraperOrchestration.Wrapper import Wrapper
+from .Wrapper import Wrapper
 
 _category_url_manager = CategoryURLManager(create_session(engine))
 _sleep_minutes = 60
