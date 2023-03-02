@@ -1,7 +1,6 @@
 from sqlalchemy.orm.session import Session
-from sqlalchemy.engine import Row
+from sqlalchemy.exc import NoResultFound
 
-from framework.domain.events import DomainEvent
 from Scraper.domain.aggragate import VolatileData
 from framework.domain.value_object import UUID
 from framework.infrastructure.db_management.db_mapping import map_from_to
@@ -9,14 +8,13 @@ from framework.infrastructure.db_management.db_structure import (
     VolatileDataInstance,
     AttrsVolatileData,
 )
-from sqlalchemy.exc import NoResultFound
 from Scraper.domain.repositories import (
     ISQLAlchemyRepository,
     EntityUIDNotFoundException,
 )
 
 
-class SQLAlchemyVolatile_data(ISQLAlchemyRepository):
+class SQLAlchemyVolatileData(ISQLAlchemyRepository):
     def __init__(self, session):
         self._session: Session = session
 
@@ -42,12 +40,6 @@ class SQLAlchemyVolatile_data(ISQLAlchemyRepository):
         query_filter = [VolatileDataInstance.url_id == ref]
 
         try:
-            ctype: Row = (
-                self._session.query(VolatileDataInstance.type)
-                .filter(*query_filter)
-                .one()
-            )
-
             vol_data_inst: VolatileDataInstance = (
                 self._session.query(VolatileDataInstance).filter(*query_filter).one()
             )
@@ -65,7 +57,10 @@ class SQLAlchemyVolatile_data(ISQLAlchemyRepository):
         try:
             current_volatile_data = self._get_instance_by_uid(volatile_data.uid)
 
-            if current_volatile_data.cost > db_volatile_data.cost:
+            if (
+                current_volatile_data.cost > db_volatile_data.cost
+                and db_volatile_data.availability
+            ):
                 # TODO lançar evento de redução de preço
                 pass
 
@@ -80,4 +75,7 @@ class SQLAlchemyVolatile_data(ISQLAlchemyRepository):
         return super()._get(**kwargs)
 
     def _get_by_uid(self, ref: UUID):
-        return super()._get_by_uid(ref)
+        volatile_data_instance = self._get_instance_by_uid(ref)
+        volatile_data = self.db_object_to_volatile_data(volatile_data_instance)
+
+        return volatile_data

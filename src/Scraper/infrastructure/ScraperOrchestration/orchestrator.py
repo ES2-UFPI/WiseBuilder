@@ -1,45 +1,39 @@
-from time import time
-from typing import List, Tuple
+import sys
 
-from framework.domain.value_object import UUID
-from framework.domain.value_object import URL
-from framework.domain.components import Component
-from Scraper.domain.service import FactoryScraper
-from Scraper.domain.aggragate import VolatileData
-from Scraper.infrastructure.VolatileDataManagment.SQL_alchemy_volatile_data import (
-    SQLAlchemyVolatile_data,
+sys.path.insert(0, r"C:\Users\wesle\OneDrive\Documentos\UFPI\ESII\WiseBuilder\src")
+
+import asyncio
+from Scraper.infrastructure.ScraperOrchestration.category_URL_manager import (
+    CategoryURLManager,
 )
+from framework.infrastructure.db_management.db_connection import create_session
+from entrypoints.api.endpoints.connection_util import engine
+from Scraper.infrastructure.ScraperOrchestration.Wrapper import Wrapper
 
-seconds_between_requests = 1
-urls: List[URL] = [URL("www.google.com", "", "", "")]  # category
-scraper_factory = FactoryScraper()
+_category_url_manager = CategoryURLManager(create_session(engine))
+_sleep_minutes = 0.1
 
 
-def run_scrapers(session):
-    volatile_data_manager = SQLAlchemyVolatile_data(session)
+async def run_scrapers():
+    while True:
+        domains = _category_url_manager.get_domains()
 
-    for category_url in urls:
-        # TODO: implementar temporização randomizada em um intervalo de segundos
-        scraper = scraper_factory.build_scraper(domain=category_url.url)
-        page_url: URL = category_url
+        tasks = []
 
-        while page_url != None:
-            page_url, volatile_datas_values = scraper.get_volatile_data(page_url)
+        for domain in domains:
+            wrapper = Wrapper(domain)
+            tasks.append(wrapper.run_scraping())
 
-            for url, name, cost, availability in volatile_datas_values:
-                # TODO: fazer chamada da engine de busca para classificar o componente
-                # component = SearchEngine.classifie(name)
+        await asyncio.gather(*tasks)
+        await asyncio.sleep(_sleep_minutes * 60)
 
-                component = Component(
-                    _id=Component.next_id(), manufacturer="1", model="2"
-                )  # placeholder
 
-                volatile_data = VolatileData(
-                    _id=UUID(url.url),
-                    component_id=component.uid,
-                    url=url,
-                    cost=cost,
-                    availability=availability,
-                )
+def main():
+    orchestrator_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(orchestrator_loop)
+    orchestrator_loop.run_until_complete(run_scrapers())
+    orchestrator_loop.close()
 
-                volatile_data_manager.add(volatile_data)
+
+if __name__ == "__main__":
+    main()

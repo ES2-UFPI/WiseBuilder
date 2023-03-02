@@ -222,7 +222,8 @@ computer_persistence_relation = Table(
 
 class CategoryUrlInstance(base):
     __tablename__ = "category_url"
-    uid = Column(INTEGER(5), primary_key=True, autoincrement=False)
+    uid = Column(BinaryUUID, primary_key=True, autoincrement=False)
+    scheme = Column(VARCHAR(8))
     domain = Column(VARCHAR(100))
     path = Column(VARCHAR(150))
     type = Column(ENUM(EComponentType))
