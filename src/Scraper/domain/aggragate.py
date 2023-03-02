@@ -18,6 +18,9 @@ class VolatileData(AggregateRoot):
 
     timestamp: datetime = field(default=datetime.utcnow())
 
+    def __hash__(self):
+        return hash(self.uid)
+
     @classmethod
     def get_attrs(cls) -> List[str]:
         return _AttrsVolatileData.copy()

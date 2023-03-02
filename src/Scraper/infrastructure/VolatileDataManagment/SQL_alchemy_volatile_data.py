@@ -1,5 +1,6 @@
 from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy import update
 
 from Scraper.domain.aggragate import VolatileData
 from framework.domain.value_object import UUID
@@ -54,19 +55,22 @@ class SQLAlchemyVolatileData(ISQLAlchemyRepository):
             volatile_data
         )
 
+        db_volatile_data.url = volatile_data.url.url  # TODO modificar dicionário
+        db_volatile_data.cost = volatile_data.cost.amount
+
         try:
             current_volatile_data = self._get_instance_by_uid(volatile_data.uid)
 
             if (
-                current_volatile_data.cost > db_volatile_data.cost
+                db_volatile_data.cost + 0.1 < current_volatile_data.cost
                 and db_volatile_data.availability
             ):
                 # TODO lançar evento de redução de preço
                 pass
 
-            current_volatile_data.__dict__.update(db_volatile_data.__dict__)
+            current_volatile_data.cost = db_volatile_data.cost
 
-        except NoResultFound:
+        except EntityUIDNotFoundException:
             self._session.add(db_volatile_data)
 
         self._session.commit()

@@ -10,8 +10,7 @@ from Scraper.domain.value_object import AbstractScraper, URL
 from Scraper.domain.category_url import CategoryURL
 from Scraper.domain.aggragate import VolatileData
 from Scraper.domain.service import FactoryScraper
-from framework.domain.value_object import UUID
-from framework.domain.components import Component
+from framework.domain.value_object import UUIDv5
 from entrypoints.api.endpoints.connection_util import engine
 from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.infrastructure.VolatileDataManagment.SQL_alchemy_volatile_data import (
@@ -31,21 +30,24 @@ class Wrapper:
 
     max_sleep_seconds = 3
 
-    def __init__(self, domain: str):
+    def __init__(self, scheme: str, domain: str):
         self.domain = domain
         self.session = create_session(engine)
         self._volatile_data_manager = SQLAlchemyVolatileData(self.session)
 
         factory_scraper = FactoryScraper()
         url_manager = CategoryURLManager(self.session)
-        self.scraper = factory_scraper.build_scraper(domain)
+        self.scraper = factory_scraper.build_scraper(f"{scheme}://{domain}")
         self.domain_urls = url_manager.get(filters_eq={"domain": domain})
 
     async def run_scraping(self):
         for domain_url in self.domain_urls:
             next_url: URL = domain_url.url
+
             while next_url != None:
-                next_url, volatile_datas = self.scraper.get_volatile_data(next_url.url)
+                next_url, volatile_datas = self.scraper.get_volatile_data(
+                    url=next_url.url
+                )
 
                 for url, name, cost, availability in volatile_datas:
                     # TODO: fazer chamada da engine de busca para classificar o componente
@@ -58,7 +60,7 @@ class Wrapper:
                     ]  # placeholder
 
                     volatile_data = VolatileData(
-                        _id=UUID(url.url),
+                        _id=UUIDv5(url.url),
                         component_id=component.uid,
                         url=url,
                         cost=cost,

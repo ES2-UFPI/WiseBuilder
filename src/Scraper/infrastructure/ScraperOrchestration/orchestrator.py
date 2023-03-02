@@ -11,17 +11,17 @@ from entrypoints.api.endpoints.connection_util import engine
 from Scraper.infrastructure.ScraperOrchestration.Wrapper import Wrapper
 
 _category_url_manager = CategoryURLManager(create_session(engine))
-_sleep_minutes = 0.1
+_sleep_minutes = 60
 
 
 async def run_scrapers():
     while True:
-        domains = _category_url_manager.get_domains()
+        urls = _category_url_manager.get_urls()
 
         tasks = []
 
-        for domain in domains:
-            wrapper = Wrapper(domain)
+        for scheme, domain in urls:
+            wrapper = Wrapper(scheme, domain)
             tasks.append(wrapper.run_scraping())
 
         await asyncio.gather(*tasks)

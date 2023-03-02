@@ -95,10 +95,9 @@ class CategoryURLManager(ISQLAlchemyRepository):
 
         return url
 
-    def get_domains(self) -> List[str]:
-        query = self._session.query(CategoryUrlInstance.domain).distinct(
-            CategoryUrlInstance.domain
-        )
-        domains = [domain[0] for domain in query]
+    def get_urls(self) -> List[tuple[str, str]]:
+        params = [CategoryUrlInstance.scheme, CategoryUrlInstance.domain]
 
-        return domains
+        query = self._session.query(*params).distinct(CategoryUrlInstance.domain)
+        urls = [url for url in query]
+        return urls
