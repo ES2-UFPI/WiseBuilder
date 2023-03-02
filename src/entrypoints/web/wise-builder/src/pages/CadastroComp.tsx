@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { ChakraProvider } from '@chakra-ui/react'
 import { Input } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Select } from '@chakra-ui/react'
-import { Button, ButtonGroup } from '@chakra-ui/react'
-import { Center, Square, Circle } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import {
   NumberInput,
   NumberInputField,
@@ -12,7 +10,6 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from '@chakra-ui/react'
-import { Grid, GridItem } from '@chakra-ui/react'
 import { Switch } from '@chakra-ui/react'
 import {
   Flex,
@@ -20,11 +17,9 @@ import {
   FormLabel,
   Stack,
   useColorModeValue,
-  HStack,
-  IconButton,
 } from '@chakra-ui/react';
 
-function App() {
+function CadastroComp() {
   const [tipo, setTipo] = useState<string>("");
   const [fabricante, setFabricante] = useState<string>("");
   const [socket, setSocket] = useState<number>(0);
@@ -482,4 +477,4 @@ function App() {
   );
 }
 
-export default App;
+export default CadastroComp;
