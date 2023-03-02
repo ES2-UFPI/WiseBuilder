@@ -6,7 +6,6 @@ from framework.domain.value_object import UUID
 from framework.domain.repository import AbstractRepository
 from framework.domain.exception import DomainException
 from framework.domain.components import Component
-from Scraper.domain.aggragate import VolatileData
 
 
 @dataclass
