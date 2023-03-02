@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from value_object import AbstractScraper
+from Scraper.domain.value_object  import AbstractScraper
 from framework.domain.value_object import URL, Money
 from framework.domain.components import EComponentType
 from bs4 import BeautifulSoup
