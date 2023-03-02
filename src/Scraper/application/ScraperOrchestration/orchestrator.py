@@ -1,7 +1,3 @@
-import sys
-
-sys.path.insert(0, r"C:\Users\wesle\OneDrive\Documentos\UFPI\ESII\WiseBuilder\src")
-
 import asyncio
 from Scraper.infrastructure.ScraperOrchestration.category_URL_manager import (
     CategoryURLManager,
