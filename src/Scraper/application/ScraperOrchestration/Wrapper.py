@@ -11,7 +11,7 @@ from Scraper.domain.entity import CategoryURL
 from Scraper.domain.aggragate import VolatileData
 from Scraper.domain.service import FactoryScraper
 from framework.domain.value_object import UUIDv5
-from entrypoints.api.endpoints.connection_util import engine
+from framework.infrastructure.connection_util import _get_engine
 from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.infrastructure.VolatileDataManagment.SQL_alchemy_volatile_data import (
     SQLAlchemyVolatileData,
@@ -20,6 +20,8 @@ from Scraper.application.ScraperOrchestration.category_URL_manager import (
     CategoryURLManager,
 )
 
+
+engine = _get_engine()
 
 class Wrapper:
     _volatile_data_manager: SQLAlchemyVolatileData
