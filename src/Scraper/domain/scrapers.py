@@ -62,11 +62,14 @@ class KabumScraper(AbstractScraper):
 
         n_next_page = n_actual_page + 1
 
+        next_url: URL | None = None
+
         if n_next_page in number_of_pages:
             next_page = url.split("?")[0] + self.query_string.format(
                 page_number=n_next_page
             )
+            next_url = URL.get_URL(next_page)
         else:
             next_page = None
 
-        return next_page, volatile_data
+        return next_url, volatile_data

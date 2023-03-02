@@ -53,9 +53,19 @@ class VolatileDataInstance(base):
     url_id = Column(BinaryUUID, primary_key=True)
     url = Column(VARCHAR(255))
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
-    price = Column(FLOAT(7, 2, False))
+    cost = Column(FLOAT(7, 2, False))
     availability = Column(BOOLEAN())
     timestamp = Column(DATETIME(timezone=False, fsp=0))
+
+
+AttrsVolatileData = [
+    "url_id",
+    "url",
+    "component_uid",
+    "cost",
+    "availability",
+    "timestamp",
+]
 
 
 class PriceHistoryInstance(base):
@@ -212,7 +222,8 @@ computer_persistence_relation = Table(
 
 class CategoryUrlInstance(base):
     __tablename__ = "category_url"
-    uid = Column(INTEGER(5), primary_key=True, autoincrement=False)
+    uid = Column(BinaryUUID, primary_key=True, autoincrement=False)
+    scheme = Column(VARCHAR(8))
     domain = Column(VARCHAR(100))
     path = Column(VARCHAR(150))
     type = Column(ENUM(EComponentType))

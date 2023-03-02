@@ -1,4 +1,5 @@
 import uuid
+from functools import partial
 from urllib.parse import urlsplit, SplitResult
 from dataclasses import dataclass
 from functools import total_ordering
@@ -6,10 +7,11 @@ from typing import Tuple
 
 from .rule import Rule, BussinessAssertionExtension
 
-__all__ = ["UUID", "UUIDv4", "ValueObject", "Money", "URL"]
+__all__ = ["UUID", "UUIDv4", "UUIDv5", "ValueObject", "Money", "URL"]
 
 UUID = uuid.UUID
 UUIDv4 = uuid.uuid4
+UUIDv5 = partial(uuid.uuid5, uuid.NAMESPACE_URL)
 
 
 class ValueObject(BussinessAssertionExtension):

@@ -1,7 +1,7 @@
 from framework.application.uow import AbstractUnitOfWork
 
 from ..domain.repositories import MockRepository
-from ..infrastructure.component_managment.SQL_alchemy_repository import (
+from ..infrastructure.ComponentManagment.SQL_alchemy_repository import (
     SQLAlchemyRepository,
 )
 

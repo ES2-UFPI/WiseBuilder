@@ -1,25 +1,34 @@
 from datetime import datetime
 from dataclasses import dataclass, field
+from typing import List
+
 from framework.domain.entity import AggregateRoot
 from framework.domain.value_object import UUID, Money, URL
-from .entity import MatchesTrackedComponent
+
+_AttrsVolatileData = ["_id", "url", "component_id", "cost", "availability", "timestamp"]
 
 
 @dataclass(kw_only=True)
 class VolatileData(AggregateRoot):
-    component_id: UUID
-    url_id: UUID
+    # url_id: UUID
     url: URL
+    component_id: UUID
     cost: Money
     availability: bool
 
     timestamp: datetime = field(default=datetime.utcnow())
 
+    def __hash__(self):
+        return hash(self.uid)
+
+    @classmethod
+    def get_attrs(cls) -> List[str]:
+        return _AttrsVolatileData.copy()
+
     def generateVolatileDataPoint(
         self,
         _id: UUID,
         component_id: UUID,
-        url_id: UUID,
         url: URL,
         cost: Money,
         availability: bool,
@@ -27,7 +36,6 @@ class VolatileData(AggregateRoot):
         return VolatileData(
             _id=_id,
             component_id=component_id,
-            url_id=url_id,
             url=url,
             cost=cost,
             availability=availability,
