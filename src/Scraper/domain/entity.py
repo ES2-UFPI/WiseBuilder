@@ -1,12 +1,14 @@
+from dataclasses import dataclass
 
+from framework.domain.entity import Entity
+from framework.domain.value_object import URL
+from framework.domain.components import EComponentType
 
 
 @dataclass
-class MatchesTrackedComponent(Rule):
-    # Verifica se o componente é um dos componentes observados
-    component_name: str
+class CategoryURL(Entity):
+    url: URL
+    category: EComponentType
 
-    def is_broken(self) -> bool:
-        # verificar se componente existe
-        # return not SearchEngine.get_id_by_name(component_name)
-        return False
+    def __hash__(self):
+        return hash(self.uid)

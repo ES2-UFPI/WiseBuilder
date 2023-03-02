@@ -2,5 +2,9 @@
 
 markers = [
     "unit: Unit test marker.",
-    "integration: Integration test marker."
+    "integration: Integration test marker.",
+    "domain: Domain layer tests.",
+    "application: Application layer tests.",
+    "infrastructure: Infrastructure layer tests.",
+    "entrypoint: Solution test. Tests solution as a whole."
 ]

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Union
 
-from .value_object import UUID, UUIDv4
+from .value_object import UUID, UUIDv4, ValueObject
 from .rule import BussinessAssertionExtension
 from .events import DomainEvent
 
@@ -33,3 +33,4 @@ class AggregateRoot(BussinessAssertionExtension, Entity):
 
 
 UniqueObject = Union[Entity, AggregateRoot]
+DomainObject = Union[ValueObject, UniqueObject]

@@ -1,4 +1,5 @@
-__all__ = [ 'DomainEvent', 'Command' ]
+__all__ = ["DomainEvent", "Command"]
+
 
 class DomainEvent:
     pass
