@@ -1,5 +1,8 @@
+from typing import Dict, Type
+
 from SearchEngine.domain.commands import *
 
+from framework.domain.events import Command, DomainEvent
 from framework.application.handler import MessageHandler
 
 
@@ -28,8 +31,11 @@ class AddComponentHandler(MessageHandler):
             return True
 
 
-COMMAND_HANDLER_MAPPER = {
+SE_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     GetComponentByUID: GetComponentByUIDHandler,
     ListComponentsByType: ListComponentsByTypeHandler,
     AddComponent: AddComponentHandler,
 }
+
+
+SE_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {}

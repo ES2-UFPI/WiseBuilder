@@ -73,11 +73,9 @@ class ListComponentsByType(Command):
         return self
 
 
+@dataclass
 class AddComponent(Command):
     component: Component
-
-    def __init__(self, component: Component):
-        self.component = component
 
     @classmethod
     def _from_kwargs(cls, type, specs_dict):

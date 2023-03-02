@@ -3,7 +3,7 @@ from typing import List
 from flask_restx import Namespace, Resource, fields
 from flask import request
 
-from .connection_util import message_bus
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 from SearchEngine.domain.repositories import (
     EntityUIDNotFoundException,
     EntityUIDCollisionException,
