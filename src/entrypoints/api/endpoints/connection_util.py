@@ -3,13 +3,13 @@ from framework.infrastructure.db_management.db_connection import (
     create_session,
 )
 from framework.infrastructure.db_management.db_creation import create_db
-from SearchEngine.application.unit_of_work import MockUnitOfWork
+from SearchEngine.application.unit_of_work import SQLAlchemyUnitOfWork
 from framework.application.handler import MessageBus
 from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
 
 
 def _message_bus(engine):
-    uow = MockUnitOfWork(create_session(engine))
+    uow = SQLAlchemyUnitOfWork(create_session(engine))
     COMMAND_HANDLER_MAPPER_CALLABLE = {}
     for c, h in COMMAND_HANDLER_MAPPER.items():
         COMMAND_HANDLER_MAPPER_CALLABLE[c] = h(uow)

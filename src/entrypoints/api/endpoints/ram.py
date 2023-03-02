@@ -4,9 +4,6 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 
 from .connection_util import message_bus
-from framework.application.handler import MessageBus
-from SearchEngine.application.handlers import COMMAND_HANDLER_MAPPER
-from SearchEngine.application.unit_of_work import MockUnitOfWork
 from SearchEngine.domain.repositories import (
     EntityUIDNotFoundException,
     EntityUIDCollisionException,

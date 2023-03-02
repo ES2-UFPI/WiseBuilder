@@ -1,6 +1,5 @@
 import pytest
 import requests
-from entrypoints.api.endpoints import cpus
 
 url = "http://127.0.0.1:5000/api/v1"
 
