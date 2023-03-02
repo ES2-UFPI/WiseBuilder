@@ -5,12 +5,11 @@ from bs4 import BeautifulSoup
 import requests as rq
 
 
-@dataclass
+@dataclass(init=False)
 class KabumScraper(AbstractScraper):
-    raw_url: str = field(default="https://www.kabum.com.br", init=False)
-    query_string: str = field(
-        default="?page_number={page_number}&page_size=100&facet_filters=&sort=most_searched",
-        init=False,
+    raw_url: str = "https://www.kabum.com.br"
+    query_string: str = (
+        "?page_number={page_number}&page_size=100&facet_filters=&sort=most_searched"
     )
 
     def get_volatile_data(
@@ -19,6 +18,7 @@ class KabumScraper(AbstractScraper):
         headers = {
             "User-Agent": "Mozilla/5.0",
         }
+
         html = rq.get(url, headers=headers).content
         soup = BeautifulSoup(html, "html.parser")
 
