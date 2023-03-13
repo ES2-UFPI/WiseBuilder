@@ -36,3 +36,13 @@ class AbstractRepository(ABC):
     @abstractmethod
     def _get(self, **kwargs) -> List[UniqueObject]:
         raise NotImplementedError
+
+
+class AbstractCategoryURLRepository(AbstractRepository):
+    def get_all_domains(self):
+        _res = self._get_all_domains()
+        return _res
+
+    @abstractmethod
+    def _get_all_domains(self):
+        raise NotImplemented

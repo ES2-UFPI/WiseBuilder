@@ -59,6 +59,9 @@ class URL(ValueObject):
         return self.url
 
 
+AttrsURL = ["url", "scheme", "domain", "path"]
+
+
 @dataclass
 class MinimalURLRule(Rule):
     """

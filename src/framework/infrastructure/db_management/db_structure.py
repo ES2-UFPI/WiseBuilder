@@ -45,7 +45,7 @@ class ComponentInstance(base):
     component_uid = None
     type = Column(ENUM(EComponentType))
     manufacturer = Column(VARCHAR(20))
-    model = Column(VARCHAR(10))
+    model = Column(VARCHAR(50))
 
 
 class VolatileDataInstance(base):
@@ -220,13 +220,16 @@ computer_persistence_relation = Table(
 )
 
 
-class CategoryUrlInstance(base):
+class CategoryURLInstance(base):
     __tablename__ = "category_url"
     uid = Column(BinaryUUID, primary_key=True, autoincrement=False)
+    category = Column(ENUM(EComponentType))
     scheme = Column(VARCHAR(8))
     domain = Column(VARCHAR(100))
     path = Column(VARCHAR(150))
-    type = Column(ENUM(EComponentType))
+
+
+AttrsCategoryURLInstance = ["uid", "category", "scheme", "domain", "path"]
 
 
 component_inst_idx = [

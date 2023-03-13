@@ -12,3 +12,6 @@ class CategoryURL(Entity):
 
     def __hash__(self):
         return hash(self.uid)
+
+
+AttrsCategoryURL = ["uid", "url", "category"]

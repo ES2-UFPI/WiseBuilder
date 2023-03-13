@@ -3,6 +3,17 @@ from typing import List
 from random import uniform
 import asyncio
 
+from framework.infrastructure.connection_util import get_message_bus
+from Scraper.application.handlers import (
+    VD_EVENT_HANDLER_MAPPER,
+    VD_COMMAND_HANDLER_MAPPER,
+    CURL_COMMAND_HANDLER_MAPPER,
+    CURL_EVENT_HANDLER_MAPPER,
+)
+from Scraper.application.unit_of_work import (
+    SQLAlchemyVolatileDataUnitOfWork,
+    SQLAlchemyCategoryURLUnitOfWork,
+)
 from SearchEngine.infrastructure.ComponentManagment.SQL_alchemy_repository import (
     SQLAlchemyRepository,
 )
@@ -13,19 +24,14 @@ from Scraper.domain.service import FactoryScraper
 from framework.domain.value_object import UUIDv5
 from framework.infrastructure.connection_util import _get_engine
 from framework.infrastructure.db_management.db_connection import create_session
-from Scraper.infrastructure.VolatileDataManagment.SQL_alchemy_volatile_data import (
-    SQLAlchemyVolatileData,
-)
-from Scraper.application.ScraperOrchestration.category_URL_manager import (
-    CategoryURLManager,
-)
-
+from Scraper.domain.commands import *
+from framework.application.handler import MessageBus
 
 engine = _get_engine()
 
 
 class Wrapper:
-    _volatile_data_manager: SQLAlchemyVolatileData
+    _volatile_data_message_bus: MessageBus
     domain: str
     scraper: AbstractScraper
     domain_urls: List[CategoryURL]
@@ -36,12 +42,25 @@ class Wrapper:
     def __init__(self, scheme: str, domain: str):
         self.domain = domain
         self.session = create_session(engine)
-        self._volatile_data_manager = SQLAlchemyVolatileData(self.session)
+
+        self._volatile_data_message_bus = get_message_bus(
+            VD_EVENT_HANDLER_MAPPER,
+            VD_COMMAND_HANDLER_MAPPER,
+            SQLAlchemyVolatileDataUnitOfWork,
+        )
+
+        self._category_url_message_bus = get_message_bus(
+            CURL_EVENT_HANDLER_MAPPER,
+            CURL_COMMAND_HANDLER_MAPPER,
+            SQLAlchemyCategoryURLUnitOfWork,
+        )
+
+        self.domain_urls = self._category_url_message_bus.handle(
+            GetCategoryURLByDomain(domain)
+        )
 
         factory_scraper = FactoryScraper()
-        url_manager = CategoryURLManager(self.session)
         self.scraper = factory_scraper.build_scraper(f"{scheme}://{domain}")
-        self.domain_urls = url_manager.get(filters_eq={"domain": domain})
 
     async def run_scraping(self):
         for domain_url in self.domain_urls:
@@ -61,7 +80,6 @@ class Wrapper:
                     component = component_manager.get(filters_gt={"consumption": -1})[
                         0
                     ]  # placeholder
-
                     volatile_data = VolatileData(
                         _id=UUIDv5(url.url),
                         component_id=component.uid,
@@ -69,8 +87,9 @@ class Wrapper:
                         cost=cost,
                         availability=availability,
                     )
-
-                    self._volatile_data_manager.add(volatile_data)
+                    self._volatile_data_message_bus.handle(
+                        AddVolatileData(volatile_data)
+                    )
 
                 sleep_seconds = uniform(1.0, self.max_sleep_seconds)
                 await asyncio.sleep(sleep_seconds)
