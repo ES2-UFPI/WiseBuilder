@@ -18,6 +18,7 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { useRouter } from "next/router";
 
 function CadastroComp() {
   const [tipo, setTipo] = useState<string>("");
@@ -50,6 +51,11 @@ function CadastroComp() {
   const [modelo, setModelo] = useState<string>("");
   const [generation, setGeneration] = useState<string>("");
   const [frequency, setFrequency] = useState<number>(0);
+
+  const router = useRouter();
+    function handleClick() {
+        router.push("/listar-componente");
+    }
 
  /*  const send = () => {
     const data: Ram = {
@@ -453,6 +459,7 @@ function CadastroComp() {
     )}
       <Stack justify={'right'}  spacing={6} direction={['column', 'row']}>
         <Button
+          onClick={handleClick}
           bg={'red.400'}
           color={'white'}
           w="20%"
