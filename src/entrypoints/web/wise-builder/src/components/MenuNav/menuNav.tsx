@@ -261,7 +261,7 @@ import {
           {
             label: 'Listar Componentes',
             subLabel: 'Veja a lista de todos componentes cadastrados no Wise Builder.',
-            href: '/cadastrar-componente',
+            href: '/listar-componente',
           },
           {
             label: 'Cadastrar Componentes',
