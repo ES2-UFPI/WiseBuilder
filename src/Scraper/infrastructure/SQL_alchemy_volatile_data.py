@@ -66,7 +66,11 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
                 db_volatile_data.cost + 0.1 < current_volatile_data.cost
                 and db_volatile_data.availability
             ):
-                volatile_data.events.append(LowerPriceRegisteredEvent(volatile_data.component_id, volatile_data.cost))
+                volatile_data.events.append(
+                    LowerPriceRegisteredEvent(
+                        volatile_data.component_id, volatile_data.cost
+                    )
+                )
                 print(
                     f"preço reduzido de {current_volatile_data.cost} para {db_volatile_data.cost}."
                 )

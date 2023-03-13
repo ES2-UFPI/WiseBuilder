@@ -6,7 +6,10 @@ from config import mail, mail_passwd
 
 from framework.infrastructure.connection_util import get_message_bus
 from SearchEngine.domain.commands import GetComponentByUID
-from SearchEngine.application.handlers import SE_COMMAND_HANDLER_MAPPER, SE_EVENT_HANDLER_MAPPER
+from SearchEngine.application.handlers import (
+    SE_COMMAND_HANDLER_MAPPER,
+    SE_EVENT_HANDLER_MAPPER,
+)
 from SearchEngine.application.unit_of_work import SQLAlchemyUnitOfWork
 from framework.domain.components import Component
 from framework.application.handler import MessageHandler, Command
@@ -18,18 +21,15 @@ from ..domain.commands import *
 # Provisório. Mover para microsserviço de usuários.
 class LowerPriceRegisteredHandler(MessageHandler):
     def __call__(self, event: LowerPriceRegisteredEvent):
-        print('sending mail')
+        print("sending mail")
         sender, passwd = mail, mail_passwd
         recv_list = [sender]
 
-
         message_bus = get_message_bus(
-            SE_EVENT_HANDLER_MAPPER,
-            SE_COMMAND_HANDLER_MAPPER,
-            SQLAlchemyUnitOfWork
+            SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
         )
 
-        component : Component = message_bus.handle(
+        component: Component = message_bus.handle(
             GetComponentByUID(event.component_uid)
         )
 
@@ -72,6 +72,7 @@ class AddVolatileDataHandler(MessageHandler):
         with self.uow:
             self.uow.repository.add(cmd.volatile_data)
 
+
 CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     AddCategoryURL: AddCategoryURLHandler,
     GetCategoryURLByDomain: GetVolatileDataByDomainHandler,
@@ -85,5 +86,5 @@ VD_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
 }
 
 VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {
-    LowerPriceRegisteredEvent : LowerPriceRegisteredHandler
+    LowerPriceRegisteredEvent: LowerPriceRegisteredHandler
 }

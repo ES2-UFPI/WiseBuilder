@@ -7,5 +7,5 @@ from framework.domain.events import DomainEvent
 
 @dataclass
 class LowerPriceRegisteredEvent(DomainEvent):
-    component_uid : UUID
+    component_uid: UUID
     price: Money
