@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Any
 
 from framework.domain.components import Component, EComponentType, component_cls_idx
 

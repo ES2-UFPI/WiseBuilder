@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from sqlalchemy.orm import Session
 
 from ..domain.entity import AggregateRoot
 from ..domain.repository import AbstractRepository
@@ -31,3 +32,8 @@ class AbstractUnitOfWork(ABC):
             if isinstance(root, AggregateRoot):
                 while root.events:
                     yield root.events.pop(0)
+
+
+class AbstractDBUnitOfWork(AbstractUnitOfWork):
+    def __init__(self, session: Session) -> None:
+        pass

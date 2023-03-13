@@ -1,4 +1,4 @@
-from framework.application.uow import AbstractUnitOfWork
+from framework.application.uow import AbstractUnitOfWork, AbstractDBUnitOfWork
 
 from ..domain.repositories import MockRepository
 from ..infrastructure.ComponentManagment.SQL_alchemy_repository import (
@@ -18,7 +18,7 @@ class MockUnitOfWork(AbstractUnitOfWork):
         pass
 
 
-class SQLAlchemyUnitOfWork(AbstractUnitOfWork):
+class SQLAlchemyUnitOfWork(AbstractDBUnitOfWork):
     def __init__(self, session):
         self.repository = SQLAlchemyRepository(session)
         self.commited = False

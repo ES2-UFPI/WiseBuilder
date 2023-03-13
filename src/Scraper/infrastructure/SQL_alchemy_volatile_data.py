@@ -11,12 +11,12 @@ from framework.infrastructure.db_management.db_structure import (
 from Scraper.domain.events import LowerPriceRegisteredEvent
 from Scraper.domain.aggragate import VolatileData
 from Scraper.domain.repositories import (
-    ISQLAlchemyRepository,
+    IVolatileDataRepository,
     EntityUIDNotFoundException,
 )
 
 
-class SQLAlchemyVolatileData(ISQLAlchemyRepository):
+class SQLAlchemyVolatileData(IVolatileDataRepository):
     def __init__(self, session):
         self._session: Session = session
 
@@ -66,9 +66,13 @@ class SQLAlchemyVolatileData(ISQLAlchemyRepository):
                 db_volatile_data.cost + 0.1 < current_volatile_data.cost
                 and db_volatile_data.availability
             ):
-                volatile_data.events.append(LowerPriceRegisteredEvent())
+                volatile_data.events.append(LowerPriceRegisteredEvent(volatile_data.component_id, volatile_data.cost))
+                print(
+                    f"preço reduzido de {current_volatile_data.cost} para {db_volatile_data.cost}."
+                )
 
             current_volatile_data.cost = db_volatile_data.cost
+            current_volatile_data.timestamp = db_volatile_data.timestamp
 
         except EntityUIDNotFoundException:
             self._session.add(db_volatile_data)
