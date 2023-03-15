@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Component } from 'react';
 import { 
     List,
     ListItem,
@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, CheckCircleIcon } from "@chakra-ui/icons";
 import Tabela from '../src/components/Tabela/tabela-listagem';
+import { Componente } from '../src/types/componente';
 
 /* async function getItems() {
     const response = await fetch('https://sua-api.com/items');
@@ -29,18 +30,24 @@ function ItemList() {
     fetchData();
   }, []); */
 
-const mockItems = [
+const mockItems: Componente[] = [
   {
-    id: 1,
-    name: 'Item 1'
+    id: '1',
+    tipo: 'Placa de Vídeo',
+    fabricante: 'Zotac',
+    modelo: '3070'
   },
   {
-    id: 2,
-    name: 'Item 2'
+    id: '2',
+    tipo: 'Placa de Vídeo',
+    fabricante: 'Asus',
+    modelo: '1060'
   },
   {
-    id: 3,
-    name: 'Item 3'
+    id: '3',
+    tipo: 'Fonte',
+    fabricante: 'Asus',
+    modelo: 'Pylon'
   }
 ];
 
@@ -66,16 +73,8 @@ function ItemList() {
         Listar Componentes
       </Heading>
       <Divider orientation='horizontal' />
-      <Tabela titulo="Componentes" link="/cadastrar-componente"/>
-        <List spacing={3}>
-            {items.map((item) => (
-                <ListItem key={item.id}>
-                    <ListIcon as={CheckCircleIcon} color="green.500" />
-                    {item.name}
-                </ListItem>
-                ))}
-            </List>
-            </Stack>
+      <Tabela titulo="Componentes" link="/cadastrar-componente" item={mockItems}/>
+    </Stack>
   </Flex>
 )};
 
