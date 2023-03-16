@@ -22,7 +22,7 @@ from ..domain.commands import *
 class LowerPriceRegisteredHandler(MessageHandler):
     def __call__(self, event: LowerPriceRegisteredEvent):
         sender, passwd = mail, mail_passwd
-        recv_list = ['wesleyvitor37417@gmail.com']
+        recv_list = ["wesleyvitor37417@gmail.com"]
 
         message_bus = get_message_bus(
             SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
@@ -45,7 +45,6 @@ class LowerPriceRegisteredHandler(MessageHandler):
             server.starttls(context=context)
             server.login(sender, passwd)
             server.send_message(message, sender, recv_list)
-        
 
 
 class AddCategoryURLHandler(MessageHandler):
