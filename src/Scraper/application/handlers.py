@@ -1,4 +1,4 @@
-from typing import Dict, Type
+from typing import Dict, Type, List
 from smtplib import SMTP
 from ssl import create_default_context
 from email.mime.text import MIMEText
@@ -21,9 +21,8 @@ from ..domain.commands import *
 # Provisório. Mover para microsserviço de usuários.
 class LowerPriceRegisteredHandler(MessageHandler):
     def __call__(self, event: LowerPriceRegisteredEvent):
-        print("sending mail")
         sender, passwd = mail, mail_passwd
-        recv_list = [sender]
+        recv_list = ['wesleyvitor37417@gmail.com']
 
         message_bus = get_message_bus(
             SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
@@ -41,12 +40,12 @@ class LowerPriceRegisteredHandler(MessageHandler):
             "Subject"
         ] = f"Preço reduzido: {component.manufacturer} {component.model}!"
         message["From"] = sender
-
         context = create_default_context()
         with SMTP("smtp.gmail.com", 587) as server:
             server.starttls(context=context)
             server.login(sender, passwd)
             server.send_message(message, sender, recv_list)
+        
 
 
 class AddCategoryURLHandler(MessageHandler):
@@ -79,12 +78,14 @@ CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     GetAllDomains: GetAllDomainsHandler,
 }
 
-CURL_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {}
+CURL_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {}
 
 VD_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     AddVolatileData: AddVolatileDataHandler
 }
 
-VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {
-    LowerPriceRegisteredEvent: LowerPriceRegisteredHandler
+VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {
+    LowerPriceRegisteredEvent: [
+        LowerPriceRegisteredHandler,
+    ]
 }

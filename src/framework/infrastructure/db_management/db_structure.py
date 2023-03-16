@@ -29,10 +29,11 @@ base = declarative_base()
 
 class UserInstance(base):
     __tablename__ = "users"
-    uid = Column(INTEGER(5), primary_key=True, autoincrement=False)
+    uid = Column(BinaryUUID, primary_key=True)
     is_admin = Column(BOOLEAN())
     email = Column(VARCHAR(150))
-    password = Column(VARCHAR(20))
+    password = Column(VARCHAR(120))
+    salt = Column(VARCHAR(32))
     name = Column(VARCHAR(128))
 
 
@@ -49,7 +50,7 @@ class ComponentInstance(base):
 
 
 class VolatileDataInstance(base):
-    __tablename__ = "volatile_datas"
+    __tablename__ = "volatile_data"
     url_id = Column(BinaryUUID, primary_key=True)
     url = Column(VARCHAR(255))
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
@@ -200,8 +201,8 @@ class PSUInstance(ComponentInstance):
 
 class ComputerInstance(base):
     __tablename__ = "computers"
-    uid = Column(INTEGER(6), primary_key=True, autoincrement=False)
-    user = Column(INTEGER(5), ForeignKey("users.uid"))
+    uid = Column(BinaryUUID, primary_key=True)
+    user = Column(BinaryUUID, ForeignKey("users.uid"))
     total_consumption = Column(INTEGER(5))
     price = Column(FLOAT(7, 2, False))
     motherboard_uid = Column(BinaryUUID, ForeignKey(MotherboardInstance.component_uid))

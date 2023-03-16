@@ -67,11 +67,11 @@ class Wrapper:
             next_url: URL = domain_url.url
 
             while next_url != None:
-                next_url, volatile_datas = self.scraper.get_volatile_data(
+                next_url, components_volatile_data = self.scraper.get_volatile_data(
                     url=next_url.url
                 )
 
-                for url, name, cost, availability in volatile_datas:
+                for url, name, cost, availability in components_volatile_data:
                     # TODO: fazer chamada da engine de busca para classificar o componente
                     # component = SearchEngine.classifie(name)
                     component_manager = SQLAlchemyRepository(

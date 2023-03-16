@@ -22,8 +22,8 @@ class EntityUIDNotFoundException(DomainException):
 
 
 class MockRepository(AbstractRepository):
-    def __init__(self, volatile_datas: Dict[UUID, VolatileData]):
-        self._volatile_data = volatile_datas
+    def __init__(self, volatile_data: Dict[UUID, VolatileData]):
+        self._volatile_data = volatile_data
 
     def _add(self, volatile_data: VolatileData):
         self._volatile_data[volatile_data.uid] = volatile_data

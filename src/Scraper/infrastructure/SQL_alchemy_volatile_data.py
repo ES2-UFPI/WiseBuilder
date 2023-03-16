@@ -71,9 +71,8 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
                         volatile_data.component_id, volatile_data.cost
                     )
                 )
-                print(
-                    f"preço reduzido de {current_volatile_data.cost} para {db_volatile_data.cost}."
-                )
+
+                print("redução do preço")
 
             current_volatile_data.cost = db_volatile_data.cost
             current_volatile_data.timestamp = db_volatile_data.timestamp
