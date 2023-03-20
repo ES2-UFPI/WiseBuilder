@@ -15,9 +15,11 @@ import { AddIcon } from "@chakra-ui/icons";
 import Acoes from '../Botão/acoes'
 import { TabelaProps } from '../../types/propsTable';
 import { useRouter } from "next/router";
+import { useState } from 'react';
 
 export default function tabela (props: TabelaProps) {
     const router = useRouter();
+    const [items, setItems] = useState(props.item);
     function handleClick() {
         router.push("/cadastrar-componente");
     }
@@ -32,31 +34,26 @@ export default function tabela (props: TabelaProps) {
                 </CardBody>
             </Card>
             <Table variant='striped' size='md'>
-            <Thead>
-                <Tr>
-                <Th isNumeric> ID </Th>
-                <Th>Tipo do Componente</Th>
-                <Th>Fabricante</Th>
-                <Th>Modelo</Th>
-                <Th>Ações</Th>
-                </Tr>
-            </Thead>
-            <Tbody>
-                <Tr>
-                <Td isNumeric>1</Td>
-                <Td>Placa de Vídeo</Td>
-                <Td>Zotac</Td>
-                <Td>RTX 3070</Td>
-                <Td><Acoes /></Td>
-                </Tr>
-                <Tr>
-                <Td isNumeric>2</Td>
-                <Td>Placa de Vídeo</Td>
-                <Td>Asus</Td>
-                <Td>GTX 1060</Td>
-                <Td><Acoes /></Td>
-                </Tr>
-            </Tbody>
+                <Thead>
+                    <Tr>
+                    <Th>ID </Th>
+                    <Th>Tipo do Componente</Th>
+                    <Th>Fabricante</Th>
+                    <Th>Modelo</Th>
+                    <Th>Ações</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {items.map((item) => (
+                        <Tr key={item.id}>
+                            <Td>{item.id}</Td>
+                            <Td>{item.tipo}</Td>
+                            <Td>{item.fabricante}</Td>
+                            <Td>{item.modelo}</Td>
+                            <Td><Acoes id={item.id}/></Td>
+                        </Tr>
+                    ))}
+                </Tbody>
             </Table>
         </TableContainer>);
 };
