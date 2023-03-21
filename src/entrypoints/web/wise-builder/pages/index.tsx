@@ -14,6 +14,7 @@ import {
     IconProps,
     Icon,
   } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
   
   const avatars = [
     {
@@ -39,6 +40,12 @@ import {
   ];
   
 function Busca() {
+  const router = useRouter();
+
+  function handleClick() {
+    router.push('/resultados-busca');
+  }
+  
     return (
       <Box position={'relative'}>
         <Container
@@ -156,6 +163,7 @@ function Busca() {
                 w={'full'}
                 bgGradient="linear(to-r, red.400,pink.400)"
                 color={'white'}
+                onClick={() => handleClick()}
                 _hover={{
                   bgGradient: 'linear(to-r, red.400,pink.400)',
                   boxShadow: 'xl',

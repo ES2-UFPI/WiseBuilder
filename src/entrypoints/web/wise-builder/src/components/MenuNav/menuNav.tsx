@@ -268,8 +268,8 @@ import {
         ],
       },
     {
-      label: 'Montador',
-      href: '/resultados-busca',
+      label: 'Sugestor de Componentes',
+      href: '/sugestor-de-componente',
     },
     {
         label: 'Favoritos',
