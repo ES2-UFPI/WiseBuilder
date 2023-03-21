@@ -1,18 +1,18 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
-
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 ram_namespace = Namespace("RAMs", description="Operações relacionadas à RAMs.")
 ram_model = ram_namespace.model(

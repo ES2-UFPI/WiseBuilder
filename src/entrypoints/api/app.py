@@ -1,8 +1,10 @@
-import sys, os
+import os
+import sys
 
 sys.path.insert(0, os.getcwd())
 
 from flask import Flask
+
 from endpoints.api import blueprint
 
 app = Flask(__name__)

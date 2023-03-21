@@ -1,5 +1,6 @@
-from flask_restx import Namespace, Resource, reqparse
 from dataclasses import dataclass
+
+from flask_restx import Namespace, Resource, reqparse
 
 search_namespace = Namespace("Search")
 

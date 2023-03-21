@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask_restx import Api
+
 # from .cpus import cpu_namespace
 # from .gpus import gpu_namespace
 # from .psus import psu_namespace
