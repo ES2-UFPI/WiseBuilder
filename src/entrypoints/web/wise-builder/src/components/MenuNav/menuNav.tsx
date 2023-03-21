@@ -269,7 +269,7 @@ import {
       },
     {
       label: 'Montador',
-      href: '#',
+      href: '/resultados-busca',
     },
     {
         label: 'Favoritos',

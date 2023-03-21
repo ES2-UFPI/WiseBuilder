@@ -2,6 +2,8 @@ export interface Componente {
     id: string,
     tipo: string,
     fabricante: string,
+    valor?: number,
+    link?: string,
     socket?: number,
     cores?: number,
     chipset?: number,
