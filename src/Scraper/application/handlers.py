@@ -13,6 +13,7 @@ from SearchEngine.application.handlers import (
 from SearchEngine.application.unit_of_work import SQLAlchemyUnitOfWork
 from framework.domain.components import Component
 from framework.application.handler import MessageHandler, Command
+from ..domain.repositories import ICategoryURLRepository
 from ..domain.events import LowerPriceRegisteredEvent
 from framework.domain.events import DomainEvent
 from ..domain.commands import *
@@ -46,6 +47,8 @@ class LowerPriceRegisteredHandler(MessageHandler):
             server.login(sender, passwd)
             server.send_message(message, sender, recv_list)
 
+        print("email sended")
+
 
 class AddCategoryURLHandler(MessageHandler):
     def __call__(self, cmd: AddCategoryURL):
@@ -56,7 +59,8 @@ class AddCategoryURLHandler(MessageHandler):
 class GetAllDomainsHandler(MessageHandler):
     def __call__(self, cmd: GetAllDomains):
         with self.uow:
-            return self.uow.repository.get_all_domains()
+            if isinstance(self.uow.repository, ICategoryURLRepository):
+                return self.uow.repository.get_all_domains()
 
 
 class GetVolatileDataByDomainHandler(MessageHandler):

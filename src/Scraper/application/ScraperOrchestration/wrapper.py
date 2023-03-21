@@ -27,8 +27,6 @@ from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.domain.commands import *
 from framework.application.handler import MessageBus
 
-engine = _get_engine()
-
 
 class Wrapper:
     _volatile_data_message_bus: MessageBus
@@ -40,6 +38,7 @@ class Wrapper:
     max_sleep_seconds = 3
 
     def __init__(self, scheme: str, domain: str):
+        engine = _get_engine()
         self.domain = domain
         self.session = create_session(engine)
 

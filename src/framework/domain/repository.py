@@ -3,6 +3,7 @@ from typing import Set, List
 
 from .entity import UniqueObject
 from .value_object import UUID
+from .users import User
 
 __all__ = ["AbstractRepository"]
 
@@ -46,3 +47,13 @@ class AbstractCategoryURLRepository(AbstractRepository):
     @abstractmethod
     def _get_all_domains(self):
         raise NotImplemented
+
+
+class AbstractUserRepository(AbstractRepository):
+    def add(self, item: UniqueObject, password: str):
+        self._add(item, password)
+        self.seen.add(item)
+
+    @abstractmethod
+    def _add(self, item: UniqueObject, password: str):
+        raise NotImplementedError

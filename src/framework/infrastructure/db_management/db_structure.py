@@ -1,6 +1,7 @@
 from typing import List
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy.types import LargeBinary
 from sqlalchemy.dialects.mysql import (
     INTEGER,
     VARCHAR,
@@ -26,15 +27,17 @@ def get_attrs(ctype: EComponentType) -> List[str]:
 
 base = declarative_base()
 
+AttrsUserInstance = ["uid", "email", "name", "is_admin"]
+
 
 class UserInstance(base):
     __tablename__ = "users"
     uid = Column(BinaryUUID, primary_key=True)
-    is_admin = Column(BOOLEAN())
     email = Column(VARCHAR(150))
-    password = Column(VARCHAR(120))
-    salt = Column(VARCHAR(32))
     name = Column(VARCHAR(128))
+    password = Column(LargeBinary())
+    salt = Column(LargeBinary())
+    is_admin = Column(BOOLEAN())
 
 
 _AttrsComponent = ["uid", "type", "manufacturer", "model"]
@@ -46,7 +49,7 @@ class ComponentInstance(base):
     component_uid = None
     type = Column(ENUM(EComponentType))
     manufacturer = Column(VARCHAR(20))
-    model = Column(VARCHAR(50))
+    model = Column(VARCHAR(100))
 
 
 class VolatileDataInstance(base):

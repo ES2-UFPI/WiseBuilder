@@ -8,8 +8,8 @@ from framework.infrastructure.db_management.db_structure import (
 )
 
 __all__ = [
-    "component_to_bd_object",
-    "bd_object_to_component",
+    "component_to_db_object",
+    "db_object_to_component",
     "find_type_by_property_names",
 ]
 
@@ -21,7 +21,7 @@ def _get_attrs_from(c_type: EComponentType):
     return comp_attrs, comp_inst_attrs
 
 
-def component_to_bd_object(component: Component) -> ComponentInstance:
+def component_to_db_object(component: Component) -> ComponentInstance:
     specific_inst_cls = component_inst_idx[component.type.value]
     comp_attrs, comp_inst_attrs = _get_attrs_from(component.type)
     mapped_comp_dict = map_from_to(component, comp_attrs, comp_inst_attrs)
@@ -29,7 +29,7 @@ def component_to_bd_object(component: Component) -> ComponentInstance:
     return specific_inst_cls(**mapped_comp_dict)
 
 
-def bd_object_to_component(component_instance: ComponentInstance) -> Component:
+def db_object_to_component(component_instance: ComponentInstance) -> Component:
     specific_comp_cls = component_cls_idx[component_instance.type]
     comp_attrs, comp_inst_attrs = _get_attrs_from(
         EComponentType(component_instance.type)
