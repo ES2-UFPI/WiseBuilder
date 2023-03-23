@@ -2,8 +2,12 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy import update
 
-from framework.domain.value_object import UUID
-from framework.infrastructure.db_management.db_mapping import map_from_to
+from framework.domain.value_object import UUID, Money
+from framework.infrastructure.db_management.db_mapping import (
+    map_from_to,
+    parse_filters,
+    filter_instance_from_db,
+)
 from framework.infrastructure.db_management.db_structure import (
     VolatileDataInstance,
     AttrsVolatileData,
@@ -20,7 +24,7 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
     def __init__(self, session):
         self._session: Session = session
 
-    def volatile_data_to_db_object(
+    def _volatile_data_to_db_object(
         self, volatile_data: VolatileData
     ) -> VolatileDataInstance:
         mapped_vol_data = map_from_to(
@@ -29,14 +33,17 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
 
         return VolatileDataInstance(**mapped_vol_data)
 
-    def db_object_to_volatile_data(
+    def _db_object_to_volatile_data(
         self, volatile_data_instance: VolatileDataInstance
     ) -> VolatileData:
         mapped_vol_data = map_from_to(
             volatile_data_instance, AttrsVolatileData, VolatileData.get_attrs()
         )
 
-        return VolatileData(**mapped_vol_data)
+        volatile_data = VolatileData(**mapped_vol_data)
+        volatile_data.cost = Money(volatile_data_instance.cost)
+
+        return volatile_data
 
     def _get_instance_by_uid(self, ref: UUID) -> VolatileDataInstance:
         query_filter = [VolatileDataInstance.url_id == ref]
@@ -52,7 +59,7 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
         return vol_data_inst
 
     def _add(self, volatile_data: VolatileData):
-        db_volatile_data: VolatileDataInstance = self.volatile_data_to_db_object(
+        db_volatile_data: VolatileDataInstance = self._volatile_data_to_db_object(
             volatile_data
         )
 
@@ -83,10 +90,22 @@ class SQLAlchemyVolatileData(IVolatileDataRepository):
         self._session.commit()
 
     def _get(self, **kwargs):
-        return super()._get(**kwargs)
+        cost = kwargs.get("cost", None)
+
+        filters = parse_filters(VolatileDataInstance, **kwargs)
+
+        volatile_datas_instances = filter_instance_from_db(
+            self._session, VolatileDataInstance, filters
+        )
+        volatile_datas = [
+            self._db_object_to_volatile_data(instance)
+            for instance in volatile_datas_instances
+        ]
+
+        return volatile_datas
 
     def _get_by_uid(self, ref: UUID):
         volatile_data_instance = self._get_instance_by_uid(ref)
-        volatile_data = self.db_object_to_volatile_data(volatile_data_instance)
+        volatile_data = self._db_object_to_volatile_data(volatile_data_instance)
 
         return volatile_data

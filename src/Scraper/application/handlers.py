@@ -63,16 +63,30 @@ class GetAllDomainsHandler(MessageHandler):
                 return self.uow.repository.get_all_domains()
 
 
+class AddVolatileDataHandler(MessageHandler):
+    def __call__(self, cmd: AddVolatileData):
+        with self.uow:
+            self.uow.repository.add(cmd.volatile_data)
+
+
 class GetVolatileDataByDomainHandler(MessageHandler):
     def __call__(self, cmd: GetCategoryURLByDomain):
         with self.uow:
             return self.uow.repository.get(filters_eq={"domain": cmd.domain})
 
 
-class AddVolatileDataHandler(MessageHandler):
-    def __call__(self, cmd: AddVolatileData):
+class GetVolatileDataByMaxCostHandler(MessageHandler):
+    def __call__(self, cmd: GetVolatileDataByMaxCost):
         with self.uow:
-            self.uow.repository.add(cmd.volatile_data)
+            return self.uow.repository.get(filters_lt={"cost": cmd.cost})
+
+
+class GetVolatileDataByComponentUIDHandler(MessageHandler):
+    def __call__(self, cmd: GetVolatileDataByComponentUID):
+        with self.uow:
+            return self.uow.repository.get(
+                filters_eq={"component_uid": cmd.component_uid}
+            )
 
 
 CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
@@ -84,7 +98,9 @@ CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
 CURL_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {}
 
 VD_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
-    AddVolatileData: AddVolatileDataHandler
+    AddVolatileData: AddVolatileDataHandler,
+    GetVolatileDataByMaxCost: GetVolatileDataByMaxCostHandler,
+    GetVolatileDataByComponentUID: GetVolatileDataByComponentUIDHandler,
 }
 
 VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {
