@@ -27,8 +27,6 @@ from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.domain.commands import *
 from framework.application.handler import MessageBus
 
-engine = _get_engine()
-
 
 class Wrapper:
     _volatile_data_message_bus: MessageBus
@@ -40,6 +38,7 @@ class Wrapper:
     max_sleep_seconds = 3
 
     def __init__(self, scheme: str, domain: str):
+        engine = _get_engine()
         self.domain = domain
         self.session = create_session(engine)
 
@@ -67,11 +66,11 @@ class Wrapper:
             next_url: URL = domain_url.url
 
             while next_url != None:
-                next_url, volatile_datas = self.scraper.get_volatile_data(
+                next_url, components_volatile_data = self.scraper.get_volatile_data(
                     url=next_url.url
                 )
 
-                for url, name, cost, availability in volatile_datas:
+                for url, name, cost, availability in components_volatile_data:
                     # TODO: fazer chamada da engine de busca para classificar o componente
                     # component = SearchEngine.classifie(name)
                     component_manager = SQLAlchemyRepository(

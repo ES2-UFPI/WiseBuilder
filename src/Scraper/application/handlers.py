@@ -1,4 +1,4 @@
-from typing import Dict, Type
+from typing import Dict, Type, List
 from smtplib import SMTP
 from ssl import create_default_context
 from email.mime.text import MIMEText
@@ -13,6 +13,7 @@ from SearchEngine.application.handlers import (
 from SearchEngine.application.unit_of_work import SQLAlchemyUnitOfWork
 from framework.domain.components import Component
 from framework.application.handler import MessageHandler, Command
+from ..domain.repositories import ICategoryURLRepository
 from ..domain.events import LowerPriceRegisteredEvent
 from framework.domain.events import DomainEvent
 from ..domain.commands import *
@@ -21,7 +22,6 @@ from ..domain.commands import *
 # Provisório. Mover para microsserviço de usuários.
 class LowerPriceRegisteredHandler(MessageHandler):
     def __call__(self, event: LowerPriceRegisteredEvent):
-        print("sending mail")
         sender, passwd = mail, mail_passwd
         recv_list = [sender]
 
@@ -41,12 +41,13 @@ class LowerPriceRegisteredHandler(MessageHandler):
             "Subject"
         ] = f"Preço reduzido: {component.manufacturer} {component.model}!"
         message["From"] = sender
-
         context = create_default_context()
         with SMTP("smtp.gmail.com", 587) as server:
             server.starttls(context=context)
             server.login(sender, passwd)
             server.send_message(message, sender, recv_list)
+
+        print("email sended")
 
 
 class AddCategoryURLHandler(MessageHandler):
@@ -58,7 +59,8 @@ class AddCategoryURLHandler(MessageHandler):
 class GetAllDomainsHandler(MessageHandler):
     def __call__(self, cmd: GetAllDomains):
         with self.uow:
-            return self.uow.repository.get_all_domains()
+            if isinstance(self.uow.repository, ICategoryURLRepository):
+                return self.uow.repository.get_all_domains()
 
 
 class GetVolatileDataByDomainHandler(MessageHandler):
@@ -79,12 +81,14 @@ CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     GetAllDomains: GetAllDomainsHandler,
 }
 
-CURL_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {}
+CURL_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {}
 
 VD_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     AddVolatileData: AddVolatileDataHandler
 }
 
-VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {
-    LowerPriceRegisteredEvent: LowerPriceRegisteredHandler
+VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {
+    LowerPriceRegisteredEvent: [
+        LowerPriceRegisteredHandler,
+    ]
 }

@@ -1,3 +1,7 @@
+import sys, os
+
+sys.path.insert(0, os.getcwd())
+
 from typing import Type
 import json
 
@@ -23,3 +27,16 @@ def store_components_from_json(json_dir: str, component_cls: Type[Component]):
             component = component_cls(_id=Component.next_id(), **json_object)
 
             component_message_bus.handle(AddComponent(component))
+
+
+def main():
+    json_dirs = {GPUComponent: r"..\res\data\raw\gpu.json"}
+
+    [
+        store_components_from_json(json_dir, component_cls)
+        for component_cls, json_dir in json_dirs.items()
+    ]
+
+
+if __name__ == "__main__":
+    main()

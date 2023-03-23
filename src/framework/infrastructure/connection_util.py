@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Type
+from typing import Callable, Dict, List, Type
 from sqlalchemy.engine import Engine
 
 from ..domain.events import DomainEvent, Command
@@ -19,14 +19,16 @@ def _get_engine() -> Engine:
 
 
 def get_message_bus(
-    event_mapper: Dict[Type[DomainEvent], Callable],
+    event_mapper: Dict[Type[DomainEvent], List[Callable]],
     command_mapper: Dict[Type[Command], Callable],
     uow_cls: Type[AbstractDBUnitOfWork],
     engine=_get_engine(),
 ) -> MessageBus:
     uow = uow_cls(create_session(engine))
 
-    event_handler_callables = {c: h(uow) for c, h in event_mapper.items()}
+    event_handler_callables = {
+        c: list(map(lambda han: han(uow), h)) for c, h in event_mapper.items()
+    }
 
     command_handler_callables = {c: h(uow) for c, h in command_mapper.items()}
 

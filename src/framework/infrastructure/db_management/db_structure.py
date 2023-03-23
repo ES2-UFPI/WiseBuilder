@@ -1,6 +1,7 @@
 from typing import List
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, ForeignKey, Table
+from sqlalchemy.types import LargeBinary
 from sqlalchemy.dialects.mysql import (
     INTEGER,
     VARCHAR,
@@ -26,14 +27,17 @@ def get_attrs(ctype: EComponentType) -> List[str]:
 
 base = declarative_base()
 
+AttrsUserInstance = ["uid", "email", "name", "is_admin"]
+
 
 class UserInstance(base):
     __tablename__ = "users"
-    uid = Column(INTEGER(5), primary_key=True, autoincrement=False)
-    is_admin = Column(BOOLEAN())
+    uid = Column(BinaryUUID, primary_key=True)
     email = Column(VARCHAR(150))
-    password = Column(VARCHAR(20))
     name = Column(VARCHAR(128))
+    password = Column(LargeBinary())
+    salt = Column(LargeBinary())
+    is_admin = Column(BOOLEAN())
 
 
 _AttrsComponent = ["uid", "type", "manufacturer", "model"]
@@ -45,11 +49,11 @@ class ComponentInstance(base):
     component_uid = None
     type = Column(ENUM(EComponentType))
     manufacturer = Column(VARCHAR(20))
-    model = Column(VARCHAR(50))
+    model = Column(VARCHAR(100))
 
 
 class VolatileDataInstance(base):
-    __tablename__ = "volatile_datas"
+    __tablename__ = "volatile_data"
     url_id = Column(BinaryUUID, primary_key=True)
     url = Column(VARCHAR(255))
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
@@ -200,8 +204,8 @@ class PSUInstance(ComponentInstance):
 
 class ComputerInstance(base):
     __tablename__ = "computers"
-    uid = Column(INTEGER(6), primary_key=True, autoincrement=False)
-    user = Column(INTEGER(5), ForeignKey("users.uid"))
+    uid = Column(BinaryUUID, primary_key=True)
+    user = Column(BinaryUUID, ForeignKey("users.uid"))
     total_consumption = Column(INTEGER(5))
     price = Column(FLOAT(7, 2, False))
     motherboard_uid = Column(BinaryUUID, ForeignKey(MotherboardInstance.component_uid))

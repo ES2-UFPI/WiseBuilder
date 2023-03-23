@@ -1,4 +1,4 @@
-from typing import Dict, Type
+from typing import Dict, Type, List
 
 from SearchEngine.domain.commands import *
 
@@ -38,4 +38,4 @@ SE_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
 }
 
 
-SE_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], Type[MessageHandler]] = {}
+SE_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {}

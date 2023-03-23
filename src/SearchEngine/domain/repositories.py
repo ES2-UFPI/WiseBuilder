@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing import Dict
 from abc import ABCMeta, abstractmethod
 
 from framework.domain.value_object import UUID
