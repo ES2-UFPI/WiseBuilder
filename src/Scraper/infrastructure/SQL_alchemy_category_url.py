@@ -1,7 +1,6 @@
 from sqlalchemy.exc import NoResultFound, IntegrityError
 from sqlalchemy.orm.session import Session
 from typing import List
-from operator import lt, gt, eq
 
 from framework.domain.value_object import UUID
 from framework.infrastructure.db_management.db_structure import (
@@ -10,7 +9,11 @@ from framework.infrastructure.db_management.db_structure import (
 )
 from framework.domain.components import EComponentType
 from Scraper.domain.entity import CategoryURL, AttrsCategoryURL
-from framework.infrastructure.db_management.db_mapping import map_from_to
+from framework.infrastructure.db_management.db_mapping import (
+    map_from_to,
+    parse_filters,
+    filter_instance_from_db,
+)
 from framework.domain.value_object import URL, AttrsURL
 from Scraper.domain.repositories import (
     ICategoryURLRepository,
@@ -20,8 +23,6 @@ from Scraper.domain.repositories import (
 
 
 class SQLAlchemyCategoryURL(ICategoryURLRepository):
-    _filters_ops: dict = {"filters_eq": eq}
-
     def __init__(self, session):
         self._session: Session = session
 
@@ -60,29 +61,6 @@ class SQLAlchemyCategoryURL(ICategoryURLRepository):
 
         return category_url
 
-    def _parse_filters(self, **kwargs) -> List:
-        ret = []
-
-        for filter_type, filters in kwargs.items():
-            if filter_type in self._filters_ops.keys():
-                op = self._filters_ops[filter_type]
-
-                [
-                    ret.append(op(getattr(CategoryURLInstance, prop), value))
-                    for prop, value in filters.items()
-                ]
-
-        return ret
-
-    def _filter_category_url_from_db(self, filters: List) -> List[CategoryURL]:
-        url_instances: List[CategoryURLInstance] = (
-            self._session.query(CategoryURLInstance).filter(*filters).all()
-        )
-
-        urls = [self._db_to_category_url(instance) for instance in url_instances]
-
-        return urls
-
     def _add(self, category_url: CategoryURL):
         url_instance = self._url_to_db(category_url)
 
@@ -93,14 +71,13 @@ class SQLAlchemyCategoryURL(ICategoryURLRepository):
             raise EntityUIDCollisionException(category_url.uid)
 
     def _get(self, **kwargs) -> List[CategoryURL]:
-        ret = []
+        filters = parse_filters(CategoryURLInstance, **kwargs)
+        urls_instances = filter_instance_from_db(
+            self._session, CategoryURLInstance, filters
+        )
+        urls = [self._db_to_category_url(instance) for instance in urls_instances]
 
-        filters = self._parse_filters(**kwargs)
-
-        urls = self._filter_category_url_from_db(filters)
-        ret.extend(urls)
-
-        return ret
+        return urls
 
     def _get_by_uid(self, ref: UUID):
         query_filter = [CategoryURLInstance.uid == ref]

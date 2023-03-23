@@ -2,7 +2,6 @@ from dataclasses import dataclass, field
 from typing import List, Dict, Any
 
 from framework.domain.components import Component, EComponentType, component_cls_idx
-
 from framework.domain.value_object import UUID, UUIDv4
 from framework.domain.events import Command
 

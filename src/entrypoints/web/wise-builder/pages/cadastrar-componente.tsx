@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input } from '@chakra-ui/react'
+import { Input, useToast } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Select } from '@chakra-ui/react'
 import { Button } from '@chakra-ui/react'
@@ -18,52 +18,159 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { useRouter } from "next/router";
+import { Componente } from '../src/types/componente';
+import { Ram } from '../src/types/ram';
 
-function CadastroComp() {
-  const [tipo, setTipo] = useState<string>("");
-  const [fabricante, setFabricante] = useState<string>("");
-  const [socket, setSocket] = useState<number>(0);
-  const [cores, setCores] = useState<number>(0);
-  const [chipset, setChipset] = useState<number>(0);
-  const [tamanho, setTamanho] = useState<number>(0);
-  const [slotsRam, setSlotsRam] = useState<number>(0);
-  const [usb2, setUsb2] = useState<number>(0);
-  const [usb3, setUsb3] = useState<number>(0);
-  const [vga, setVga] = useState<number>(0);
-  const [display, setDisplay] = useState<number>(0);
-  const [hdmi, setHdmi] = useState<number>(0);
-  const [pciGen, setPciGen] = useState<number>(0);
-  const [pci1, setPci1] = useState<number>(0);
-  const [pci4, setPci4] = useState<number>(0);
-  const [pci8, setPci8] = useState<number>(0);
-  const [pci16, setPci16] = useState<number>(0);
-  const [volts, setVolts] = useState<number>(0);
-  const [eficiency, setEficiency] = useState<number>(0);
-  const [modular, setModular] = useState<number>(0);
-  const [baseClock, setBaseClock] = useState<number>(0);
-  const [boostClock, setBoostClock] = useState<number>(0);
-  const [consumo, setConsumo] = useState<number>(0);
-  const [gpuIntegrada, setGpuIntegrada] = useState<string>("");
-  const [overclock, setOverclock] = useState<boolean>(false);
-  const [vram, setVram] = useState<number>(0);
-  const [vramSpd, setVramSpd] = useState<number>(0);
-  const [modelo, setModelo] = useState<string>("");
-  const [generation, setGeneration] = useState<string>("");
-  const [frequency, setFrequency] = useState<number>(0);
+interface Props {
+  componente?: Componente,
+  editar?: boolean,
+}
 
- /*  const send = () => {
-    const data: Ram = {
-      fabricante:fabricante,
-      modelo: modelo,
-      generation: generation,
-      frequency: frequency
+function CadastroComp({ componente, editar }: Props) {
+  const toast = useToast();
+  const [tipo, setTipo] = useState<string>(componente?.tipo || "");
+  const [fabricante, setFabricante] = useState<string>(componente?.fabricante || "");
+  const [socket, setSocket] = useState<number>(componente?.socket || 0);
+  const [cores, setCores] = useState<number>(componente?.cores || 0);
+  const [chipset, setChipset] = useState<number>(componente?.chipset || 0);
+  const [tamanho, setTamanho] = useState<number>(componente?.tamanho || 0);
+  const [slotsRam, setSlotsRam] = useState<number>(componente?.slotsRam || 0);
+  const [usb2, setUsb2] = useState<number>(componente?.usb2 || 0);
+  const [usb3, setUsb3] = useState<number>(componente?.usb3 || 0);
+  const [vga, setVga] = useState<number>(componente?.vga || 0);
+  const [display, setDisplay] = useState<number>(componente?.display || 0);
+  const [hdmi, setHdmi] = useState<number>(componente?.hdmi || 0);
+  const [pciGen, setPciGen] = useState<number>(componente?.pciGen || 0);
+  const [pci1, setPci1] = useState<number>(componente?.pci1 || 0);
+  const [pci4, setPci4] = useState<number>(componente?.pci4 || 0);
+  const [pci8, setPci8] = useState<number>(componente?.pci8 || 0);
+  const [pci16, setPci16] = useState<number>(componente?.pci16 || 0);
+  const [volts, setVolts] = useState<number>(componente?.volts || 0);
+  const [eficiency, setEficiency] = useState<number>(componente?.eficiency || 0);
+  const [modular, setModular] = useState<number>(componente?.modular || 0);
+  const [baseClock, setBaseClock] = useState<number>(componente?.baseClock || 0);
+  const [boostClock, setBoostClock] = useState<number>(componente?.boostClock || 0);
+  const [consumo, setConsumo] = useState<number>(componente?.consumo || 0);
+  const [gpuIntegrada, setGpuIntegrada] = useState<string>(componente?.gpuIntegrada || "");
+  const [overclock, setOverclock] = useState<boolean>(componente?.overclock || false);
+  const [vram, setVram] = useState<number>(componente?.vram || 0);
+  const [vramSpd, setVramSpd] = useState<number>(componente?.vramSpd || 0);
+  const [modelo, setModelo] = useState<string>(componente?.modelo || "");
+  const [generation, setGeneration] = useState<string>(componente?.generation || "");
+  const [frequency, setFrequency] = useState<number>(componente?.frequency || 0);
+
+  const router = useRouter();
+    function handleClick() {
+        router.push("/listar-componente");
     }
 
-    fetch('https://api.npms.io/v2/search?q=react', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-        .then() //evento que vai ocorrer se a requisição der certo
-        .catch(); //lógica para tratar erro
-
-  } */
+  const send = () => {
+    let data;
+    let url = "";
+    
+    switch (tipo) {
+      case "CPU":
+        data = {
+          fabricante: fabricante,
+          modelo: modelo,
+          socket: socket,
+          cores: cores,
+          baseClock: baseClock,
+          boostClock: boostClock,
+          vramSpd: vramSpd,
+          consumo: consumo,
+          gpuIntegrada: gpuIntegrada,
+          overclock: overclock
+        };
+        url = "https://api.npms.io/v2/search?q=ram";
+        break;
+      case "GPU":
+        data = {
+          fabricante: fabricante,
+          modelo: modelo,
+          consumo: consumo,
+          vram: vram,
+          vramSpd: vramSpd
+        };
+        url = "https://api.npms.io/v2/search?q=hd";
+        break;
+      case "Placa Mãe":
+        data = {
+          fabricante: fabricante,
+          modelo: modelo,
+          chipset: chipset,
+          tamanho: tamanho,
+          slotsRam: slotsRam,
+          consumo: consumo,
+          usb2: usb2,
+          usb3: usb3,
+          vga: vga,
+          hdmi: hdmi,
+          display: display,
+          pciGen: pciGen,
+          pci1: pci1,
+          pci4: pci4,
+          pci8: pci8,
+          pci16: pci16,
+          socket: socket,
+        };
+        url = "https://api.npms.io/v2/search?q=placa+de+video";
+        break;
+      case "Memória RAM":
+        data = {
+          fabricante: fabricante,
+          modelo: modelo,
+          generation: generation,
+          frequency: frequency
+        };
+        url = "https://api.npms.io/v2/search?q=processador";
+        break;
+      case "Fonte":
+        data = {
+          fabricante: fabricante,
+          modelo: modelo,
+          volts: volts,
+          eficiency: eficiency,
+          modular: modular
+        };
+        url = "https://api.npms.io/v2/search?q=processador";
+        break;
+      default:
+        console.log("Tipo de componente inválido");
+        return;
+    }
+  
+    fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+    .then((response) => {  //evento que vai ocorrer se a requisição der certo
+      if (response.ok) {
+        toast({
+          position: 'top',
+          title: "Salvo com Sucesso!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          position: 'top',
+          title: "Erro ao Salvar",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    })
+    .catch((error) => {   //lógica para tratar erro
+      toast({
+        position: 'top',
+        title: "Erro ao Salvar",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    });
+  };
 
   return (
     <Flex
@@ -216,7 +323,7 @@ function CadastroComp() {
           <FormControl id="vram" isRequired>
           <FormLabel>Capacidade da Memória RAM da CPU</FormLabel>
             <NumberInput onChange={(value)=> setVram(+value)}>
-              <NumberInputField placeholder="Velocidade Máxima do Clock da RAM" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
+              <NumberInputField placeholder="Capacidade da Memória RAM da CPU" _placeholder={{ color: 'gray.500' }} /><NumberInputStepper><NumberIncrementStepper /><NumberDecrementStepper /></NumberInputStepper>
             </NumberInput>
           </FormControl>
 
@@ -453,6 +560,7 @@ function CadastroComp() {
     )}
       <Stack justify={'right'}  spacing={6} direction={['column', 'row']}>
         <Button
+          onClick={handleClick}
           bg={'red.400'}
           color={'white'}
           w="20%"
@@ -462,7 +570,7 @@ function CadastroComp() {
           Cancel
         </Button>
         <Button
-          onClick={()=> ""}
+          onClick={send}
           bg={'blue.400'}
           color={'white'}
           w="20%"
