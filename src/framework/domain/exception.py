@@ -12,10 +12,5 @@ class DomainException(Exception):
 
 
 @dataclass
-class KnapsackBurst(DomainException):
-    _message: str = "A bolsa atingiu o limite de preço."
-
-
-@dataclass
 class CurrencyNotEqual(DomainException):
     _message: str = "As moedas são diferentes"

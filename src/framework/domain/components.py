@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import List
 
 from .entity import Entity
-from .exception import KnapsackBurst
 
 __all__ = [
     "Component",
@@ -219,20 +218,6 @@ class PSUComponent(Component):
     power: int
     rate: EPSURate
     modularity: EPSUModularity
-
-
-@dataclass
-class Knapsack(Entity):
-    components: list[Component]
-    max_price: Money
-    current_price: Money
-
-    def push(self, component: Component, price: Money):
-        if self.current_price + price > self.max_price:
-            raise KnapsackBurst()
-
-        # TODO checar restrições
-        self.components.append(component)
 
 
 component_cls_idx = [
