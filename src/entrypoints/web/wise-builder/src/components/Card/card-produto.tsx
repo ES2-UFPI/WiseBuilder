@@ -17,7 +17,7 @@ import Acoes from "../Botão/acoes";
 import { cardProdutoProps } from "../../types/propsCardProduto";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import getGridTemplateColumns from "../../types/getGridTemplateColumns";
+import getGridTemplateColumns from "../../common/utils/getGridTemplateColumns";
 
 export default function CardProduto(props: cardProdutoProps) {
   const router = useRouter();
@@ -52,7 +52,7 @@ export default function CardProduto(props: cardProdutoProps) {
           key={index}
           style={{
             display: "grid",
-            gridTemplateColumns: getGridTemplateColumns(),
+            gridTemplateColumns: "repeat(4, 1fr)",
             gridGap: "20px",
           }}
           >

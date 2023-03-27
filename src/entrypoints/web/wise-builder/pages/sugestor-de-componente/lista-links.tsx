@@ -1,3 +1,5 @@
+import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
+
 import { useState, useEffect } from 'react';
 import { 
     Heading,
@@ -15,11 +17,11 @@ import {
     GridItem,
     useColorModeValue,
 } from "@chakra-ui/react";
-import { ArrowForwardIcon, CheckCircleIcon, HamburgerIcon } from "@chakra-ui/icons";
-import CardProduto from '../src/components/Card/card-produto';
-import { Componente } from '../src/types/componente';
-import React from 'react';
-import StatusIndicator from '../src/components/Status/status';
+import { ArrowForwardIcon, ArrowBackIcon, HamburgerIcon } from "@chakra-ui/icons";
+import CardProduto from '../../src/components/Card/card-produto';
+import { Componente } from '../../src/types/componente';
+import StatusIndicator from '../../src/components/Status/status';
+import { useRouter } from 'next/router';
 
 /* async function getItems() {
     const response = await fetch('https://sua-api.com/items');
@@ -84,8 +86,18 @@ const mockItems: Componente[] = [
   }
 ];
 
-function SugestorComponente(busca: string) {
+function ListaLinks() {
+  const router = useRouter();
   const [items, setItems] = useState(mockItems);
+  
+  function handleClick(prox = false) {
+    if (prox){
+        router.push('lista-links');
+    }
+    else{
+        router.back()
+    }
+  }
 
   return (  
     <Grid
@@ -96,50 +108,8 @@ function SugestorComponente(busca: string) {
       bg={useColorModeValue('gray.50', 'gray.800')}
     >
       <GridItem colSpan={4}>
-        <Heading>Sugestor de Componente</Heading>
         <Center>
-            <HStack
-            pl={6}
-            mt={1}
-            spacing={'200'}
-            bg={useColorModeValue('white', 'gray.700')}
-            rounded={'xl'}
-            boxShadow={'lg'}
-          >
-                <Stack>
-                    <Heading as='h4' size='md'>
-                        Placa mãe
-                    </Heading>
-                    <StatusIndicator></StatusIndicator>
-                </Stack> 
-                <Stack>
-                    <Heading as='h4' size='md'>
-                        Processador
-                    </Heading>
-                    <StatusIndicator></StatusIndicator>
-                </Stack> 
-                <Stack>
-                    <Heading as='h4' size='md'>
-                        Memória RAM
-                    </Heading>
-                    <StatusIndicator></StatusIndicator>
-                </Stack> 
-                <Stack>
-                    <Heading as='h4' size='md'>
-                        Placa de Vídeo
-                    </Heading>
-                    <StatusIndicator></StatusIndicator>
-                </Stack> 
-                <Stack>
-                    <Heading as='h4' size='md'>
-                        Fonte
-                    </Heading>
-                    <StatusIndicator></StatusIndicator>
-                </Stack> 
-                <Button variant="solid" colorScheme="blue" rightIcon={<ArrowForwardIcon />}>
-                        Próximo
-                </Button>
-            </HStack>
+          <Heading>Componentes Escolhidos</Heading>
         </Center>
       </GridItem>
       <GridItem rowSpan={20} colSpan={3} margin={3}>
@@ -148,4 +118,4 @@ function SugestorComponente(busca: string) {
     </Grid>
 )};
 
-export default SugestorComponente;
+export default ListaLinks;

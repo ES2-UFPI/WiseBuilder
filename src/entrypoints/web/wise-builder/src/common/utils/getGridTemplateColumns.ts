@@ -1,6 +1,7 @@
 // arquivo getGridTemplateColumns.js
 export default function getGridTemplateColumns() {
   const screenWidth = document.documentElement.clientWidth;
+  console.log(screenWidth);
   if (screenWidth > 1024) {
     return "repeat(4, 1fr)";
   } else if (screenWidth > 768) {
@@ -11,5 +12,3 @@ export default function getGridTemplateColumns() {
     return "1fr";
   }
 }
-
-  
