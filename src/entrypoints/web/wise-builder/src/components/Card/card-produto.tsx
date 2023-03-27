@@ -1,15 +1,15 @@
 import {
+  Button,
+  ButtonGroup,
   Card,
   CardBody,
-  Image,
-  Heading,
-  Text,
-  Divider,
   CardFooter,
-  ButtonGroup,
-  Button,
+  Divider,
+  Heading,
+  Image,
   Stack,
   TableContainer,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -48,22 +48,22 @@ export default function CardProduto(props: cardProdutoProps) {
   return (
     <>
       {cardGroups.map((group, index) => (
-          <div
+        <div
           key={index}
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
             gridGap: "20px",
           }}
-          >
+        >
           {group.map((item) => (
             <Card minW={300} key={item.id} mb={3}>
               <CardBody>
                 <Heading size="md">
-                  {item.tipo} {item.fabricante} {item.modelo}
+                  {item.type} {item.manufacturer} {item.model}
                 </Heading>
                 <Text color="pink.300" fontSize="2xl">
-                  R$ {item.valor}
+                  R$ {item.price}
                 </Text>
               </CardBody>
               <Divider />
