@@ -1,6 +1,8 @@
 from operator import eq, lt, gt
 from typing import List
+from sqlalchemy import Column
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.query import Query
 
 
 _filters_ops: dict = {"filters_eq": eq, "filters_lt": lt, "filters_gt": gt}
@@ -34,10 +36,16 @@ def map_from_to(
 
 
 def filter_instance_from_db(
-    session: Session, instance_cls, filters: List, qsize: int | None = None
+    session: Session,
+    instance_cls,
+    filters: List,
+    qsize: int | None = None,
+    group_by: Column | None = None,
 ) -> List:
-    db_instances: List[instance_cls] = (
-        session.query(instance_cls).filter(*filters).limit(qsize).all()
+    query: Query = (
+        session.query(instance_cls).filter(*filters).group_by(group_by).limit(qsize)
     )
+
+    db_instances: List[instance_cls] = query.all()
 
     return db_instances

@@ -5,7 +5,11 @@ from framework.domain.components import Component, EComponentType, component_cls
 from framework.domain.value_object import UUID, UUIDv4
 from framework.domain.events import Command
 
-__all__ = ["GetComponentByUID", "ListComponentsByType", "AddComponent"]
+__all__ = [
+    "GetComponentByUID",
+    "ListComponentsByType",
+    "AddComponent",
+]
 
 
 @dataclass

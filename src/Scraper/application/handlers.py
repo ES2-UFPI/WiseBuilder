@@ -1,4 +1,4 @@
-from typing import Dict, Type, List
+from typing import Type, Dict, List
 from smtplib import SMTP
 from ssl import create_default_context
 from email.mime.text import MIMEText
@@ -12,10 +12,11 @@ from SearchEngine.application.handlers import (
 )
 from SearchEngine.application.unit_of_work import SQLAlchemyUnitOfWork
 from framework.domain.components import Component
-from framework.application.handler import MessageHandler, Command
-from ..domain.repositories import ICategoryURLRepository
+from framework.domain.events import Command, DomainEvent
+from framework.application.handler import MessageHandler
+from Scraper.domain.aggragate import VolatileData
+from ..domain.repositories import ICategoryURLRepository, IVolatileDataRepository
 from ..domain.events import LowerPriceRegisteredEvent
-from framework.domain.events import DomainEvent
 from ..domain.commands import *
 
 
@@ -81,12 +82,56 @@ class GetVolatileDataByMaxCostHandler(MessageHandler):
             return self.uow.repository.get(filters_lt={"cost": cmd.cost})
 
 
+class GetLowerCostVolatileDatasHandler(MessageHandler):
+    def __call__(self, cmd: GetLowerCostVolatileDatas):
+        with self.uow:
+            cost_filter = {} if cmd.cost >= 0 else {"filters_lt": {"cost": cmd.cost}}
+            if isinstance(self.uow.repository, IVolatileDataRepository):
+                return self.uow.repository.get_lower_costs(**cost_filter)
+
+
 class GetVolatileDataByComponentUIDHandler(MessageHandler):
     def __call__(self, cmd: GetVolatileDataByComponentUID):
         with self.uow:
             return self.uow.repository.get(
                 filters_eq={"component_uid": cmd.component_uid}
             )
+
+
+def _get_components_from_volatile_data(volatile_data: list[VolatileData]):
+    message_bus = get_message_bus(
+        SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
+    )
+
+    components = [
+        message_bus.handle(GetComponentByUID(vd.component_id)) for vd in volatile_data
+    ]
+
+    return components
+
+
+class GetComponentsFromVolatileDataHandler(MessageHandler):
+    def __call__(self, cmd: GetComponentsFromVolatileData):
+        with self.uow:
+            return _get_components_from_volatile_data(cmd.volatile_data)
+
+
+class GetVolatileDataByCostIntervalHandler(MessageHandler):
+    def __call__(self, cmd: GetVolatileDataByCostInterval):
+        with self.uow:
+            filters_lt = {"cost": cmd.max_cost}
+            filters_gt = {"cost": cmd.min_cost}
+            filters_eq = {"component_type": cmd.component_type}
+
+            volatile_data = self.uow.repository.get_lower_costs(
+                filters_eq=filters_eq,
+                filters_lt=filters_lt,
+                filters_gt=filters_gt,
+            )
+
+            components = _get_components_from_volatile_data(volatile_data)
+
+            return components, volatile_data
 
 
 CURL_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
@@ -101,6 +146,9 @@ VD_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     AddVolatileData: AddVolatileDataHandler,
     GetVolatileDataByMaxCost: GetVolatileDataByMaxCostHandler,
     GetVolatileDataByComponentUID: GetVolatileDataByComponentUIDHandler,
+    GetLowerCostVolatileDatas: GetLowerCostVolatileDatasHandler,
+    GetComponentsFromVolatileData: GetComponentsFromVolatileDataHandler,
+    GetVolatileDataByCostInterval: GetVolatileDataByCostIntervalHandler,
 }
 
 VD_EVENT_HANDLER_MAPPER: Dict[Type[DomainEvent], List[Type[MessageHandler]]] = {

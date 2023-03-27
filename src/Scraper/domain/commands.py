@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from Scraper.domain.entity import CategoryURL
 from Scraper.domain.aggragate import VolatileData
 from framework.domain.value_object import UUID, Money
+from framework.domain.components import Component
+from framework.domain.components_enums import *
 
 __all__ = [
     "AddCategoryURL",
@@ -12,6 +14,9 @@ __all__ = [
     "AddVolatileData",
     "GetVolatileDataByMaxCost",
     "GetVolatileDataByComponentUID",
+    "GetLowerCostVolatileDatas",
+    "GetComponentsFromVolatileData",
+    "GetVolatileDataByCostInterval",
 ]
 
 
@@ -45,5 +50,24 @@ class GetVolatileDataByMaxCost(Command):
     cost: float
 
 
+@dataclass
+class GetLowerCostVolatileDatas(Command):
+    cost: float = -1
+    pass
+
+
+@dataclass
 class GetVolatileDataByComponentUID(Command):
     component_uid: UUID
+
+
+@dataclass
+class GetComponentsFromVolatileData(Command):
+    volatile_data: list[VolatileData]
+
+
+@dataclass
+class GetVolatileDataByCostInterval(Command):
+    component_type: EComponentType
+    min_cost: float
+    max_cost: float

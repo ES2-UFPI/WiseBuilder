@@ -12,8 +12,10 @@ from sqlalchemy.dialects.mysql import (
     FLOAT,
 )
 
+from framework.domain.components_enums import *
 from .binaryUUID import BinaryUUID
 from framework.domain.components import *
+from framework.domain.components_enums import *
 
 
 def get_attrs(ctype: EComponentType) -> List[str]:
@@ -40,7 +42,7 @@ class UserInstance(base):
     is_admin = Column(BOOLEAN())
 
 
-_AttrsComponent = ["uid", "type", "manufacturer", "model"]
+_AttrsComponent = ["uid", "type", "manufacturer", "model", "rank"]
 
 
 class ComponentInstance(base):
@@ -50,6 +52,18 @@ class ComponentInstance(base):
     type = Column(ENUM(EComponentType))
     manufacturer = Column(VARCHAR(20))
     model = Column(VARCHAR(100))
+    rank = Column(INTEGER(4))
+
+
+AttrsVolatileData = [
+    "url_id",
+    "url",
+    "component_uid",
+    "component_type",
+    "cost",
+    "availability",
+    "timestamp",
+]
 
 
 class VolatileDataInstance(base):
@@ -57,27 +71,20 @@ class VolatileDataInstance(base):
     url_id = Column(BinaryUUID, primary_key=True)
     url = Column(VARCHAR(255))
     component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
+    component_type = Column(ENUM(EComponentType))
     cost = Column(FLOAT(7, 2, False))
     availability = Column(BOOLEAN())
     timestamp = Column(DATETIME(timezone=False, fsp=0))
 
 
-AttrsVolatileData = [
-    "url_id",
-    "url",
-    "component_uid",
-    "cost",
-    "availability",
-    "timestamp",
-]
-
-
-class PriceHistoryInstance(base):
-    __tablename__ = "prices_history"
-    uid = Column(BinaryUUID, primary_key=True)
-    component_uid = Column(BinaryUUID, ForeignKey(ComponentInstance.uid))
-    price = Column(FLOAT(7, 2, False))
-    price_mean = Column(FLOAT(7, 2, False))
+class LowerCostsInstance(base):
+    __tablename__ = "lower_costs"
+    component_uid = Column(
+        BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
+    )
+    volatile_data_uid = Column(BinaryUUID, ForeignKey(VolatileDataInstance.url_id))
+    component_type = Column(ENUM(EComponentType))
+    cost = Column(FLOAT(7, 2, False))
     timestamp = Column(DATE)
 
 
@@ -91,7 +98,6 @@ _AttrsMotherboard = [
     "n_vga",
     "n_hdmi",
     "n_display_port",
-    "pcie_gen",
     "n_pcie_x1",
     "n_pcie_x4",
     "n_pcie_x8",
@@ -105,7 +111,7 @@ class MotherboardInstance(ComponentInstance):
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
     )
     consumption = Column(INTEGER(5))
-    chipset = Column(ENUM(EChipsetType))
+    chipset = Column(VARCHAR(10))
     board_size = Column(ENUM(EBoardSize))
     n_ram_slots = Column(INTEGER(1))
 
@@ -116,7 +122,6 @@ class MotherboardInstance(ComponentInstance):
     n_hdmi = Column(INTEGER(1))
     n_display_port = Column(INTEGER(1))
 
-    pcie_gen = Column(ENUM(EPCIeGeneration))
     n_pcie_x1 = Column(INTEGER(1))
     n_pcie_x4 = Column(INTEGER(1))
     n_pcie_x8 = Column(INTEGER(1))
@@ -128,7 +133,6 @@ _AttrsCPU = [
     "n_cores",
     "base_clock_spd",
     "boost_clock_spd",
-    "ram_clock_max",
     "consumption",
     "integrated_gpu",
     "overclock",
@@ -141,11 +145,10 @@ class CPUInstance(ComponentInstance):
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
     )
     consumption = Column(INTEGER(5))
-    socket = Column(ENUM(ESocketType))
+    socket = Column(VARCHAR(10))
     n_cores = Column(INTEGER(1))
     base_clock_spd = Column(FLOAT(4, 2, True))
     boost_clock_spd = Column(FLOAT(4, 2, False))
-    ram_clock_max = Column(INTEGER(5))
     integrated_gpu = Column(VARCHAR(30))
     overclock = Column(BOOLEAN())
 
@@ -163,7 +166,7 @@ class GPUInstance(ComponentInstance):
     vram_spd = Column(INTEGER(5))
 
 
-_AttrsRAM = ["generation", "frequency"]
+_AttrsRAM = ["msize", "generation", "frequency"]
 
 
 class RAMInstance(ComponentInstance):
@@ -171,11 +174,12 @@ class RAMInstance(ComponentInstance):
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
     )
+    msize = Column(INTEGER(3))
     generation = Column(ENUM(ERAMGeneration))
     frequency = Column(INTEGER(5))
 
 
-_AttrsPersistence = ["storage", "spd", "io", "is_HDD"]
+_AttrsPersistence = ["storage", "rpm", "io", "is_HDD"]
 
 
 class PersistenceInstance(ComponentInstance):
@@ -185,7 +189,7 @@ class PersistenceInstance(ComponentInstance):
     )
     is_HDD = Column(BOOLEAN())
     storage = Column(INTEGER(5))
-    spd = Column(INTEGER(5))
+    rpm = Column(INTEGER(5))
     io = Column(ENUM(EPersistenceIOType))
 
 

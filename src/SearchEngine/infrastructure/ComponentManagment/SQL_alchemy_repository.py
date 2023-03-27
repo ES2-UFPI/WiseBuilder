@@ -4,6 +4,7 @@ from sqlalchemy.engine import Row
 from typing import List
 
 from framework.domain.components import *
+from framework.domain.components_enums import *
 from framework.domain.value_object import UUID
 from SearchEngine.domain.repositories import (
     ISQLAlchemyRepository,
