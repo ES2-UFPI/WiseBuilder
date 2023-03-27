@@ -89,7 +89,7 @@ function SugestorComponentePlacaMae(busca: string) {
   const [items, setItems] = useState(mockItems);
   
   function handleClick() {
-    router.push('processador');
+    router.push('/sugestor-de-componente/processador');
   }
 
   return (  

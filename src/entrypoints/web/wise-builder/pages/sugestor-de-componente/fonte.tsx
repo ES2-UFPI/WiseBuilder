@@ -90,7 +90,7 @@ function SugestorComponenteMemoriaRam(busca: string) {
   
   function handleClick(prox = false) {
     if (prox){
-        router.push('lista-links');
+        router.push('/sugestor-de-componente/lista-links');
     }
     else{
         router.back()
