@@ -56,32 +56,68 @@ export default function CardProduto(props: cardProdutoProps) {
             gridGap: "20px",
           }}
           >
-          {group.map((item) => (
-            <Card minW={300} key={item.id} mb={3} onClick={() => props.selectedFunction(item)} bgColor={props.selectedItems.find((i) => i.id === item.id) !== undefined ? 'blue.400' : 'white'}>
-              <CardBody>
-                <Heading size="md">
-                  {item.tipo} {item.fabricante} {item.modelo}
-                </Heading>
-                <Text color="pink.300" fontSize="2xl">
-                  R$ {item.valor}
-                </Text>
-              </CardBody>
-              <Divider />
-              <CardFooter>
-                <ButtonGroup spacing="2">
-                  <Button variant="solid" colorScheme="blue">
-                    Ver Produto
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    colorScheme="blue"
-                    onClick={() => handleClick(item.link)}
-                  >
-                    Visitar Oferta
-                  </Button>
-                </ButtonGroup>
-              </CardFooter>
-            </Card>
+          {group.map((item) => props.selectedFunction && props.selectedItems !== undefined ? (
+              <Card
+                minW={300}
+                key={item.id}
+                mb={3}
+                onClick={() => props.selectedFunction(item)}
+                bgColor={
+                  props.selectedItems.find((i) => i.id === item.id) !== undefined
+                    ? "blue.700"
+                    : "white"
+                }
+              >
+                <CardBody>
+                  <Heading size="md" color={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "white" : "black"}>
+                    {item.tipo} {item.fabricante} {item.modelo}
+                  </Heading>
+                  <Text color="pink.300" fontSize="2xl">
+                    R$ {item.valor}
+                  </Text>
+                </CardBody>
+                <Divider />
+                <CardFooter>
+                  <ButtonGroup spacing="2">
+                    <Button variant="solid" colorScheme={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "orange" : "blue"}>
+                      Ver Produto
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      colorScheme="blue"
+                      onClick={() => handleClick(item.link)}
+                    >
+                      Visitar Oferta
+                    </Button>
+                  </ButtonGroup>
+                </CardFooter>
+              </Card>
+            ) : (
+              <Card minW={300} key={item.id} mb={3}>
+                <CardBody>
+                  <Heading size="md">
+                    {item.tipo} {item.fabricante} {item.modelo}
+                  </Heading>
+                  <Text color="pink.300" fontSize="2xl">
+                    R$ {item.valor}
+                  </Text>
+                </CardBody>
+                <Divider />
+                <CardFooter>
+                  <ButtonGroup spacing="2">
+                    <Button variant="solid" colorScheme="blue">
+                      Ver Produto
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      colorScheme="blue"
+                      onClick={() => handleClick(item.link)}
+                    >
+                      Visitar Oferta
+                    </Button>
+                  </ButtonGroup>
+                </CardFooter>
+              </Card>
           ))}
         </div>
       ))}

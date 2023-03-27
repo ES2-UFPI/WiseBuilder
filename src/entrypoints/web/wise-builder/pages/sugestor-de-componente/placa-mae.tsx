@@ -113,7 +113,11 @@ function SugestorComponentePlacaMae(busca: string) {
     >
       <GridItem colSpan={4}>
         <Center>
-          <Heading>Sugestor de Componente</Heading>
+          <Stack alignItems={'center'} mb={'3'} mt={'3'}>
+            <Heading>Sugestor de Componente</Heading>
+            <Text fontSize={'lg'} color={'gray.600'}>Para selecionar os componentes que você deseja, basta clicar nos cards.</Text>
+            <Text fontSize={'lg'} color={'gray.600'}>Os cards selecionados aparecem em azul.</Text>
+          </Stack>
         </Center>
         <Center>
             <HStack
@@ -167,9 +171,6 @@ function SugestorComponentePlacaMae(busca: string) {
                 </Stack> 
                 <Button variant="solid" colorScheme="blue" rightIcon={<ArrowForwardIcon />} onClick={() => handleClick()}>
                         Próximo
-                </Button>
-                <Button variant="solid" colorScheme="blue" rightIcon={<ArrowForwardIcon />} onClick={() => console.log(selectedItems)}>
-                        Log
                 </Button>
             </HStack>
         </Center>
