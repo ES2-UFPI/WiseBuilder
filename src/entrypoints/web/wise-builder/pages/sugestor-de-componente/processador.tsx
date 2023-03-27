@@ -90,7 +90,7 @@ function SugestorComponenteProcessador(busca: string) {
   
   function handleClick(prox = false) {
     if (prox){
-        router.push('memoria-ram');
+        router.push('/sugestor-de-componente/memoria-ram');
     }
     else{
         router.back()

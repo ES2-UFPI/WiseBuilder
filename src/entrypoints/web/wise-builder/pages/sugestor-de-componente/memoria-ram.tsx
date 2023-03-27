@@ -90,7 +90,7 @@ function SugestorComponenteMemoriaRam(busca: string) {
   
   function handleClick(prox = false) {
     if (prox){
-        router.push('placa-de-video');
+        router.push('/sugestor-de-componente/placa-de-video');
     }
     else{
         router.back()
