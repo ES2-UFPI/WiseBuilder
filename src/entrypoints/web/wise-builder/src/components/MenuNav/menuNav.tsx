@@ -273,6 +273,6 @@ import {
     },
     {
         label: 'Favoritos',
-        href: '#',
+        href: '/favoritos',
     },
   ];

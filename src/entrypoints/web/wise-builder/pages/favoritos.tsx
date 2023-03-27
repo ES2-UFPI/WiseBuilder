@@ -70,10 +70,10 @@ function ItemList() {
       p={6}
       my={12}>
       <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
-        Listar Componentes
+        Favoritos
       </Heading>
       <Divider orientation='horizontal' />
-      <Tabela titulo="Componentes" link="/cadastrar-componente" item={mockItems} edit={true}/>
+      <Tabela titulo="Componentes" item={mockItems} edit={false}/>
     </Stack>
   </Flex>
 )};
