@@ -269,7 +269,7 @@ import {
       },
     {
       label: 'Sugestor de Componentes',
-      href: '/sugestor-de-componente',
+      href: '/sugestor-de-componente/placa-mae',
     },
     {
         label: 'Favoritos',

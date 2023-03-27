@@ -1,13 +1,16 @@
 import { Box, Flex, keyframes, Tooltip } from '@chakra-ui/react';
 import React from 'react';
 
-export default function StatusIndicator() {
+
+interface StatusProps {
+  isActive: boolean;
+}
+
+export default function StatusIndicator(props: StatusProps) {
   const activeColor = 'green.500';
   const inactiveColor = 'gray.400';
   const ringScaleMin = 0.33;
   const ringScaleMax = 0.66;
-  const aux = 'true';
-  const aux2 = 'false';
 
   const pulseRing = keyframes`
 	0% {
@@ -41,14 +44,14 @@ export default function StatusIndicator() {
 	`;
 
   return (
-    <Flex>
-        {aux === 'true' && (
+    <Flex mb={'4'}>
+        {props.isActive && (
             <Tooltip label={`Status: Active`} textTransform="capitalize">
                 <Box
                 as="div"
                 h="24px"
                 w="24px"
-                mb="1.99em"
+                
                 position="relative"
                 bgColor={activeColor}
                 borderRadius="50%"
@@ -71,7 +74,7 @@ export default function StatusIndicator() {
                 />
             </Tooltip>
         )}
-        {aux2 === 'false' && (
+        {props.isActive === false && (
             <Tooltip label={`Status: Inactive`} textTransform="capitalize">
                 <Box
                 as="div"
