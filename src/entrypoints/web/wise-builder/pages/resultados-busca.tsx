@@ -13,6 +13,8 @@ import {
     HStack,
     GridItem,
     useColorModeValue,
+    ButtonGroup,
+    Button,
 } from "@chakra-ui/react";
 import { FiFilter } from "react-icons/fi";
 import { AddIcon, CheckCircleIcon, HamburgerIcon } from "@chakra-ui/icons";
@@ -84,7 +86,7 @@ const mockItems: Componente[] = [
 
 function ResultadosBusca(busca: string) {
   const [items, setItems] = useState(mockItems);
-  const [checkedItems, setCheckedItems] = useState([false, false])
+  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false])
 
   const allChecked = checkedItems.every(Boolean)
   const isIndeterminate = checkedItems.some(Boolean) && !allChecked
@@ -119,13 +121,13 @@ function ResultadosBusca(busca: string) {
             <Stack pl={6} mt={1} spacing={1}>
               <Checkbox
                 isChecked={checkedItems[0]}
-                onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1]])}
+                onChange={(e) => setCheckedItems([...checkedItems.slice(0, 0), e.target.checked, ...checkedItems.slice(0 + 1)])}
               >
                 Placa de vídeo
               </Checkbox>
               <Checkbox
                 isChecked={checkedItems[1]}
-                onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked])}
+                onChange={(e) => setCheckedItems([...checkedItems.slice(0, 1), e.target.checked, ...checkedItems.slice(1 + 1)])}
               >
                 Placa mãe
               </Checkbox>
@@ -135,24 +137,38 @@ function ResultadosBusca(busca: string) {
             </Text>
             <Stack pl={6} mt={1} spacing={1}>
               <Checkbox
-                isChecked={checkedItems[0]}
-                onChange={(e) => setCheckedItems([e.target.checked, checkedItems[1]])}
+                isChecked={checkedItems[2]}
+                onChange={(e) => setCheckedItems([...checkedItems.slice(0, 2), e.target.checked, ...checkedItems.slice(2 + 1)])}
               >
                 Asus
               </Checkbox>
               <Checkbox
-                isChecked={checkedItems[1]}
-                onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked])}
+                isChecked={checkedItems[3]}
+                onChange={(e) => setCheckedItems([...checkedItems.slice(0, 3), e.target.checked, ...checkedItems.slice(3 + 1)])}
               >
                 MSI
               </Checkbox>
               <Checkbox
-                isChecked={checkedItems[1]}
-                onChange={(e) => setCheckedItems([checkedItems[0], e.target.checked])}
+                isChecked={checkedItems[4]}
+                onChange={(e) => setCheckedItems([...checkedItems.slice(0, 4), e.target.checked, ...checkedItems.slice(4 + 1)])}
               >
                 ZOTAC
               </Checkbox>
             </Stack>
+            <ButtonGroup>
+              <Button colorScheme='teal' variant='ghost'>
+                Limpar Filtro
+              </Button>
+              <Button 
+                loadingText="Submitting"
+                bg={'blue.400'}
+                color={'white'}
+                _hover={{
+                  bg: 'blue.500',
+                }}>
+                Aplicar Filtro
+              </Button>
+            </ButtonGroup>
           </Stack>
         </Flex>
       </GridItem>

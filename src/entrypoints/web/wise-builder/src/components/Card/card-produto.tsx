@@ -8,11 +8,11 @@ import {
   CardFooter,
   ButtonGroup,
   Button,
-  Stack,
-  TableContainer,
+  HStack,
+  Link,
   useToast,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import Acoes from "../Botão/acoes";
 import { cardProdutoProps } from "../../types/propsCardProduto";
 import { useRouter } from "next/router";
@@ -68,18 +68,14 @@ export default function CardProduto(props: cardProdutoProps) {
               </CardBody>
               <Divider />
               <CardFooter>
-                <ButtonGroup spacing="2">
+                <HStack spacing={'5'}>
                   <Button variant="solid" colorScheme="blue">
                     Ver Produto
                   </Button>
-                  <Button
-                    variant="ghost"
-                    colorScheme="blue"
-                    onClick={() => handleClick(item.link)}
-                  >
-                    Visitar Oferta
-                  </Button>
-                </ButtonGroup>
+                  <Link color='teal.500' href={item.link} isExternal>
+                    Visitar Oferta <ExternalLinkIcon mx='2px' />
+                  </Link>
+                </HStack>      
               </CardFooter>
             </Card>
           ))}
