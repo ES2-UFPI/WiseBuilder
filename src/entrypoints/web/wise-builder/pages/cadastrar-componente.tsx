@@ -62,7 +62,7 @@ function CadastroComp({ componente, editar }: Props) {
 
   const router = useRouter();
     function handleClick() {
-        router.push("/listar-componente");
+        router.back();
     }
 
   const send = () => {

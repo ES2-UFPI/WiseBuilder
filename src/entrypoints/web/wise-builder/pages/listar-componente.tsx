@@ -73,7 +73,7 @@ function ItemList() {
         Listar Componentes
       </Heading>
       <Divider orientation='horizontal' />
-      <Tabela titulo="Componentes" link="/cadastrar-componente" item={mockItems}/>
+      <Tabela titulo="Componentes" link="/cadastrar-componente" item={mockItems} edit={true}/>
     </Stack>
   </Flex>
 )};

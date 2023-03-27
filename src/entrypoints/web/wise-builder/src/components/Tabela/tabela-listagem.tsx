@@ -21,7 +21,9 @@ export default function tabela (props: TabelaProps) {
     const router = useRouter();
     const [items, setItems] = useState(props.item);
     function handleClick() {
-        router.push("/cadastrar-componente");
+        if (props.link != undefined){
+            router.push(props.link);
+        }
     }
     return(
         <TableContainer>
@@ -29,7 +31,9 @@ export default function tabela (props: TabelaProps) {
                 <CardBody>
                     <Stack direction="row" align="center" justify="space-between">
                         <Heading size={'md'}>{props.titulo}</Heading>
-                        <Button onClick={handleClick} size={'sm'} colorScheme='blue' aria-label='Adicionar Componente' leftIcon={<AddIcon />}>Adicionar</Button>
+                        {props.link &&(
+                            <Button onClick={handleClick} size={'sm'} colorScheme='blue' aria-label='Adicionar Componente' leftIcon={<AddIcon />}>Adicionar</Button>
+                        )}
                     </Stack>  
                 </CardBody>
             </Card>
@@ -50,7 +54,7 @@ export default function tabela (props: TabelaProps) {
                             <Td>{item.tipo}</Td>
                             <Td>{item.fabricante}</Td>
                             <Td>{item.modelo}</Td>
-                            <Td><Acoes id={item.id}/></Td>
+                            <Td><Acoes id={item.id} edit={props.edit} link={item.link}/></Td>
                         </Tr>
                     ))}
                 </Tbody>
