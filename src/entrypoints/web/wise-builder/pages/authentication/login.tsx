@@ -42,7 +42,7 @@ import {
                   align={'start'}
                   justify={'space-between'}>
                   <Checkbox>Lembrar-me</Checkbox>
-                  <Link color={'blue.400'}>Esqueceu a senha?</Link>
+                  <Link color={'blue.400'} href='/authentication/esqueceu-senha'>Esqueceu a senha?</Link>
                 </Stack>
                 <Button
                   bg={'blue.400'}

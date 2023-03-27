@@ -83,7 +83,7 @@ import {
               </Stack>
               <Stack pt={6}>
                 <Text align={'center'}>
-                  Já possui uma conta? <Link color={'blue.400'}>Login</Link>
+                  Já possui uma conta? <Link color={'blue.400'} href='/authentication/login'>Login</Link>
                 </Text>
               </Stack>
             </Stack>
