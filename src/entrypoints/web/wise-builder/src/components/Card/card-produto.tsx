@@ -57,7 +57,7 @@ export default function CardProduto(props: cardProdutoProps) {
           }}
           >
           {group.map((item) => (
-            <Card minW={300} key={item.id} mb={3}>
+            <Card minW={300} key={item.id} mb={3} onClick={() => props.selectedFunction(item)} bgColor={props.selectedItems.find((i) => i.id === item.id) !== undefined ? 'blue.400' : 'white'}>
               <CardBody>
                 <Heading size="md">
                   {item.tipo} {item.fabricante} {item.modelo}

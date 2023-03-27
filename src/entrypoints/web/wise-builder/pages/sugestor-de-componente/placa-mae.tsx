@@ -87,9 +87,20 @@ const mockItems: Componente[] = [
 function SugestorComponentePlacaMae(busca: string) {
   const router = useRouter();
   const [items, setItems] = useState(mockItems);
+  const [selectedItems, setSelectedItems] = useState<any>([]);
   
   function handleClick() {
     router.push('processador');
+  }
+
+  function handleSelected(obj: any) {
+    var index = selectedItems.findIndex((i: any) => i.id === obj.id)
+    if(index === -1)
+      setSelectedItems([...selectedItems, obj])
+    else {
+      selectedItems.splice(index, 1)
+      setSelectedItems([...selectedItems])
+    }
   }
 
   return (  
@@ -157,11 +168,14 @@ function SugestorComponentePlacaMae(busca: string) {
                 <Button variant="solid" colorScheme="blue" rightIcon={<ArrowForwardIcon />} onClick={() => handleClick()}>
                         Próximo
                 </Button>
+                <Button variant="solid" colorScheme="blue" rightIcon={<ArrowForwardIcon />} onClick={() => console.log(selectedItems)}>
+                        Log
+                </Button>
             </HStack>
         </Center>
       </GridItem>
       <GridItem rowSpan={20} colSpan={3} margin={3}>
-        <CardProduto item={mockItems}/>
+        <CardProduto item={mockItems} selectedFunction={handleSelected} selectedItems={selectedItems}/>
       </GridItem>
     </Grid>
 )};
