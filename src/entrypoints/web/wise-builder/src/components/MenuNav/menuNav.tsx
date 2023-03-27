@@ -70,7 +70,7 @@ import {
               fontSize={'sm'}
               fontWeight={400}
               variant={'link'}
-              href={'#'}>
+              href={'/authentication/cadastre-se'}>
               Cadastre-se
             </Button>
             <Button
@@ -80,7 +80,7 @@ import {
               fontWeight={600}
               color={'white'}
               bg={'pink.400'}
-              href={'authentication/login'}
+              href={'/authentication/login'}
               _hover={{
                 bg: 'pink.300',
               }}>
