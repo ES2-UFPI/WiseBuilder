@@ -32,4 +32,8 @@ export interface Componente {
   model?: string;
   generation?: number;
   frequency?: number;
+  storage?: number;
+  io?: number;
+  is_HDD?: boolean;
+  rpm?: number;
 }

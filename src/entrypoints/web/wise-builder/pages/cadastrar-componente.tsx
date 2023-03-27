@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Input, useToast } from "@chakra-ui/react";
 import { Heading } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
@@ -80,6 +80,11 @@ function CadastroComp({ componente, editar }: Props) {
     componente?.frequency || 0,
   );
 
+  const [storage, setStorage] = useState<number>(componente?.storage || 0);
+  const [io, setIO] = useState<number>(componente?.io || 0);
+  const [isHDD, setIsHDD] = useState<boolean>(componente?.is_HDD || false);
+  const [rpm, setRpm] = useState<number>(componente?.rpm || 0);
+
   const router = useRouter();
   function handleClick() {
     router.back();
@@ -103,7 +108,7 @@ function CadastroComp({ componente, editar }: Props) {
           integrated_gpu: gpuIntegrada,
           overclock: overclock,
         };
-        url = "http://127.0.0.1:5000/api/v1/psus/";
+        url = "http://127.0.0.1:5000/api/v1/cpus/";
         break;
       case "GPU":
         data = {
@@ -145,6 +150,15 @@ function CadastroComp({ componente, editar }: Props) {
         };
         url = "http://127.0.0.1:5000/api/v1/rams/";
         break;
+      case "Armazenamento":
+        data = {
+          manufacturer: fabricante,
+          model: modelo,
+          io: io,
+          is_HDD: isHDD,
+          rpm: rpm,
+        };
+        url = "http://127.0.0.1:5000/api/v1/persistences";
       case "Fonte":
         data = {
           manufacturer: fabricante,
@@ -225,6 +239,7 @@ function CadastroComp({ componente, editar }: Props) {
             <option value="GPU">GPU</option>
             <option value="Placa Mãe">Placa Mãe</option>
             <option value="Memória RAM">Memória RAM</option>
+            <option value="Armazenamento">Armazenamento</option>
             <option value="Fonte">Fonte</option>
           </Select>
         </FormControl>
@@ -778,6 +793,85 @@ function CadastroComp({ componente, editar }: Props) {
               <NumberInput onChange={(value) => setFrequency(+value)}>
                 <NumberInputField
                   placeholder="Frequência"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+          </Stack>
+        )}
+
+        {tipo === "Armazenamento" && (
+          <Stack
+            spacing={4}
+            w={"full"}
+            maxW={"full"}
+            rounded={"xl"}
+            my={12}
+          >
+            <FormControl id="fabricante" isRequired>
+              <FormLabel>Fabricante</FormLabel>
+              <Input
+                onChange={(event) => setFabricante(event.target.value)}
+                placeholder="Fabricante"
+                _placeholder={{ color: "gray.500" }}
+                type="text"
+              />
+            </FormControl>
+
+            <FormControl id="modelo" isRequired>
+              <FormLabel>Modelo</FormLabel>
+              <Input
+                onChange={(event) => setModelo(event.target.value)}
+                placeholder="Modelo"
+                _placeholder={{ color: "gray.500" }}
+                type="text"
+              />
+            </FormControl>
+
+            <FormControl id="storage" isRequired>
+              <FormLabel>Capacidade</FormLabel>
+              <NumberInput onChange={(value) => setStorage(+value)}>
+                <NumberInputField
+                  placeholder="Geração"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+            <FormControl id="io" isRequired>
+              <FormLabel>Entrada</FormLabel>
+              <NumberInput onChange={(value) => setIO(+value)}>
+                <NumberInputField
+                  placeholder="Entrada"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+            <FormControl id="is_HDD" isRequired>
+              <FormLabel>É HDD</FormLabel>
+              <Switch
+                isChecked={isHDD}
+                onChange={() => isHDD ? setIsHDD(false) : setIsHDD(true)}
+              />
+            </FormControl>
+            <FormControl id="rpm" isRequired>
+              <FormLabel>Rotações por minuto</FormLabel>
+              <NumberInput onChange={(value) => setRpm(+value)}>
+                <NumberInputField
+                  placeholder="RPM"
                   _placeholder={{ color: "gray.500" }}
                 />
                 <NumberInputStepper>
