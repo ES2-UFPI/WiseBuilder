@@ -61,7 +61,7 @@ export default function CardProduto(props: cardProdutoProps) {
                 minW={300}
                 key={item.id}
                 mb={3}
-                onClick={() => props.selectedFunction(item)}
+                onClick={() => props.selectedFunction && props.selectedFunction(item)}
                 bgColor={
                   props.selectedItems.find((i) => i.id === item.id) !== undefined
                     ? "blue.700"
