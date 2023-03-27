@@ -158,7 +158,7 @@ function CadastroComp({ componente, editar }: Props) {
           is_HDD: isHDD,
           rpm: rpm,
         };
-        url = "http://127.0.0.1:5000/api/v1/persistences";
+        url = "http://127.0.0.1:5000/api/v1/persistences/";
       case "Fonte":
         data = {
           manufacturer: fabricante,
