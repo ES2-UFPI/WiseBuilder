@@ -13,5 +13,3 @@ function App(props: { Component: any; pageProps: any; }) {
 }
 
 export default App
-
-
