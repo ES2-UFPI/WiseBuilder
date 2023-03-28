@@ -4,9 +4,9 @@ export interface Componente {
   manufacturer: string;
   price?: number;
   link?: string;
-  socket?: number;
+  socket?: string;
   n_cores?: number;
-  chipset?: number;
+  chipset?: string;
   board_size?: number;
   n_ram_slots?: number;
   n_usb2?: number;
