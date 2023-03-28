@@ -35,9 +35,9 @@ class DataFrameUnitOfWork(AbstractDBUnitOfWork):
     def __init__(self, path):
         self.repository = DataFrameRepository(path)
         self.commited = False
-    
+
     def commit(self):
         self.commited = True
-    
+
     def rollback(self):
         pass
