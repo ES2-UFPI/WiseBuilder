@@ -62,7 +62,7 @@ export default function tabela(props: TabelaProps) {
           {props.item.map((item) => (
             <Tr key={item._id}>
               <Td>{item._id}</Td>
-              <Td>{item.manufacturer}</Td>
+              <Td>{item.type}</Td>
               <Td>{item.manufacturer}</Td>
               <Td>{item.model}</Td>
               <Td>

@@ -1,5 +1,5 @@
 export interface Componente {
-  id: string;
+  _id: string;
   type: string;
   manufacturer: string;
   price?: number;
