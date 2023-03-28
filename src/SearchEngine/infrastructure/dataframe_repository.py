@@ -1,8 +1,11 @@
 import pandas as pd
+import sys, os
 
 from framework.domain.value_object import UUID
 
 from ..domain.repositories import IDataFrameRepository
+
+sys.path.insert(0, os.getcwd())
 
 
 class DataFrameRepository(IDataFrameRepository):
@@ -14,6 +17,12 @@ class DataFrameRepository(IDataFrameRepository):
         self.hdds = self._import_df(f"{path}/hdd.json")
         self.ssds = self._import_df(f"{path}/ssd.json")
         self.motherboards = self._import_df(f"{path}/motherboard.json")
+
+        from polyfuzz import PolyFuzz
+        from polyfuzz.models import TFIDF
+
+        tfidf_vec = TFIDF(n_gram_range=(3, 3), clean_string=True)
+        self.tfidf = PolyFuzz(tfidf_vec)
 
         idx = ["uid", "model"]
         self.all = pd.concat(
@@ -31,6 +40,7 @@ class DataFrameRepository(IDataFrameRepository):
     def _import_df(self, path):
         from thefuzz.utils import full_process
 
+        print(path)
         df = pd.read_json(path)
         df.set_index("uid")
         df.model = df.model.apply(lambda x: full_process(x))

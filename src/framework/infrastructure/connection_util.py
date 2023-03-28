@@ -24,7 +24,10 @@ def get_message_bus(
     uow_cls: Type[AbstractDBUnitOfWork],
     engine=_get_engine(),
 ) -> MessageBus:
-    uow = uow_cls(create_session(engine))
+    if isinstance(engine, Engine):
+        uow = uow_cls(create_session(engine))
+    else:
+        uow = uow_cls(engine)
 
     event_handler_callables = {
         c: list(map(lambda han: han(uow), h)) for c, h in event_mapper.items()

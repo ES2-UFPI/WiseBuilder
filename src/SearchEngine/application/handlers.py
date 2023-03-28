@@ -7,6 +7,7 @@ from framework.application.handler import MessageHandler
 from SearchEngine.application.unit_of_work import DataFrameUnitOfWork
 from SearchEngine.infrastructure.dataframe_repository import DataFrameRepository
 from framework.domain.components import EComponentType
+from framework.domain.value_object import UUID
 
 
 class GetComponentByUIDHandler(MessageHandler):
@@ -73,18 +74,27 @@ class MatchNameHandler(MessageHandler):
     def __call__(self, cmd: MatchName):
         with self.uow:
             if isinstance(self.uow.repository, DataFrameRepository):
-                from thefuzz import process
-
-                matched = process.extractOne(cmd.name, self.uow.repository.all.model)
-                return self.uow.repository.all[
-                    self.uow.repository.all.model == matched
-                ].uid
+                self.uow.repository.tfidf.match(
+                    [cmd.name], self.uow.repository.all.model.to_list()
+                )
+                print(cmd.name)
+                matched = self.uow.repository.tfidf.get_matches().To.values[0]
+                print(matched)
+                return UUID(
+                    str(
+                        self.uow.repository.all[
+                            self.uow.repository.all.model == matched
+                        ].uid.values[0]
+                    )
+                )
 
 
 SE_COMMAND_HANDLER_MAPPER: Dict[Type[Command], Type[MessageHandler]] = {
     GetComponentByUID: GetComponentByUIDHandler,
     ListComponentsByType: ListComponentsByTypeHandler,
     AddComponent: AddComponentHandler,
+    SearchByName: SearchByNameHandler,
+    MatchName: MatchNameHandler,
 }
 
 

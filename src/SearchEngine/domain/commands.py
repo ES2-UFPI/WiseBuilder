@@ -117,7 +117,7 @@ class AddComponent(Command):
 @dataclass
 class SearchByName(Command):
     name: str
-    ctype: EComponentType
+    ctype: EComponentType | None = None
 
     @classmethod
     def Motherboard(cls, query) -> "SearchByName":
@@ -147,7 +147,7 @@ class SearchByName(Command):
 @dataclass
 class MatchName(Command):
     name: str
-    ctype: EComponentType
+    ctype: EComponentType | None = None
 
     @classmethod
     def Motherboard(cls, query) -> "MatchName":

@@ -17,7 +17,7 @@ from Scraper.domain.entity import CategoryURL
 from Scraper.domain.commands import AddCategoryURL
 from Scraper.domain.repositories import EntityUIDCollisionException
 
-_csv_file_dir = r"C:\Users\wesle\OneDrive\Documentos\UFPI\ESII\WiseBuilder\res\data\raw\category_urls.csv"
+_csv_file_dir = r"..\res\data\raw\category_urls.csv"
 
 
 def store_components_from_csv(csv_dir: str):
