@@ -36,4 +36,5 @@ export interface Componente {
   io?: number;
   is_HDD?: boolean;
   rpm?: number;
+  available?: boolean;
 }

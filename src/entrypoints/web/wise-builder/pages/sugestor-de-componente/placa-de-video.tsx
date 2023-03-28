@@ -41,53 +41,52 @@ function ItemList() {
 const mockItems: Componente[] = [
   {
     id: '1',
-    tipo: 'Placa de Vídeo',
-    fabricante: 'Zotac',
-    modelo: '3070',
-    valor: 100,
+    type: 'Placa de Vídeo',
+    manufacturer: 'Zotac',
+    model: '3070',
+    price: 100,
     link: 'https://www.kabum.com.br/produto/377636/placa-de-video-rtx-3070-msi-ventus-3x-plus-nvidia-geforce-8gb-gddr6-lhr-dlss-ray-tracing-geforce-rtx-3070-ventus-3x-plus-8g-oc-lhr'
   },
   {
     id: '2',
-    tipo: 'Placa de Vídeo',
-    fabricante: 'Asus',
-    modelo: '1060',
-    valor: 200
+    type: 'Placa de Vídeo',
+    manufacturer: 'Asus',
+    model: '1060',
+    price: 200
   },
   {
     id: '3',
-    tipo: 'Fonte',
-    fabricante: 'Asus',
-    modelo: 'Pylon',
-    valor: 500
+    type: 'Fonte',
+    manufacturer: 'Asus',
+    model: 'Pylon',
+    price: 500
   },
   {
     id: '4',
-    tipo: 'Fonte',
-    fabricante: 'Asus',
-    modelo: 'Pylon',
-    valor: 500
+    type: 'Fonte',
+    manufacturer: 'Asus',
+    model: 'Pylon',
+    price: 500
   },
   {
     id: '6',
-    tipo: 'Fonte',
-    fabricante: 'Asus',
-    modelo: 'Pylon',
-    valor: 500
+    type: 'Fonte',
+    manufacturer: 'Asus',
+    model: 'Pylon',
+    price: 500
   },
   {
     id: '7',
-    tipo: 'Fonte',
-    fabricante: 'Asus',
-    modelo: 'Pylon',
-    valor: 500
+    type: 'Fonte',
+    manufacturer: 'Asus',
+    model: 'Pylon',
+    price: 500
   }
 ];
 
 function SugestorComponenteMemoriaRam(busca: string) {
   const router = useRouter();
   const [items, setItems] = useState(mockItems);
-  const [selectedItems, setSelectedItems] = useState<any>([]);
   
   function handleClick(prox = false) {
     if (prox){
@@ -95,16 +94,6 @@ function SugestorComponenteMemoriaRam(busca: string) {
     }
     else{
         router.back()
-    }
-  }
-
-  function handleSelected(obj: any) {
-    var index = selectedItems.findIndex((i: any) => i.id === obj.id)
-    if(index === -1)
-      setSelectedItems([...selectedItems, obj])
-    else {
-      selectedItems.splice(index, 1)
-      setSelectedItems([...selectedItems])
     }
   }
 
@@ -118,11 +107,7 @@ function SugestorComponenteMemoriaRam(busca: string) {
     >
       <GridItem colSpan={4}>
         <Center>
-          <Stack alignItems={'center'} mb={'3'} mt={'3'}>
-            <Heading>Sugestor de Componente</Heading>
-            <Text fontSize={'lg'} color={'gray.600'}>Para selecionar os componentes que você deseja, basta clicar nos cards.</Text>
-            <Text fontSize={'lg'} color={'gray.600'}>Os cards selecionados aparecem em azul.</Text>
-          </Stack>
+          <Heading>Sugestor de Componente</Heading>
         </Center>
         <Center>
             <HStack
@@ -184,7 +169,7 @@ function SugestorComponenteMemoriaRam(busca: string) {
         </Center>
       </GridItem>
       <GridItem rowSpan={20} colSpan={3} margin={3}>
-        <CardProduto item={mockItems} selectedFunction={handleSelected} selectedItems={selectedItems}/>
+        <CardProduto item={mockItems}/>
       </GridItem>
     </Grid>
 )};
