@@ -1,5 +1,6 @@
 from typing import List
 from framework.domain.components import *
+from framework.domain.components_enums import *
 from framework.infrastructure.db_management.db_mapping import map_from_to
 from framework.infrastructure.db_management.db_structure import (
     ComponentInstance,

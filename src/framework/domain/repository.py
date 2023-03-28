@@ -49,6 +49,16 @@ class AbstractCategoryURLRepository(AbstractRepository):
         raise NotImplemented
 
 
+class AbstractVolatileDataRepository(AbstractRepository):
+    def get_lower_costs(self, **kwargs):
+        _res = self._get_lower_costs(**kwargs)
+        return _res
+
+    @abstractmethod
+    def _get_lower_costs(self, **kwargs):
+        raise NotImplemented
+
+
 class AbstractUserRepository(AbstractRepository):
     def add(self, item: UniqueObject, password: str):
         self._add(item, password)

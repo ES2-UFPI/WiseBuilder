@@ -1,6 +1,27 @@
 from dataclasses import dataclass
+from functools import reduce, partial
 
 from flask_restx import Namespace, Resource, reqparse, fields
+
+from SearchEngine.domain.commands import SearchByName
+from Scraper.application.handlers import (
+    CURL_COMMAND_HANDLER_MAPPER,
+    CURL_EVENT_HANDLER_MAPPER,
+    VD_COMMAND_HANDLER_MAPPER,
+    VD_EVENT_HANDLER_MAPPER,
+)
+from Scraper.application.unit_of_work import (
+    SQLAlchemyCategoryURLUnitOfWork,
+    SQLAlchemyVolatileDataUnitOfWork,
+)
+from SearchEngine.application.handlers import SE_COMMAND_HANDLER_MAPPER
+from SearchEngine.application.unit_of_work import (
+    DataFrameUnitOfWork,
+    SQLAlchemyUnitOfWork,
+)
+from framework.infrastructure.connection_util import get_message_bus
+from Scraper.domain.commands import GetVolatileDataByComponentUID
+from SearchEngine.domain.commands import GetComponentByUID
 
 search_namespace = Namespace("Search")
 
@@ -49,6 +70,20 @@ mock_components: list[dict] = [
     },
 ]
 
+_volatile_data_message_bus = get_message_bus(
+    VD_EVENT_HANDLER_MAPPER,
+    VD_COMMAND_HANDLER_MAPPER,
+    SQLAlchemyVolatileDataUnitOfWork,
+)
+
+_sse_message_bus = get_message_bus(
+    {}, SE_COMMAND_HANDLER_MAPPER, DataFrameUnitOfWork, "../res/data/run"
+)
+
+_search_message_bus = get_message_bus(
+    {}, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
+)
+
 
 @dataclass
 class AbstractSearchEngine:
@@ -67,8 +102,23 @@ class SearchList(Resource):
     def get(self):
         args = parser.parse_args()
         name = args.get("name")
-        sla = AbstractSearchEngine.search(
-            name,
-        )
-        print(sla)
-        return sla
+        matches = _sse_message_bus.handle(SearchByName(name))
+        components = [
+            _search_message_bus.handle(GetComponentByUID(match_)) for match_ in matches
+        ]
+        vol_data = [
+            _volatile_data_message_bus.handle(
+                GetVolatileDataByComponentUID(component.uid)
+            )
+            for component in components
+        ]
+        vol_data = [reduce(lambda x, y: x < y, l) for l in vol_data]
+        return [
+            {
+                "_id": component.uid,
+                "model": component.model,
+                "price": vol.price,
+                "available": vol.aval,
+            }
+            for component, vol in zip(components, vol_data)
+        ]

@@ -4,6 +4,7 @@ from sqlalchemy.engine import Row
 from typing import List
 
 from framework.domain.components import *
+from framework.domain.components_enums import *
 from framework.domain.value_object import UUID
 from SearchEngine.domain.repositories import (
     ISQLAlchemyRepository,
@@ -56,6 +57,7 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
         return component
 
     def _get(self, **kwargs) -> List[Component]:
+        print(kwargs)
         qsize: int = kwargs.get("qsize", None)
         ctypes: List = kwargs.get("ctypes", [])
         ret = []

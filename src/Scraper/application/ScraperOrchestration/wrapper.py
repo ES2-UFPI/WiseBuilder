@@ -25,7 +25,14 @@ from framework.domain.value_object import UUIDv5
 from framework.infrastructure.connection_util import _get_engine
 from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.domain.commands import *
+from framework.domain.components import Component
 from framework.application.handler import MessageBus
+from SearchEngine.application.handlers import SE_COMMAND_HANDLER_MAPPER
+from SearchEngine.application.unit_of_work import (
+    DataFrameUnitOfWork,
+    SQLAlchemyUnitOfWork,
+)
+from SearchEngine.domain.commands import GetComponentByUID, MatchName
 
 
 class Wrapper:
@@ -54,6 +61,14 @@ class Wrapper:
             SQLAlchemyCategoryURLUnitOfWork,
         )
 
+        self._sse_message_bus = get_message_bus(
+            {}, SE_COMMAND_HANDLER_MAPPER, DataFrameUnitOfWork, "../res/data/run"
+        )
+
+        self._search_message_bus = get_message_bus(
+            {}, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
+        )
+
         self.domain_urls = self._category_url_message_bus.handle(
             GetCategoryURLByDomain(domain)
         )
@@ -73,15 +88,14 @@ class Wrapper:
                 for url, name, cost, availability in components_volatile_data:
                     # TODO: fazer chamada da engine de busca para classificar o componente
                     # component = SearchEngine.classifie(name)
-                    component_manager = SQLAlchemyRepository(
-                        self.session
-                    )  # placeholder
-                    component = component_manager.get(filters_gt={"consumption": -1})[
-                        0
-                    ]  # placeholder
+                    component_id = self._sse_message_bus.handle(MatchName(name))
+                    component = self._search_message_bus.handle(
+                        GetComponentByUID(component_id)
+                    )
                     volatile_data = VolatileData(
                         _id=UUIDv5(url.url),
                         component_id=component.uid,
+                        component_type=component.type,
                         url=url,
                         cost=cost,
                         availability=availability,
