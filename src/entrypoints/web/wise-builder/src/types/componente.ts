@@ -37,4 +37,6 @@ export interface Componente {
   is_HDD?: boolean;
   rpm?: number;
   available?: boolean;
+  sata?:number;
+  memory_type?:number;
 }

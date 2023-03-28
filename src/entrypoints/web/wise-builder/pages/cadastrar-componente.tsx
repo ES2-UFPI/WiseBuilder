@@ -84,6 +84,8 @@ function CadastroComp({ componente, editar }: Props) {
   const [io, setIO] = useState<number>(componente?.io || 0);
   const [isHDD, setIsHDD] = useState<boolean>(componente?.is_HDD || false);
   const [rpm, setRpm] = useState<number>(componente?.rpm || 0);
+  const [sata. setSata] = useState<number>(componente?.sata || 0)
+  const [memoryType, setMemoryType] = useState<number>(componente?.memory_type)
 
   const router = useRouter();
   function handleClick() {
@@ -138,6 +140,8 @@ function CadastroComp({ componente, editar }: Props) {
           n_pcie_x4: pci4,
           n_pcie_x8: pci8,
           n_pcie_x16: pci16,
+          sata: sata,
+          memory_type: memoryType,
         };
         url = "http://127.0.0.1:5000/api/v1/motherboards/";
         break;
@@ -672,6 +676,35 @@ function CadastroComp({ componente, editar }: Props) {
                 </NumberInputStepper>
               </NumberInput>
             </FormControl>
+
+            <FormControl id="sata" isRequired>
+              <FormLabel>Quantidade PCIE x16</FormLabel>
+              <NumberInput onChange={(value) => setSata(+value)}>
+                <NumberInputField
+                  placeholder="Quantidade de SATA"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+        <FormControl id="memoryType" isRequired>
+              <FormLabel>Quantidade PCIE x16</FormLabel>
+              <NumberInput onChange={(value) => setMemoryType(+value)}>
+                <NumberInputField
+                  placeholder="Geração da memória ram"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+
           </Stack>
         )}
 
