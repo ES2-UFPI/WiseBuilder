@@ -1,15 +1,16 @@
 import {
+  Button,
+  ButtonGroup,
   Card,
   CardBody,
-  Link,
-  Heading,
-  Text,
-  Divider,
   CardFooter,
-  ButtonGroup,
-  Button,
-  Stack,
+  Divider,
+  Heading,
   HStack,
+  Image,
+  Link,
+  Stack,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
@@ -48,69 +49,100 @@ export default function CardProduto(props: cardProdutoProps) {
   return (
     <>
       {cardGroups.map((group, index) => (
-          <div
+        <div
           key={index}
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
             gridGap: "20px",
           }}
-          >
-          {group.map((item) => props.selectedFunction && props.selectedItems !== undefined ? (
-              <Card
-                minW={300}
-                key={item.id}
-                mb={3}
-                onClick={() => props.selectedFunction && props.selectedFunction(item)}
-                bgColor={
-                  props.selectedItems.find((i) => i.id === item.id) !== undefined
+        >
+          {group.map((item) =>
+            props.selectedFunction && props.selectedItems !== undefined
+              ? (
+                <Card
+                  minW={300}
+                  key={item.id}
+                  mb={3}
+                  onClick={() =>
+                    props.selectedFunction && props.selectedFunction(item)}
+                  bgColor={props.selectedItems.find((i) => i.id === item.id) !==
+                      undefined
                     ? "blue.700"
-                    : "white"
-                }
-              >
-                <CardBody>
-                  <Heading size="md" color={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "white" : "black"}>
-                    {item.tipo} {item.fabricante} {item.modelo}
-                  </Heading>
-                  <Text color="pink.300" fontSize="2xl">
-                    R$ {item.valor}
-                  </Text>
-                </CardBody>
-                <Divider color={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "white" : "black"}/>
-                <CardFooter>
-                  <HStack spacing={'5'}>
-                    <Button variant="solid" colorScheme={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "orange" : "blue"}>
-                      Ver Produto
-                    </Button>
-                    <Link color={props.selectedItems.find((i) => i.id === item.id) !== undefined ? "blue.100" : "teal.500"} href={item.link} isExternal>
-                      Visitar Oferta <ExternalLinkIcon mx='2px' />
-                    </Link>
-                  </HStack>      
-                </CardFooter>
-              </Card>
-            ) : (
-              <Card minW={300} key={item.id} mb={3}>
-                <CardBody>
-                  <Heading size="md">
-                    {item.tipo} {item.fabricante} {item.modelo}
-                  </Heading>
-                  <Text color="pink.300" fontSize="2xl">
-                    R$ {item.valor}
-                  </Text>
-                </CardBody>
-                <Divider />
-                <CardFooter>
-                  <HStack spacing={'5'}>
-                    <Button variant="solid" colorScheme="blue">
-                      Ver Produto
-                    </Button>
-                    <Link color='teal.500' href={item.link} isExternal>
-                      Visitar Oferta <ExternalLinkIcon mx='2px' />
-                    </Link>
-                  </HStack>      
-                </CardFooter>
-              </Card>
-          ))}
+                    : "white"}
+                >
+                  <CardBody>
+                    <Heading
+                      size="md"
+                      color={props.selectedItems.find((i) =>
+                          i.id === item.id
+                        ) !== undefined
+                        ? "white"
+                        : "black"}
+                    >
+                      {item.type} {item.manufacturer} {item.model}
+                    </Heading>
+                    <Text color="pink.300" fontSize="2xl">
+                      R$ {item.price}
+                    </Text>
+                  </CardBody>
+                  <Divider
+                    color={props.selectedItems.find((i) => i.id === item.id) !==
+                        undefined
+                      ? "white"
+                      : "black"}
+                  />
+                  <CardFooter>
+                    <HStack spacing={"5"}>
+                      <Button
+                        variant="solid"
+                        colorScheme={props.selectedItems.find((i) =>
+                            i.id === item.id
+                          ) !== undefined
+                          ? "orange"
+                          : "blue"}
+                      >
+                        Ver Produto
+                      </Button>
+                      <Link
+                        color={props.selectedItems.find((i) =>
+                            i.id === item.id
+                          ) !== undefined
+                          ? "blue.100"
+                          : "teal.500"}
+                        href={item.link}
+                        isExternal
+                      >
+                        Visitar Oferta <ExternalLinkIcon mx="2px" />
+                      </Link>
+                    </HStack>
+                  </CardFooter>
+                </Card>
+              )
+              : (
+                <Card minW={300} key={item.id} mb={3}>
+                  <CardBody>
+                    <Heading size="md">
+                      {item.type} {item.manufacturer} {item.model}
+                    </Heading>
+                    <Text color="pink.300" fontSize="2xl">
+                      R$ {item.price}
+                    </Text>
+                  </CardBody>
+                  <Divider />
+                  <CardFooter>
+                    <HStack spacing={"5"}>
+                      <Button variant="solid" colorScheme="blue">
+                        Ver Produto
+                      </Button>
+                      <Link color="teal.500" href={item.link} isExternal>
+                        Visitar Oferta <ExternalLinkIcon mx="2px" />
+                      </Link>
+                    </HStack>
+                  </CardFooter>
+                </Card>
+              ) //e15b3be74a55e164e4ca0805f6ec5dc1ffd343a2
+          )}
         </div>
       ))}
     </>
