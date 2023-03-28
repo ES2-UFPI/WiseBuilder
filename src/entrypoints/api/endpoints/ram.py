@@ -1,24 +1,25 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
-
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 ram_namespace = Namespace("RAMs", description="Operações relacionadas à RAMs.")
 ram_model = ram_namespace.model(
     "RAM",
     {
         "_id": fields.String(description="Identificador da memória RAM."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "generation": fields.Integer(
@@ -37,12 +38,14 @@ class RAMList(Resource):
     @ram_namespace.marshal_list_with(ram_model)
     def get(self):
         _rams = message_bus.handle(ListComponentsByType.RAM())
+        for _ram in _rams:
+            _ram.type = _ram.type._name_
         return _rams
 
     @ram_namespace.expect(ram_model)
     def post(self):
         body = request.json
-        ram = dict((key, body[key]) for key in list(ram_model.keys())[1:])
+        ram = dict((key, body[key]) for key in list(ram_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildRAM(**ram))
             return ram, 201
