@@ -168,7 +168,11 @@ class GPUInstance(ComponentInstance):
     vram_spd = Column(INTEGER(5))
 
 
-_AttrsRAM = ["msize", "generation", "frequency"]
+_AttrsRAM = [
+    # "msize",
+    "generation",
+    "frequency",
+]
 
 
 class RAMInstance(ComponentInstance):
@@ -176,7 +180,7 @@ class RAMInstance(ComponentInstance):
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
     )
-    msize = Column(INTEGER(3))
+    # msize = Column(INTEGER(3))
     generation = Column(ENUM(ERAMGeneration))
     frequency = Column(INTEGER(5))
 

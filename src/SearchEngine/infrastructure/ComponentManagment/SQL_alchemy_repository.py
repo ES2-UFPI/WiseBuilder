@@ -57,7 +57,6 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
         return component
 
     def _get(self, **kwargs) -> List[Component]:
-        print(kwargs)
         qsize: int = kwargs.get("qsize", None)
         ctypes: List = kwargs.get("ctypes", [])
         ret = []

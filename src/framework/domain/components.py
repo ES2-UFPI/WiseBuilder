@@ -120,13 +120,17 @@ class GPUComponent(Component):
     vram_spd: int
 
 
-_AttrsRAM = ["msize", "generation", "frequency"]
+_AttrsRAM = [
+    # "msize",
+    "generation",
+    "frequency",
+]
 
 
 @dataclass(kw_only=True, eq=False)
 class RAMComponent(Component):
     type: EComponentType = EComponentType.RAM
-    msize: int
+    # msize: int
     generation: ERAMGeneration
     frequency: int
 
