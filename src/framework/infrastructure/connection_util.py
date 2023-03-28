@@ -9,6 +9,7 @@ from framework.infrastructure.db_management.db_connection import (
 from framework.infrastructure.db_management.db_creation import create_db
 from framework.application.uow import AbstractDBUnitOfWork
 from framework.application.handler import MessageBus
+
 from config import db_username, db_password, db_address, db_port, db_name
 
 

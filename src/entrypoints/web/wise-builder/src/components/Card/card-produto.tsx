@@ -19,6 +19,8 @@ import { cardProdutoProps } from "../../types/propsCardProduto";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import getGridTemplateColumns from "../../common/utils/getGridTemplateColumns";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import { Componente } from "../../types/componente";
 
 export default function CardProduto(props: cardProdutoProps) {
   const router = useRouter();
@@ -41,8 +43,8 @@ export default function CardProduto(props: cardProdutoProps) {
 
   const cardGroups = [];
 
-  for (let i = 0; i < items.length; i += 4) {
-    const group = items.slice(i, i + 4);
+  for (let i = 0; i <= Object.keys(props.item).length; i += 4) {
+    const group = props.item.slice(i, i + 4);
     cardGroups.push(group);
   }
 
@@ -62,11 +64,13 @@ export default function CardProduto(props: cardProdutoProps) {
               ? (
                 <Card
                   minW={300}
-                  key={item.id}
+                  key={item._id}
                   mb={3}
                   onClick={() =>
                     props.selectedFunction && props.selectedFunction(item)}
-                  bgColor={props.selectedItems.find((i) => i.id === item.id) !==
+                  bgColor={props.selectedItems.find((i) =>
+                      i._id === item._id
+                    ) !==
                       undefined
                     ? "blue.700"
                     : "white"}
@@ -75,19 +79,21 @@ export default function CardProduto(props: cardProdutoProps) {
                     <Heading
                       size="md"
                       color={props.selectedItems.find((i) =>
-                          i.id === item.id
+                          i._id === item._id
                         ) !== undefined
                         ? "white"
                         : "black"}
                     >
-                      {item.type} {item.manufacturer} {item.model}
+                      {item.manufacturer} {item.model}
                     </Heading>
                     <Text color="pink.300" fontSize="2xl">
                       R$ {item.price}
                     </Text>
                   </CardBody>
                   <Divider
-                    color={props.selectedItems.find((i) => i.id === item.id) !==
+                    color={props.selectedItems.find((i) =>
+                        i._id === item._id
+                      ) !==
                         undefined
                       ? "white"
                       : "black"}
@@ -97,7 +103,7 @@ export default function CardProduto(props: cardProdutoProps) {
                       <Button
                         variant="solid"
                         colorScheme={props.selectedItems.find((i) =>
-                            i.id === item.id
+                            i._id === item._id
                           ) !== undefined
                           ? "orange"
                           : "blue"}
@@ -106,7 +112,7 @@ export default function CardProduto(props: cardProdutoProps) {
                       </Button>
                       <Link
                         color={props.selectedItems.find((i) =>
-                            i.id === item.id
+                            i._id === item._id
                           ) !== undefined
                           ? "blue.100"
                           : "teal.500"}
@@ -120,10 +126,10 @@ export default function CardProduto(props: cardProdutoProps) {
                 </Card>
               )
               : (
-                <Card minW={300} key={item.id} mb={3}>
+                <Card minW={300} key={item._id} mb={3}>
                   <CardBody>
                     <Heading size="md">
-                      {item.type} {item.manufacturer} {item.model}
+                      {item.manufacturer} {item.model}
                     </Heading>
                     <Text color="pink.300" fontSize="2xl">
                       R$ {item.price}

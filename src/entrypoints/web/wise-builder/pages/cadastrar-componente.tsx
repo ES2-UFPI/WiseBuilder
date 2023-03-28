@@ -207,6 +207,7 @@ function CadastroComp({ componente, editar }: Props) {
           isClosable: true,
         });
       });
+    router.push("/listar-componente");
   };
 
   return (

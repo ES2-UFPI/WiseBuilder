@@ -5,3 +5,4 @@ export interface cardProdutoProps {
     selectedFunction?: Function,
     selectedItems?: Componente[]
 };
+
