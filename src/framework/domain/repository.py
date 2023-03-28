@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Set, List
 
 from .entity import UniqueObject
 from .value_object import UUID
+from .users import User
 
 __all__ = ["AbstractRepository"]
 
@@ -35,4 +36,34 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     def _get(self, **kwargs) -> List[UniqueObject]:
+        raise NotImplementedError
+
+
+class AbstractCategoryURLRepository(AbstractRepository):
+    def get_all_domains(self):
+        _res = self._get_all_domains()
+        return _res
+
+    @abstractmethod
+    def _get_all_domains(self):
+        raise NotImplemented
+
+
+class AbstractVolatileDataRepository(AbstractRepository):
+    def get_lower_costs(self, **kwargs):
+        _res = self._get_lower_costs(**kwargs)
+        return _res
+
+    @abstractmethod
+    def _get_lower_costs(self, **kwargs):
+        raise NotImplemented
+
+
+class AbstractUserRepository(AbstractRepository):
+    def add(self, item: UniqueObject, password: str):
+        self._add(item, password)
+        self.seen.add(item)
+
+    @abstractmethod
+    def _add(self, item: UniqueObject, password: str):
         raise NotImplementedError

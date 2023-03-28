@@ -2,9 +2,9 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.engine import Row
 from typing import List
-from operator import lt, gt, eq
 
 from framework.domain.components import *
+from framework.domain.components_enums import *
 from framework.domain.value_object import UUID
 from SearchEngine.domain.repositories import (
     ISQLAlchemyRepository,
@@ -16,16 +16,18 @@ from framework.infrastructure.db_management.db_structure import (
     component_inst_idx,
 )
 from SearchEngine.infrastructure.ComponentManagment.component_mapper import *
+from framework.infrastructure.db_management.db_mapping import (
+    parse_filters,
+    filter_instance_from_db,
+)
 
 
 class SQLAlchemyRepository(ISQLAlchemyRepository):
-    _filters_ops: dict = {"filters_eq": eq, "filters_lt": lt, "filters_gt": gt}
-
     def __init__(self, session):
         self._session: Session = session
 
     def _add(self, component: Component):
-        component_instance = component_to_bd_object(component)
+        component_instance = component_to_db_object(component)
 
         try:
             self._session.add(component_instance)
@@ -47,39 +49,12 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
                 .one()
             )
 
-            component = bd_object_to_component(component_inst)
+            component = db_object_to_component(component_inst)
 
         except NoResultFound:
             raise EntityUIDNotFoundException(ref)
 
         return component
-
-    def _filter_components_from_db(
-        self, filters: List, type_inst: ComponentInstance, qsize: int | None
-    ) -> List[Component | ComponentInstance]:
-        component_instances: List[ComponentInstance] = (
-            self._session.query(type_inst).filter(*filters).limit(qsize).all()
-        )
-
-        components = [
-            bd_object_to_component(instance) for instance in component_instances
-        ]
-
-        return components
-
-    def _parse_filters(self, instance_type: ComponentInstance, **kwargs) -> List:
-        ret = []
-
-        for filter_type, filters in kwargs.items():
-            if filter_type in self._filters_ops.keys():
-                op = self._filters_ops[filter_type]
-
-                [
-                    ret.append(op(getattr(instance_type, prop), value))
-                    for prop, value in filters.items()
-                ]
-
-        return ret
 
     def _get(self, **kwargs) -> List[Component]:
         qsize: int = kwargs.get("qsize", None)
@@ -91,9 +66,14 @@ class SQLAlchemyRepository(ISQLAlchemyRepository):
 
         for ctype in ctypes:
             instance_cls = component_inst_idx[ctype]
-            filters = self._parse_filters(instance_cls, **kwargs)
+            filters = parse_filters(instance_cls, **kwargs)
 
-            components = self._filter_components_from_db(filters, instance_cls, qsize)
+            component_instances = filter_instance_from_db(
+                self._session, instance_cls, filters, qsize
+            )
+            components = [
+                db_object_to_component(instance) for instance in component_instances
+            ]
             ret.extend(components)
 
             if qsize != None:

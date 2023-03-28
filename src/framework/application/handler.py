@@ -18,16 +18,19 @@ class MessageBus:
 
     def handle(self, message: Message) -> Any:
         self.queue = [message]
+        ret: Any = None
         while self.queue:
             message = self.queue.pop(0)
             if isinstance(message, DomainEvent):
-                return self.handle_event(message)
+                self.handle_event(message)
             elif isinstance(message, Command):
-                return self.handle_command(message)
+                ret = self.handle_command(message)
             else:
                 raise Exception(
                     f"{message} de tipo {message.__class__} não é um evento ou comando."
                 )
+
+        return ret
 
     def handle_event(self, event: DomainEvent) -> Any:
         for handler in self.event_mapper[type(event)]:

@@ -1,18 +1,18 @@
-from uuid import UUID
 from typing import List
-from flask_restx import Namespace, Resource, fields
-from flask import request
+from uuid import UUID
 
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
+from flask import request
+from flask_restx import Namespace, Resource, fields
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 motherboard_namespace = Namespace(
     "MotherBoards", description="Operações relacionadas à Placa-Mãe."
@@ -21,11 +21,12 @@ motherboard_model = motherboard_namespace.model(
     "MotherBoard",
     {
         "_id": fields.String(description="Identificador da Placa-Mãe."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(
             required=True, description="Fabricante da Placa-Mãe."
         ),
         "model": fields.String(required=True, description="Modelo da Placa-Mãe."),
-        "chipset": fields.Integer(required=True),
+        "chipset": fields.String(required=True),
         "board_size": fields.Integer(required=True),
         "n_ram_slots": fields.Integer(required=True),
         "consumption": fields.Integer(
@@ -41,6 +42,8 @@ motherboard_model = motherboard_namespace.model(
         "n_pcie_x4": fields.Integer(required=True),
         "n_pcie_x8": fields.Integer(required=True),
         "n_pcie_x16": fields.Integer(required=True),
+        "sata": fields.Integer(required=True),
+        "memory_type": fields.Integer(required=True),
     },
 )
 
@@ -51,13 +54,15 @@ class MotherBoardList(Resource):
     @motherboard_namespace.marshal_list_with(motherboard_model)
     def get(self):
         _motherboards = message_bus.handle(ListComponentsByType.Motherboard())
+        for _motherboard in _motherboards:
+            _motherboard.type = _motherboard.type._name_
         return _motherboards
 
     @motherboard_namespace.expect(motherboard_model)
     def post(self):
         body = request.json
         motherboard = dict(
-            (key, body[key]) for key in list(motherboard_model.keys())[1:]
+            (key, body[key]) for key in list(motherboard_model.keys())[2:]
         )
         try:
             _ = message_bus.handle(AddComponent.buildMotherboard(**motherboard))

@@ -1,12 +1,17 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Any
 
 from framework.domain.components import Component, EComponentType, component_cls_idx
-
 from framework.domain.value_object import UUID, UUIDv4
 from framework.domain.events import Command
 
-__all__ = ["GetComponentByUID", "ListComponentsByType", "AddComponent"]
+__all__ = [
+    "GetComponentByUID",
+    "ListComponentsByType",
+    "AddComponent",
+    "SearchByName",
+    "MatchName",
+]
 
 
 @dataclass
@@ -107,3 +112,63 @@ class AddComponent(Command):
     @classmethod
     def buildPSU(cls, **kwargs):
         return cls._from_kwargs(EComponentType.PSU, kwargs)
+
+
+@dataclass
+class SearchByName(Command):
+    name: str
+    ctype: EComponentType | None = None
+
+    @classmethod
+    def Motherboard(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.MOTHERBOARD)
+
+    @classmethod
+    def CPU(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.CPU)
+
+    @classmethod
+    def GPU(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.GPU)
+
+    @classmethod
+    def RAM(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.RAM)
+
+    @classmethod
+    def Persistence(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.PERSISTENCE)
+
+    @classmethod
+    def PSU(cls, query) -> "SearchByName":
+        return SearchByName(query, EComponentType.PSU)
+
+
+@dataclass
+class MatchName(Command):
+    name: str
+    ctype: EComponentType | None = None
+
+    @classmethod
+    def Motherboard(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.MOTHERBOARD)
+
+    @classmethod
+    def CPU(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.CPU)
+
+    @classmethod
+    def GPU(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.GPU)
+
+    @classmethod
+    def RAM(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.RAM)
+
+    @classmethod
+    def Persistence(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.PERSISTENCE)
+
+    @classmethod
+    def PSU(cls, query) -> "MatchName":
+        return MatchName(query, EComponentType.PSU)

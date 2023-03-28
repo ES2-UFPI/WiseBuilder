@@ -14,6 +14,7 @@ import {
     useColorModeValue,
     useBreakpointValue,
     useDisclosure,
+    Avatar,
   } from '@chakra-ui/react';
   import {
     HamburgerIcon,
@@ -51,13 +52,9 @@ import {
             />
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-            <Text
-              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-              fontFamily={'heading'}
-              color={useColorModeValue('gray.800', 'white')}>
-              Logo
-            </Text>
-  
+            <Avatar
+              size={'sm'}
+              src= {'https://cdn-icons-png.flaticon.com/512/1400/1400409.png'} />
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
             </Flex>
@@ -73,7 +70,7 @@ import {
               fontSize={'sm'}
               fontWeight={400}
               variant={'link'}
-              href={'#'}>
+              href={'/authentication/cadastre-se'}>
               Cadastre-se
             </Button>
             <Button
@@ -83,7 +80,7 @@ import {
               fontWeight={600}
               color={'white'}
               bg={'pink.400'}
-              href={'#'}
+              href={'/authentication/login'}
               _hover={{
                 bg: 'pink.300',
               }}>
@@ -253,24 +250,29 @@ import {
   const NAV_ITEMS: Array<NavItem> = [
     {
       label: 'Buscador',
-      href: '#',
+      href: '/',
     },
     {
-        label: 'Administrador',
+        label: 'Componentes',
         children: [
           {
+            label: 'Listar Componentes',
+            subLabel: 'Veja a lista de todos componentes cadastrados no Wise Builder.',
+            href: '/listar-componente',
+          },
+          {
             label: 'Cadastrar Componentes',
-            subLabel: 'Adicione novos componentes ao site',
-            href: '#',
+            subLabel: 'Adicione novos componentes ao site.',
+            href: '/cadastrar-componente',
           },
         ],
       },
     {
-      label: 'Montador',
-      href: '#',
+      label: 'Sugestor de Componentes',
+      href: '/sugestor-de-componente/placa-mae',
     },
     {
         label: 'Favoritos',
-        href: '#',
+        href: '/favoritos',
     },
   ];

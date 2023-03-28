@@ -6,6 +6,7 @@ from functools import total_ordering
 from typing import Tuple
 
 from .rule import Rule, BussinessAssertionExtension
+from .exception import CurrencyNotEqual
 
 __all__ = ["UUID", "UUIDv4", "UUIDv5", "ValueObject", "Money", "URL"]
 
@@ -32,6 +33,11 @@ class Money(ValueObject):
     def __lt__(self, oMoney: "Money") -> bool:
         return self.currency == oMoney.currency and self.amount < oMoney.amount
 
+    def __add__(self, oMoney: "Money") -> "Money":
+        if self.currency != oMoney.currency:
+            raise CurrencyNotEqual()
+        return Money(self.amount + oMoney.amount)
+
     def __repr__(self):
         return f"{self.currency} {self.amount:.2f}"
 
@@ -57,6 +63,9 @@ class URL(ValueObject):
 
     def __repr__(self) -> str:
         return self.url
+
+
+AttrsURL = ["url", "scheme", "domain", "path"]
 
 
 @dataclass

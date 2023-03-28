@@ -3,7 +3,11 @@ from typing import Dict
 from abc import ABCMeta, abstractmethod
 
 from framework.domain.value_object import UUID
-from framework.domain.repository import AbstractRepository
+from framework.domain.repository import (
+    AbstractRepository,
+    AbstractCategoryURLRepository,
+    AbstractVolatileDataRepository,
+)
 from framework.domain.exception import DomainException
 from Scraper.domain.aggragate import VolatileData
 
@@ -19,8 +23,8 @@ class EntityUIDNotFoundException(DomainException):
 
 
 class MockRepository(AbstractRepository):
-    def __init__(self, volatile_datas: Dict[UUID, VolatileData]):
-        self._volatile_data = volatile_datas
+    def __init__(self, volatile_data: Dict[UUID, VolatileData]):
+        self._volatile_data = volatile_data
 
     def _add(self, volatile_data: VolatileData):
         self._volatile_data[volatile_data.uid] = volatile_data
@@ -49,7 +53,17 @@ class MockRepository(AbstractRepository):
         return str(self._volatile_data)
 
 
-class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
+@dataclass
+class EntityUIDCollisionException(DomainException):
+    entity_id: UUID
+    _message: str = field(init=False)
+
+    def __post_init__(self):
+        self._message = f"{self.__class__.__name__}: "
+        f"URL de categoria com UID {self.entity_id} já existe."
+
+
+class IVolatileDataRepository(AbstractVolatileDataRepository, metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, session):
         raise NotImplemented
@@ -64,6 +78,35 @@ class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
 
     @abstractmethod
     def _get(self, **kwargs):
+        raise NotImplemented
+
+    @abstractmethod
+    def _get_lower_costs(self, **kwargs):
+        raise NotImplemented
+
+    def __repr__(self):
+        raise NotImplemented
+
+
+class ICategoryURLRepository(AbstractCategoryURLRepository, metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(self, session):
+        raise NotImplemented
+
+    @abstractmethod
+    def _add(self, volatile_data: VolatileData):
+        raise NotImplemented
+
+    @abstractmethod
+    def _get_by_uid(self, ref: UUID):
+        raise NotImplemented
+
+    @abstractmethod
+    def _get(self, **kwargs):
+        raise NotImplemented
+
+    @abstractmethod
+    def _get_all_domains(self):
         raise NotImplemented
 
     def __repr__(self):
