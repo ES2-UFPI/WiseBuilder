@@ -8,12 +8,14 @@ import {
     Text,
     useColorModeValue,
   } from '@chakra-ui/react';
+import { useState } from 'react';
   
   type ForgotPasswordFormInputs = {
     email: string;
   };
   
   export default function ForgotPasswordForm(): JSX.Element {
+    const [email, setEmail] = useState<string>("");
     return (
       <Flex
         minH={'100vh'}
@@ -42,6 +44,7 @@ import {
               placeholder="your-email@example.com"
               _placeholder={{ color: 'gray.500' }}
               type="email"
+              onChange={(event)=> setEmail(event.target.value)}
             />
           </FormControl>
           <Stack spacing={6}>
