@@ -6,6 +6,7 @@ from framework.domain.value_object import UUID
 from framework.domain.repository import (
     AbstractRepository,
     AbstractCategoryURLRepository,
+    AbstractVolatileDataRepository,
 )
 from framework.domain.exception import DomainException
 from Scraper.domain.aggragate import VolatileData
@@ -62,7 +63,7 @@ class EntityUIDCollisionException(DomainException):
         f"URL de categoria com UID {self.entity_id} já existe."
 
 
-class IVolatileDataRepository(AbstractRepository, metaclass=ABCMeta):
+class IVolatileDataRepository(AbstractVolatileDataRepository, metaclass=ABCMeta):
     @abstractmethod
     def __init__(self, session):
         raise NotImplemented
@@ -77,6 +78,10 @@ class IVolatileDataRepository(AbstractRepository, metaclass=ABCMeta):
 
     @abstractmethod
     def _get(self, **kwargs):
+        raise NotImplemented
+
+    @abstractmethod
+    def _get_lower_costs(self, **kwargs):
         raise NotImplemented
 
     def __repr__(self):

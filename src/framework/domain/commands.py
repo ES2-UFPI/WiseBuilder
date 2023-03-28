@@ -2,7 +2,7 @@ from framework.domain.events import Command
 from dataclasses import dataclass
 
 from ..domain.users import User
-from framework.domain.value_object import UUID, UUIDv4
+from framework.domain.value_object import UUID
 
 __all__ = [
     "AddUser",

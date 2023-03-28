@@ -25,6 +25,7 @@ from framework.domain.value_object import UUIDv5
 from framework.infrastructure.connection_util import _get_engine
 from framework.infrastructure.db_management.db_connection import create_session
 from Scraper.domain.commands import *
+from framework.domain.components import Component
 from framework.application.handler import MessageBus
 
 
@@ -76,12 +77,15 @@ class Wrapper:
                     component_manager = SQLAlchemyRepository(
                         self.session
                     )  # placeholder
-                    component = component_manager.get(filters_gt={"consumption": -1})[
-                        0
+                    component: Component = component_manager.get(
+                        filters_gt={"consumption": -1}
+                    )[
+                        int(uniform(0, 10))
                     ]  # placeholder
                     volatile_data = VolatileData(
                         _id=UUIDv5(url.url),
                         component_id=component.uid,
+                        component_type=component.type,
                         url=url,
                         cost=cost,
                         availability=availability,
