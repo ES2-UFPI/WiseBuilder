@@ -20,6 +20,7 @@ psu_model = psu_namespace.model(
     {
         "_id": fields.String(description="Identificador da PSU."),
         "manufacturer": fields.String(required=True, description="Fabricante da PSU."),
+        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da PSU"),
         "power": fields.Integer(required=True, description="Potência da fonte."),
         "rate": fields.Integer(required=True),

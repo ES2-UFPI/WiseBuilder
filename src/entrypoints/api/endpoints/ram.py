@@ -20,6 +20,7 @@ ram_model = ram_namespace.model(
     {
         "_id": fields.String(description="Identificador da memória RAM."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
+        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "generation": fields.Integer(
             required=True, description="Geração da memória RAM."
