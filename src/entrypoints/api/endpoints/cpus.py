@@ -22,6 +22,7 @@ cpu_model = cpu_namespace.model(
     {
         "_id": fields.String(description="Identificador da CPU."),
         "manufacturer": fields.String(required=True, description="Fabricante da CPU."),
+        "type": fields.String(required=True, description="Tipo do componente."), 
         "model": fields.String(required=True, description="Modelo da CPU."),
         "socket": fields.Integer(required=True, description="Socket da CPU."),
         "n_cores": fields.Integer(required=True, description="Número de nucleos."),
@@ -48,6 +49,7 @@ class CPUList(Resource):
     @cpu_namespace.marshal_list_with(cpu_model)
     def get(self):
         _cpus = message_bus.handle(ListComponentsByType.CPU())
+        print(_cpus)
         return _cpus
 
     @cpu_namespace.expect(cpu_model)

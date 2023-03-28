@@ -24,6 +24,7 @@ persistence_model = persistence_namespace.model(
         "manufacturer": fields.String(
             required=True, description="Fabricante da Persistência."
         ),
+        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da PSU"),
         "storage": fields.Integer(
             required=True, description="Capacidade de armazenamento da Persistência."
