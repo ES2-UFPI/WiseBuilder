@@ -15,6 +15,7 @@ import {
     Icon,
   } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
   
   const avatars = [
     {
@@ -41,6 +42,7 @@ import { useRouter } from 'next/router';
   
 function Busca() {
   const router = useRouter();
+  const [busca, setBusca] = useState<string>("");
 
   function handleClick() {
     router.push('/resultados-busca');
@@ -149,6 +151,7 @@ function Busca() {
               <Stack spacing={4}>
                 <Input
                   placeholder="Qual componente está buscando?"
+                  onChange={(event)=> setBusca(event.target.value)}
                   bg={'gray.100'}
                   border={0}
                   color={'gray.500'}
