@@ -1,211 +1,226 @@
 import {
-    Box,
-    Flex,
-    Stack,
-    Heading,
-    Text,
-    Container,
-    Input,
-    Button,
-    SimpleGrid,
-    Avatar,
-    AvatarGroup,
-    useBreakpointValue,
-    IconProps,
-    Icon,
-  } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-  
-  const avatars = [
-    {
-      name: 'Placas de Vídeo',
-      url: 'https://www.pichauarena.com.br/wp-content/uploads/2022/09/Imagem-Reproducao-Intel.png',
-    },
-    {
-      name: 'Placas Mãe',
-      url: 'https://www.gigantec.com.br/media/catalog/product/cache/1/image/800x925/9df78eab33525d08d6e5fb8d27136e95/p/l/placa_m_e_550m_aorus_elite_gigabyte_matx_amd_am4_ddr4_-_001.jpg',
-    },
-    {
-      name: 'Fontes',
-      url: 'https://images.tcdn.com.br/img/img_prod/623639/fonte_pc_80_plus_gold_pc_gamer_atx_550w_dorado_pfc_ativo_aerocool_4661_1_b3f0b5b7c7d6b9a23babb4ab42c8e967.jpg',
-    },
-    {
-      name: 'Memórias RAM',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReg_p6-5cholSvrRnsyWAWM-y3rbB-pWY0Pb-SPbKw7P-KB9ZtO-Y37IrgyGsxfvCfvYI&usqp=CAU',
-    },
-    {
-      name: 'Processadores',
-      url: 'https://www.redhat.com/sysadmin/sites/default/files/styles/google_discover/public/2020-07/cpu-564771_1920%20Cropped.jpg?itok=hDSdriO6',
-    },
-  ];
-  
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Icon,
+  IconProps,
+  Input,
+  SimpleGrid,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+
+const avatars = [
+  {
+    name: "Placas de Vídeo",
+    url:
+      "https://www.pichauarena.com.br/wp-content/uploads/2022/09/Imagem-Reproducao-Intel.png",
+  },
+  {
+    name: "Placas Mãe",
+    url:
+      "https://www.gigantec.com.br/media/catalog/product/cache/1/image/800x925/9df78eab33525d08d6e5fb8d27136e95/p/l/placa_m_e_550m_aorus_elite_gigabyte_matx_amd_am4_ddr4_-_001.jpg",
+  },
+  {
+    name: "Fontes",
+    url:
+      "https://images.tcdn.com.br/img/img_prod/623639/fonte_pc_80_plus_gold_pc_gamer_atx_550w_dorado_pfc_ativo_aerocool_4661_1_b3f0b5b7c7d6b9a23babb4ab42c8e967.jpg",
+  },
+  {
+    name: "Memórias RAM",
+    url:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReg_p6-5cholSvrRnsyWAWM-y3rbB-pWY0Pb-SPbKw7P-KB9ZtO-Y37IrgyGsxfvCfvYI&usqp=CAU",
+  },
+  {
+    name: "Processadores",
+    url:
+      "https://www.redhat.com/sysadmin/sites/default/files/styles/google_discover/public/2020-07/cpu-564771_1920%20Cropped.jpg?itok=hDSdriO6",
+  },
+];
+
 function Busca() {
   const router = useRouter();
   const [busca, setBusca] = useState<string>("");
 
   function handleClick() {
-    router.push('/resultados-busca');
+    router.push({ pathname: "/resultados-busca", query: { name: busca } });
   }
-  
-    return (
-      <Box position={'relative'}>
-        <Container
-          as={SimpleGrid}
-          maxW={'7xl'}
-          columns={{ base: 1, md: 2 }}
-          spacing={{ base: 10, lg: 32 }}
-          py={{ base: 10, sm: 20, lg: 32 }}>
-          <Stack spacing={{ base: 10, md: 20 }}>
-            <Heading
-              lineHeight={1.1}
-              fontSize={{ base: '3xl', sm: '4xl', md: '5xl', lg: '6xl' }}>
-              Wise Builder,{' '}
-              <Text
-                as={'span'}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                bgClip="text">
-                O
-              </Text>{' '}
-              seu montador de PC
-            </Heading>
-            <Stack direction={'row'} spacing={4} align={'center'}>
-              <AvatarGroup>
-                {avatars.map((avatar) => (
-                  <Avatar
-                    key={avatar.name}
-                    name={avatar.name}
-                    src={avatar.url}
-                    /* size={useBreakpointValue({ base: 'md', md: 'lg' })} */
-                    position={'relative'}
-                    zIndex={2}
-                    _before={{
-                      content: '""',
-                      width: 'full',
-                      height: 'full',
-                      rounded: 'full',
-                      transform: 'scale(1.125)',
-                      bgGradient: 'linear(to-bl, red.400,pink.400)',
-                      position: 'absolute',
-                      zIndex: -1,
-                      top: 0,
-                      left: 0,
-                    }}
-                  />
-                ))}
-              </AvatarGroup>
-              <Text fontFamily={'heading'} fontSize={{ base: '4xl', md: '6xl' }}>
-                =
-              </Text>
-              <Flex
-                align={'center'}
-                justify={'center'}
-                fontFamily={'heading'}
-                fontSize={{ base: 'sm', md: 'lg' }}
-                bg={'gray.800'}
-                color={'white'}
-                rounded={'full'}
-                minWidth={useBreakpointValue({ base: '44px', md: '60px' })}
-                minHeight={useBreakpointValue({ base: '44px', md: '60px' })}
-                position={'relative'}
-                _before={{
-                  content: '""',
-                  width: 'full',
-                  height: 'full',
-                  rounded: 'full',
-                  transform: 'scale(1.125)',
-                  bgGradient: 'linear(to-bl, orange.400,yellow.400)',
-                  position: 'absolute',
-                  zIndex: -1,
-                  top: 0,
-                  left: 0,
-                }}>
-                PC
-              </Flex>
-            </Stack>
-          </Stack>
-          <Stack
-            bg={'gray.50'}
-            rounded={'xl'}
-            p={{ base: 4, sm: 6, md: 8 }}
-            spacing={{ base: 8 }}
-            maxW={{ lg: 'lg' }}>
-            <Stack spacing={4}>
-              <Heading
-                color={'gray.800'}
-                lineHeight={1.1}
-                fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}>
-                Conheça o Wise-Builder
-                <Text
-                  as={'span'}
-                  bgGradient="linear(to-r, red.400,pink.400)"
-                  bgClip="text">
-                  !
-                </Text>
-              </Heading>
-              <Text color={'gray.500'} fontSize={{ base: 'sm', sm: 'md' }}>
-                Nós somos um projeto de estudantes da UFPI, onde buscamos ajudar vocês a montarem o seu PC dos sonhos pelo melhor preço!
-              </Text>
-            </Stack>
-            <Box as={'form'} mt={10}>
-              <Stack spacing={4}>
-                <Input
-                  placeholder="Qual componente está buscando?"
-                  onChange={(event)=> setBusca(event.target.value)}
-                  bg={'gray.100'}
-                  border={0}
-                  color={'gray.500'}
-                  _placeholder={{
-                    color: 'gray.500',
+
+  return (
+    <Box position={"relative"}>
+      <Container
+        as={SimpleGrid}
+        maxW={"7xl"}
+        columns={{ base: 1, md: 2 }}
+        spacing={{ base: 10, lg: 32 }}
+        py={{ base: 10, sm: 20, lg: 32 }}
+      >
+        <Stack spacing={{ base: 10, md: 20 }}>
+          <Heading
+            lineHeight={1.1}
+            fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
+          >
+            Wise Builder,{" "}
+            <Text
+              as={"span"}
+              bgGradient="linear(to-r, red.400,pink.400)"
+              bgClip="text"
+            >
+              O
+            </Text>{" "}
+            seu montador de PC
+          </Heading>
+          <Stack direction={"row"} spacing={4} align={"center"}>
+            <AvatarGroup>
+              {avatars.map((avatar) => (
+                <Avatar
+                  key={avatar.name}
+                  name={avatar.name}
+                  src={avatar.url}
+                  /* size={useBreakpointValue({ base: 'md', md: 'lg' })} */
+                  position={"relative"}
+                  zIndex={2}
+                  _before={{
+                    content: '""',
+                    width: "full",
+                    height: "full",
+                    rounded: "full",
+                    transform: "scale(1.125)",
+                    bgGradient: "linear(to-bl, red.400,pink.400)",
+                    position: "absolute",
+                    zIndex: -1,
+                    top: 0,
+                    left: 0,
                   }}
                 />
-              </Stack>
-              <Button
-                fontFamily={'heading'}
-                mt={8}
-                w={'full'}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={'white'}
-                onClick={() => handleClick()}
-                _hover={{
-                  bgGradient: 'linear(to-r, red.400,pink.400)',
-                  boxShadow: 'xl',
-                }}>
-                Buscar
-              </Button>
-            </Box>
-            form
+              ))}
+            </AvatarGroup>
+            <Text fontFamily={"heading"} fontSize={{ base: "4xl", md: "6xl" }}>
+              =
+            </Text>
+            <Flex
+              align={"center"}
+              justify={"center"}
+              fontFamily={"heading"}
+              fontSize={{ base: "sm", md: "lg" }}
+              bg={"gray.800"}
+              color={"white"}
+              rounded={"full"}
+              minWidth={useBreakpointValue({ base: "44px", md: "60px" })}
+              minHeight={useBreakpointValue({ base: "44px", md: "60px" })}
+              position={"relative"}
+              _before={{
+                content: '""',
+                width: "full",
+                height: "full",
+                rounded: "full",
+                transform: "scale(1.125)",
+                bgGradient: "linear(to-bl, orange.400,yellow.400)",
+                position: "absolute",
+                zIndex: -1,
+                top: 0,
+                left: 0,
+              }}
+            >
+              PC
+            </Flex>
           </Stack>
-        </Container>
-        <Blur
-          position={'absolute'}
-          top={-10}
-          left={-10}
-          style={{ filter: 'blur(70px)' }}
-        />
-      </Box>
-    );
-  }
-  
-  export const Blur = (props: IconProps) => {
-    return (
-      <Icon
-        width={useBreakpointValue({ base: '100%', md: '40vw', lg: '30vw' })}
-        zIndex={useBreakpointValue({ base: -1, md: -1, lg: 0 })}
-        height="560px"
-        viewBox="0 0 528 560"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        {...props}>
-        <circle cx="71" cy="61" r="111" fill="#F56565" />
-        <circle cx="244" cy="106" r="139" fill="#ED64A6" />
-        <circle cy="291" r="139" fill="#ED64A6" />
-        <circle cx="80.5" cy="189.5" r="101.5" fill="#ED8936" />
-        <circle cx="196.5" cy="317.5" r="101.5" fill="#ECC94B" />
-        <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78" />
-        <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1" />
-      </Icon>
-    );
-  };
+        </Stack>
+        <Stack
+          bg={"gray.50"}
+          rounded={"xl"}
+          p={{ base: 4, sm: 6, md: 8 }}
+          spacing={{ base: 8 }}
+          maxW={{ lg: "lg" }}
+        >
+          <Stack spacing={4}>
+            <Heading
+              color={"gray.800"}
+              lineHeight={1.1}
+              fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
+            >
+              Conheça o Wise-Builder
+              <Text
+                as={"span"}
+                bgGradient="linear(to-r, red.400,pink.400)"
+                bgClip="text"
+              >
+                !
+              </Text>
+            </Heading>
+            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
+              Nós somos um projeto de estudantes da UFPI, onde buscamos ajudar
+              vocês a montarem o seu PC dos sonhos pelo melhor preço!
+            </Text>
+          </Stack>
+          <Box as={"form"} mt={10}>
+            <Stack spacing={4}>
+              <Input
+                placeholder="Qual componente está buscando?"
+                onChange={(event) => setBusca(event.target.value)}
+                bg={"gray.100"}
+                border={0}
+                color={"gray.500"}
+                _placeholder={{
+                  color: "gray.500",
+                }}
+              />
+            </Stack>
+            <Button
+              fontFamily={"heading"}
+              mt={8}
+              w={"full"}
+              bgGradient="linear(to-r, red.400,pink.400)"
+              color={"white"}
+              onClick={() => handleClick()}
+              _hover={{
+                bgGradient: "linear(to-r, red.400,pink.400)",
+                boxShadow: "xl",
+              }}
+            >
+              Buscar
+            </Button>
+          </Box>
+          form
+        </Stack>
+      </Container>
+      <Blur
+        position={"absolute"}
+        top={-10}
+        left={-10}
+        style={{ filter: "blur(70px)" }}
+      />
+    </Box>
+  );
+}
 
-  export default Busca;
+export const Blur = (props: IconProps) => {
+  return (
+    <Icon
+      width={useBreakpointValue({ base: "100%", md: "40vw", lg: "30vw" })}
+      zIndex={useBreakpointValue({ base: -1, md: -1, lg: 0 })}
+      height="560px"
+      viewBox="0 0 528 560"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <circle cx="71" cy="61" r="111" fill="#F56565" />
+      <circle cx="244" cy="106" r="139" fill="#ED64A6" />
+      <circle cy="291" r="139" fill="#ED64A6" />
+      <circle cx="80.5" cy="189.5" r="101.5" fill="#ED8936" />
+      <circle cx="196.5" cy="317.5" r="101.5" fill="#ECC94B" />
+      <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78" />
+      <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1" />
+    </Icon>
+  );
+};
+
+export default Busca;
