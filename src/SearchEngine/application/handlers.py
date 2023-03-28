@@ -20,7 +20,7 @@ class ListComponentsByTypeHandler(MessageHandler):
     def __call__(self, cmd: ListComponentsByType):
         with self.uow:
             return self.uow.repository.get(
-                ctype=cmd.ctype,
+                ctypes=[cmd.ctype],
                 qsize=cmd.qsize,
                 filters_eq=cmd._filters_eq,
                 filters_gt=cmd._filters_gt,
@@ -67,7 +67,7 @@ class SearchByNameHandler(MessageHandler):
         if "rank" in df.columns:
             df.sort_values(by="rank", inplace=True)
 
-        return df[w_ratio > w_ratio.max()].uid
+        return df[w_ratio > w_ratio.max()].uid.values
 
 
 class MatchNameHandler(MessageHandler):
