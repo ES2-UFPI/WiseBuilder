@@ -46,14 +46,22 @@ class ERAMGeneration(IntEnum):
     DDR3L = auto()
     DDR4 = auto()
     DDR5 = auto()
+    SODIMM = auto()
 
 
 class EBoardSize(IntEnum):
-    PICO_ITX = auto()
-    NANO_ITX = auto()
-    MINI_ITX = auto()
-    MICRO_ATX = auto()
-    STANDARD = auto()
+    ATX = auto()
+    Micro_ATX = auto()
+    Mini_ITX = auto()
+    ITX = auto()
+    E_ATX = auto()
+    Mini_STX = auto()
+    Thin_Mini_ITX = auto()
+    CEB = auto()
+    Mini_DTX = auto()
+    SSI = auto()
+    XL_ATX = auto()
+    EEB = auto()
 
 
 class EPSUModularity(IntEnum):

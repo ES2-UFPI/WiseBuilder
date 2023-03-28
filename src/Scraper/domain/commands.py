@@ -71,3 +71,4 @@ class GetVolatileDataByCostInterval(Command):
     component_type: EComponentType
     min_cost: float
     max_cost: float
+    need_rank: bool = False

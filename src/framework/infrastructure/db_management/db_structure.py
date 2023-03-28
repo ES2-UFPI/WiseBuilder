@@ -50,7 +50,7 @@ class ComponentInstance(base):
     uid = Column(BinaryUUID, primary_key=True)
     component_uid = None
     type = Column(ENUM(EComponentType))
-    manufacturer = Column(VARCHAR(20))
+    manufacturer = Column(VARCHAR(50))
     model = Column(VARCHAR(100))
     rank = Column(INTEGER(4))
 
@@ -92,9 +92,9 @@ _AttrsMotherboard = [
     "chipset",
     "board_size",
     "n_ram_slots",
-    "consumption",
-    "n_usb2",
-    "n_usb3x",
+    "memory_type",
+    "sata",
+    "n_usb",
     "n_vga",
     "n_hdmi",
     "n_display_port",
@@ -110,13 +110,15 @@ class MotherboardInstance(ComponentInstance):
     component_uid = Column(
         BinaryUUID, ForeignKey(ComponentInstance.uid), primary_key=True
     )
-    consumption = Column(INTEGER(5))
     chipset = Column(VARCHAR(10))
     board_size = Column(ENUM(EBoardSize))
     n_ram_slots = Column(INTEGER(1))
 
-    n_usb2 = Column(INTEGER(1))
-    n_usb3x = Column(INTEGER(1))
+    n_usb = Column(INTEGER(1))
+
+    memory_type = Column(ENUM(ERAMGeneration))
+
+    sata = Column(INTEGER(2))
 
     n_vga = Column(INTEGER(1))
     n_hdmi = Column(INTEGER(1))

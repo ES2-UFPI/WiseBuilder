@@ -48,9 +48,9 @@ _AttrsMotherboard = [
     "chipset",
     "board_size",
     "n_ram_slots",
-    "consumption",
-    "n_usb2",
-    "n_usb3x",
+    "memory_type",
+    "sata",
+    "n_usb",
     "n_vga",
     "n_hdmi",
     "n_display_port",
@@ -67,10 +67,12 @@ class MotherboardComponent(Component):
     chipset: str
     board_size: EBoardSize
     n_ram_slots: int
-    consumption: int
 
-    n_usb2: int
-    n_usb3x: int
+    memory_type: ERAMGeneration
+
+    sata: int
+
+    n_usb: int
 
     n_vga: int
     n_hdmi: int
@@ -137,7 +139,7 @@ class PersistenceComponent(Component):
     type: EComponentType = EComponentType.PERSISTENCE
     storage: int
     io: EPersistenceIOType
-    is_HDD: bool
+    is_HDD: bool = False
     rpm: int = 0
 
 

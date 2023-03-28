@@ -123,13 +123,18 @@ class GetVolatileDataByCostIntervalHandler(MessageHandler):
             filters_gt = {"cost": cmd.min_cost}
             filters_eq = {"component_type": cmd.component_type}
 
-            volatile_data = self.uow.repository.get_lower_costs(
+            volatile_data: list = self.uow.repository.get_lower_costs(
                 filters_eq=filters_eq,
                 filters_lt=filters_lt,
                 filters_gt=filters_gt,
             )
 
             components = _get_components_from_volatile_data(volatile_data)
+
+            for i, component in enumerate(components):
+                if component.rank is None:
+                    del volatile_data[i]
+                    del components[i]
 
             return components, volatile_data
 

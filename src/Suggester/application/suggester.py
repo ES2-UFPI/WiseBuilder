@@ -1,5 +1,6 @@
 from enum import Enum
 
+import pygad
 from framework.domain.components import Component, EComponentType, CPUComponent
 from Scraper.domain.aggragate import VolatileData
 from framework.infrastructure.connection_util import get_message_bus
@@ -54,6 +55,11 @@ class ComponentSuggester:
             SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
         )
 
+    # def fitness_func(solution, solution_idx):
+    #     output = numpy.sum(solution*function_inputs)
+    #     fitness = 1.0 / numpy.abs(output - desired_output)
+    #     return fitness
+
     def _get_components_by_cost_interval(
         self, priorities: dict[EComponentType, tuple], component_type: EComponentType
     ) -> tuple[list[Component], list[VolatileData]]:
@@ -64,6 +70,7 @@ class ComponentSuggester:
                 component_type,
                 self.budget * priority[0],
                 self.budget * priority[1],
+                True,
             )
         )
 
@@ -91,15 +98,12 @@ class ComponentSuggester:
             component_priorities, EComponentType.PSU
         )
 
-        for cpu, cpu_vd in zip(cpus, cpus_vd):
-            print(cpu)
-            print(cpu_vd, "\n")
+        for i, cpu in enumerate(cpus):
+            if isinstance(cpu, CPUComponent):
+                if cpu.integrated_gpu is None or len(cpu.integrated_gpu) == 0:
+                    del cpus[i]
+                    del cpus_vd[i]
 
-        # if self.budget < _gpu_price_thresh:
-        #     a = [cpu for cpu in cpus if cpu.integrated_gpu]
-        #     input(a)
-
-        # TODO calcula sua 'pontuação' com base na prioridade de suas especificações.
         # TODO Executa problema da mochila, restringindo com base na compatibilidade.
         # TODO somar consumo total e definir fonte com o orçamento estabelecido.
         # TODO caso o orçamento não seja totalmente preenchido, aumentar o orçamento do item prioritário, mantendo as compatibilidades anteriores
