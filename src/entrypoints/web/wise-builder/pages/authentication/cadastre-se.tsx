@@ -19,6 +19,10 @@ import {
   
   export default function SignupCard() {
     const [showPassword, setShowPassword] = useState(false);
+    const [nome, setNome] = useState<string>("");
+    const [sobreNome, setSobreNome] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [senha, setSenha] = useState<string>("");
   
     return (
       <Flex
@@ -40,24 +44,24 @@ import {
                 <Box>
                   <FormControl id="firstName" isRequired>
                     <FormLabel>Nome</FormLabel>
-                    <Input type="text" />
+                    <Input type="text" onChange={(event)=> setNome(event.target.value)}/>
                   </FormControl>
                 </Box>
                 <Box>
                   <FormControl id="lastName">
                     <FormLabel>Sobrenome</FormLabel>
-                    <Input type="text" />
+                    <Input type="text" onChange={(event)=> setSobreNome(event.target.value)}/>
                   </FormControl>
                 </Box>
               </HStack>
               <FormControl id="email" isRequired>
                 <FormLabel>Email</FormLabel>
-                <Input type="email" />
+                <Input type="email" onChange={(event)=> setEmail(event.target.value)}/>
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Senha</FormLabel>
                 <InputGroup>
-                  <Input type={showPassword ? 'text' : 'password'} />
+                  <Input type={showPassword ? 'text' : 'password'} onChange={(event)=> setSenha(event.target.value)}/>
                   <InputRightElement h={'full'}>
                     <Button
                       variant={'ghost'}

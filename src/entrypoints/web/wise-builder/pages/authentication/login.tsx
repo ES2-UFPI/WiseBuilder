@@ -12,8 +12,13 @@ import {
     Text,
     useColorModeValue,
   } from '@chakra-ui/react';
+import { useState } from 'react';
   
   export default function SimpleCard() {
+    const [email, setEmail] = useState<string>("");
+    const [senha, setSenha] = useState<string>("");
+    const [lembrar, setLembrar] = useState<boolean>(false);
+
     return (
       <Flex
         minH={'100vh'}
@@ -30,18 +35,18 @@ import {
             <Stack spacing={4}>
               <FormControl id="email">
                 <FormLabel>Email</FormLabel>
-                <Input type="email" />
+                <Input type="email" onChange={(event)=> setEmail(event.target.value)} />
               </FormControl>
               <FormControl id="password">
                 <FormLabel>Senha</FormLabel>
-                <Input type="password" />
+                <Input type="password" onChange={(event)=> setSenha(event.target.value)}/>
               </FormControl>
               <Stack spacing={10}>
                 <Stack
                   direction={{ base: 'column', sm: 'row' }}
                   align={'start'}
                   justify={'space-between'}>
-                  <Checkbox>Lembrar-me</Checkbox>
+                  <Checkbox isChecked={lembrar} onChange={()=> lembrar? setLembrar(false): setLembrar(true)}>Lembrar-me</Checkbox>
                   <Link color={'blue.400'} href='/authentication/esqueceu-senha'>Esqueceu a senha?</Link>
                 </Stack>
                 <Button
