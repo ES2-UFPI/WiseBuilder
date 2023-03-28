@@ -21,10 +21,10 @@ persistence_model = persistence_namespace.model(
     "persistence",
     {
         "_id": fields.String(description="Identificador da Persistência."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(
             required=True, description="Fabricante da Persistência."
         ),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da PSU"),
         "storage": fields.Integer(
             required=True, description="Capacidade de armazenamento da Persistência."
@@ -44,13 +44,15 @@ class persistenceList(Resource):
     @persistence_namespace.marshal_list_with(persistence_model)
     def get(self):
         _persistences = message_bus.handle(ListComponentsByType.Persistence())
+        for _persistence in _persistences:
+            _persistence.type = _persistence.type._name_
         return _persistences
 
     @persistence_namespace.expect(persistence_model)
     def post(self):
         body = request.json
         persistence = dict(
-            (key, body[key]) for key in list(persistence_model.keys())[1:]
+            (key, body[key]) for key in list(persistence_model.keys())[2:]
         )
         try:
             _ = message_bus.handle(AddComponent.buildPersistence(**persistence))

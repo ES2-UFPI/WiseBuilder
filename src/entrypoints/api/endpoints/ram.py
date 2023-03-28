@@ -19,8 +19,8 @@ ram_model = ram_namespace.model(
     "RAM",
     {
         "_id": fields.String(description="Identificador da memória RAM."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "generation": fields.Integer(
             required=True, description="Geração da memória RAM."
@@ -38,12 +38,14 @@ class RAMList(Resource):
     @ram_namespace.marshal_list_with(ram_model)
     def get(self):
         _rams = message_bus.handle(ListComponentsByType.RAM())
+        for _ram in _rams:
+            _ram.type = _ram.type._name_
         return _rams
 
     @ram_namespace.expect(ram_model)
     def post(self):
         body = request.json
-        ram = dict((key, body[key]) for key in list(ram_model.keys())[1:])
+        ram = dict((key, body[key]) for key in list(ram_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildRAM(**ram))
             return ram, 201

@@ -19,8 +19,8 @@ gpu_model = gpu_namespace.model(
     "GPU",
     {
         "_id": fields.String(description="Identificador da GPU."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "consumption": fields.Integer(required=True, description="Consumo da GPU."),
         "vram": fields.Integer(
@@ -39,12 +39,14 @@ class GPUList(Resource):
     @gpu_namespace.marshal_list_with(gpu_model)
     def get(self):
         _gpus = message_bus.handle(ListComponentsByType.GPU())
+        for _gpu in _gpus:
+            _gpu.type = _gpu.type._name_
         return _gpus
 
     @gpu_namespace.expect(gpu_model)
     def post(self):
         body: dict = request.json
-        gpu = dict((key, body[key]) for key in list(gpu_model.keys())[1:])
+        gpu = dict((key, body[key]) for key in list(gpu_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildGPU(**gpu))
             return gpu, 201

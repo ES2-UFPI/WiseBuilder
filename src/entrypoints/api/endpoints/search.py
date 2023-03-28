@@ -9,7 +9,7 @@ result_model = search_namespace.model(
     {
         "_id": fields.String(description="Identificador do componente."),
         "model": fields.String(required=True, description="Modelo do componente."),
-        "type": fields.String(required=True, description="Tipo do componente."),
+        "type": fields.String(description="Tipo do componente."),
         "price": fields.Float(required=True, description="Preço do componente."),
         "available": fields.Boolean(
             required=True, description="Disponibilidade do componente."

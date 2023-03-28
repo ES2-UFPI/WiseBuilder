@@ -21,10 +21,10 @@ motherboard_model = motherboard_namespace.model(
     "MotherBoard",
     {
         "_id": fields.String(description="Identificador da Placa-Mãe."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(
             required=True, description="Fabricante da Placa-Mãe."
         ),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da Placa-Mãe."),
         "chipset": fields.Integer(required=True),
         "board_size": fields.Integer(required=True),
@@ -52,13 +52,15 @@ class MotherBoardList(Resource):
     @motherboard_namespace.marshal_list_with(motherboard_model)
     def get(self):
         _motherboards = message_bus.handle(ListComponentsByType.Motherboard())
+        for _motherboard in _motherboards:
+            _motherboard.type = _motherboard.type._name_
         return _motherboards
 
     @motherboard_namespace.expect(motherboard_model)
     def post(self):
         body = request.json
         motherboard = dict(
-            (key, body[key]) for key in list(motherboard_model.keys())[1:]
+            (key, body[key]) for key in list(motherboard_model.keys())[2:]
         )
         try:
             _ = message_bus.handle(AddComponent.buildMotherboard(**motherboard))

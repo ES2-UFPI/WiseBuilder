@@ -21,8 +21,8 @@ cpu_model = cpu_namespace.model(
     "CPU",
     {
         "_id": fields.String(description="Identificador da CPU."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da CPU."),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da CPU."),
         "socket": fields.Integer(required=True, description="Socket da CPU."),
         "n_cores": fields.Integer(required=True, description="Número de nucleos."),
@@ -49,13 +49,15 @@ class CPUList(Resource):
     @cpu_namespace.marshal_list_with(cpu_model)
     def get(self):
         _cpus = message_bus.handle(ListComponentsByType.CPU())
-        print(_cpus)
+        for _cpu in _cpus:
+            _cpu.type = _cpu.type._name_
         return _cpus
 
     @cpu_namespace.expect(cpu_model)
     def post(self):
         body: dict = request.json
-        cpu = dict((key, body[key]) for key in list(cpu_model.keys())[1:])
+        print(body)
+        cpu = dict((key, body[key]) for key in list(cpu_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildCPU(**cpu))
             return cpu, 201
