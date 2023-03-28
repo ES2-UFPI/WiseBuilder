@@ -21,7 +21,6 @@ gpu_model = gpu_namespace.model(
         "_id": fields.String(description="Identificador da GPU."),
         "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da GPU"),
         "consumption": fields.Integer(required=True, description="Consumo da GPU."),
         "vram": fields.Integer(

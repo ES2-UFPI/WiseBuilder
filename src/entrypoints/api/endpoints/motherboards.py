@@ -25,7 +25,6 @@ motherboard_model = motherboard_namespace.model(
         "manufacturer": fields.String(
             required=True, description="Fabricante da Placa-Mãe."
         ),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da Placa-Mãe."),
         "chipset": fields.Integer(required=True),
         "board_size": fields.Integer(required=True),

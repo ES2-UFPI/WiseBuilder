@@ -23,7 +23,6 @@ cpu_model = cpu_namespace.model(
         "_id": fields.String(description="Identificador da CPU."),
         "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da CPU."),
-        "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da CPU."),
         "socket": fields.Integer(required=True, description="Socket da CPU."),
         "n_cores": fields.Integer(required=True, description="Número de nucleos."),
