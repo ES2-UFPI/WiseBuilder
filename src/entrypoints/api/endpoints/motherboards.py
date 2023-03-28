@@ -42,6 +42,8 @@ motherboard_model = motherboard_namespace.model(
         "n_pcie_x4": fields.Integer(required=True),
         "n_pcie_x8": fields.Integer(required=True),
         "n_pcie_x16": fields.Integer(required=True),
+        "sata": fields.Integer(required=True),
+        "memory_type": fields.Integer(required=True),
     },
 )
 

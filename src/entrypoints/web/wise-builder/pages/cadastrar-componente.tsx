@@ -33,9 +33,9 @@ function CadastroComp({ componente, editar }: Props) {
   const [fabricante, setFabricante] = useState<string>(
     componente?.manufacturer || "",
   );
-  const [socket, setSocket] = useState<number>(componente?.socket || 0);
+  const [socket, setSocket] = useState<string>(componente?.socket || "");
   const [cores, setCores] = useState<number>(componente?.n_cores || 0);
-  const [chipset, setChipset] = useState<number>(componente?.chipset || 0);
+  const [chipset, setChipset] = useState<string>(componente?.chipset || "");
   const [tamanho, setTamanho] = useState<number>(componente?.board_size || 0);
   const [slotsRam, setSlotsRam] = useState<number>(
     componente?.n_ram_slots || 0,
@@ -74,7 +74,7 @@ function CadastroComp({ componente, editar }: Props) {
   const [vramSpd, setVramSpd] = useState<number>(componente?.vram_spd || 0);
   const [modelo, setModelo] = useState<string>(componente?.model || "");
   const [generation, setGeneration] = useState<number>(
-    componente?.generation || "",
+    componente?.generation || 0,
   );
   const [frequency, setFrequency] = useState<number>(
     componente?.frequency || 0,
@@ -84,6 +84,10 @@ function CadastroComp({ componente, editar }: Props) {
   const [io, setIO] = useState<number>(componente?.io || 0);
   const [isHDD, setIsHDD] = useState<boolean>(componente?.is_HDD || false);
   const [rpm, setRpm] = useState<number>(componente?.rpm || 0);
+  const [sata, setSata] = useState<number>(componente?.sata || 0);
+  const [memoryType, setMemoryType] = useState<number>(
+    componente?.memory_type || 0,
+  );
 
   const router = useRouter();
   function handleClick() {
@@ -138,6 +142,8 @@ function CadastroComp({ componente, editar }: Props) {
           n_pcie_x4: pci4,
           n_pcie_x8: pci8,
           n_pcie_x16: pci16,
+          sata: sata,
+          memory_type: memoryType,
         };
         url = "http://127.0.0.1:5000/api/v1/motherboards/";
         break;
@@ -154,11 +160,13 @@ function CadastroComp({ componente, editar }: Props) {
         data = {
           manufacturer: fabricante,
           model: modelo,
+          storage: storage,
           io: io,
           is_HDD: isHDD,
           rpm: rpm,
         };
         url = "http://127.0.0.1:5000/api/v1/persistences/";
+        break;
       case "Fonte":
         data = {
           manufacturer: fabricante,
@@ -271,19 +279,14 @@ function CadastroComp({ componente, editar }: Props) {
                 type="text"
               />
             </FormControl>
-
             <FormControl id="socket" isRequired>
               <FormLabel>Socket</FormLabel>
-              <NumberInput onChange={(value) => setSocket(+value)}>
-                <NumberInputField
-                  placeholder="Socket"
-                  _placeholder={{ color: "gray.500" }}
-                />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+              <Input
+                onChange={(event) => setSocket(event.target.value)}
+                placeholder="Socket"
+                _placeholder={{ color: "gray.500" }}
+                type="text"
+              />
             </FormControl>
 
             <FormControl id="nucleos" isRequired>
@@ -477,18 +480,14 @@ function CadastroComp({ componente, editar }: Props) {
               />
             </FormControl>
 
-            <FormControl id="chipset" isRequired>
+            <FormControl id="modelo" isRequired>
               <FormLabel>Chipset</FormLabel>
-              <NumberInput onChange={(value) => setChipset(+value)}>
-                <NumberInputField
-                  placeholder="Chipset"
-                  _placeholder={{ color: "gray.500" }}
-                />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+              <Input
+                onChange={(event) => setChipset(event.target.value)}
+                placeholder="Chipset"
+                _placeholder={{ color: "gray.500" }}
+                type="text"
+              />
             </FormControl>
 
             <FormControl id="tamanho" isRequired>
@@ -664,6 +663,33 @@ function CadastroComp({ componente, editar }: Props) {
               <NumberInput onChange={(value) => setPci16(+value)}>
                 <NumberInputField
                   placeholder="Quantidade PCIE x16"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+
+            <FormControl id="sata" isRequired>
+              <FormLabel>Quantidade PCIE x16</FormLabel>
+              <NumberInput onChange={(value) => setSata(+value)}>
+                <NumberInputField
+                  placeholder="Quantidade de SATA"
+                  _placeholder={{ color: "gray.500" }}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </FormControl>
+            <FormControl id="memoryType" isRequired>
+              <FormLabel>Quantidade PCIE x16</FormLabel>
+              <NumberInput onChange={(value) => setMemoryType(+value)}>
+                <NumberInputField
+                  placeholder="Geração da memória ram"
                   _placeholder={{ color: "gray.500" }}
                 />
                 <NumberInputStepper>
