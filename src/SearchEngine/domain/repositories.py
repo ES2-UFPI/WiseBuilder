@@ -81,3 +81,24 @@ class ISQLAlchemyRepository(AbstractRepository, metaclass=ABCMeta):
 
     def __repr__(self):
         raise NotImplemented
+
+
+class IDataFrameRepository(AbstractRepository, metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(self) -> None:
+        raise NotImplemented
+    
+    @abstractmethod
+    def _add(self, component: Component):
+        raise NotImplemented
+    
+    @abstractmethod
+    def _get_by_uid(self, ref: UUID):
+        raise NotImplemented
+    
+    @abstractmethod
+    def _get(self, **kwargs):
+        raise NotImplemented
+    
+    def __repr__(self) -> str:
+        return NotImplemented
