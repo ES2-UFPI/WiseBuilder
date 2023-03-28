@@ -6,13 +6,14 @@ import {
   CardFooter,
   Divider,
   Heading,
+  HStack,
   Image,
+  Link,
   Stack,
-  TableContainer,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import Acoes from "../Botão/acoes";
 import { cardProdutoProps } from "../../types/propsCardProduto";
 import { useRouter } from "next/router";
@@ -56,33 +57,92 @@ export default function CardProduto(props: cardProdutoProps) {
             gridGap: "20px",
           }}
         >
-          {group.map((item) => (
-            <Card minW={300} key={item.id} mb={3}>
-              <CardBody>
-                <Heading size="md">
-                  {item.type} {item.manufacturer} {item.model}
-                </Heading>
-                <Text color="pink.300" fontSize="2xl">
-                  R$ {item.price}
-                </Text>
-              </CardBody>
-              <Divider />
-              <CardFooter>
-                <ButtonGroup spacing="2">
-                  <Button variant="solid" colorScheme="blue">
-                    Ver Produto
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    colorScheme="blue"
-                    onClick={() => handleClick(item.link)}
-                  >
-                    Visitar Oferta
-                  </Button>
-                </ButtonGroup>
-              </CardFooter>
-            </Card>
-          ))}
+          {group.map((item) =>
+            props.selectedFunction && props.selectedItems !== undefined
+              ? (
+                <Card
+                  minW={300}
+                  key={item.id}
+                  mb={3}
+                  onClick={() =>
+                    props.selectedFunction && props.selectedFunction(item)}
+                  bgColor={props.selectedItems.find((i) => i.id === item.id) !==
+                      undefined
+                    ? "blue.700"
+                    : "white"}
+                >
+                  <CardBody>
+                    <Heading
+                      size="md"
+                      color={props.selectedItems.find((i) =>
+                          i.id === item.id
+                        ) !== undefined
+                        ? "white"
+                        : "black"}
+                    >
+                      {item.type} {item.manufacturer} {item.model}
+                    </Heading>
+                    <Text color="pink.300" fontSize="2xl">
+                      R$ {item.price}
+                    </Text>
+                  </CardBody>
+                  <Divider
+                    color={props.selectedItems.find((i) => i.id === item.id) !==
+                        undefined
+                      ? "white"
+                      : "black"}
+                  />
+                  <CardFooter>
+                    <HStack spacing={"5"}>
+                      <Button
+                        variant="solid"
+                        colorScheme={props.selectedItems.find((i) =>
+                            i.id === item.id
+                          ) !== undefined
+                          ? "orange"
+                          : "blue"}
+                      >
+                        Ver Produto
+                      </Button>
+                      <Link
+                        color={props.selectedItems.find((i) =>
+                            i.id === item.id
+                          ) !== undefined
+                          ? "blue.100"
+                          : "teal.500"}
+                        href={item.link}
+                        isExternal
+                      >
+                        Visitar Oferta <ExternalLinkIcon mx="2px" />
+                      </Link>
+                    </HStack>
+                  </CardFooter>
+                </Card>
+              )
+              : (
+                <Card minW={300} key={item.id} mb={3}>
+                  <CardBody>
+                    <Heading size="md">
+                      {item.type} {item.manufacturer} {item.model}
+                    </Heading>
+                    <Text color="pink.300" fontSize="2xl">
+                      R$ {item.price}
+                    </Text>
+                  </CardBody>
+                  <Divider />
+                  <CardFooter>
+                    <HStack spacing={"5"}>
+                      <Button variant="solid" colorScheme="blue">
+                        Ver Produto
+                      </Button>
+                      <Link color="teal.500" href={item.link} isExternal>
+                        Visitar Oferta <ExternalLinkIcon mx="2px" />
+                      </Link>
+                    </HStack>
+                  </CardFooter>
+                </Card>
+              ) //e15b3be74a55e164e4ca0805f6ec5dc1ffd343a2
+          )}
         </div>
       ))}
     </>

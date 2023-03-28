@@ -87,9 +87,20 @@ const mockItems: Componente[] = [
 function SugestorComponentePlacaMae(busca: string) {
   const router = useRouter();
   const [items, setItems] = useState(mockItems);
+  const [selectedItems, setSelectedItems] = useState<any>([]);
   
   function handleClick() {
     router.push('/sugestor-de-componente/processador');
+  }
+
+  function handleSelected(obj: any) {
+    var index = selectedItems.findIndex((i: any) => i.id === obj.id)
+    if(index === -1)
+      setSelectedItems([...selectedItems, obj])
+    else {
+      selectedItems.splice(index, 1)
+      setSelectedItems([...selectedItems])
+    }
   }
 
   return (  
@@ -102,7 +113,11 @@ function SugestorComponentePlacaMae(busca: string) {
     >
       <GridItem colSpan={4}>
         <Center>
-          <Heading>Sugestor de Componente</Heading>
+          <Stack alignItems={'center'} mb={'3'} mt={'3'}>
+            <Heading>Sugestor de Componente</Heading>
+            <Text fontSize={'lg'} color={'gray.600'}>Para selecionar os componentes que você deseja, basta clicar nos cards.</Text>
+            <Text fontSize={'lg'} color={'gray.600'}>Os cards selecionados aparecem em azul.</Text>
+          </Stack>
         </Center>
         <Center>
             <HStack
@@ -161,7 +176,7 @@ function SugestorComponentePlacaMae(busca: string) {
         </Center>
       </GridItem>
       <GridItem rowSpan={20} colSpan={3} margin={3}>
-        <CardProduto item={mockItems}/>
+        <CardProduto item={mockItems} selectedFunction={handleSelected} selectedItems={selectedItems}/>
       </GridItem>
     </Grid>
 )};
