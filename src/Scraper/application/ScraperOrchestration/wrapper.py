@@ -80,7 +80,7 @@ class Wrapper:
                     component: Component = component_manager.get(
                         filters_gt={"consumption": -1}
                     )[
-                        int(uniform(0, 10))
+                        int(uniform(0, 100))
                     ]  # placeholder
                     volatile_data = VolatileData(
                         _id=UUIDv5(url.url),
