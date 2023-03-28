@@ -1,24 +1,25 @@
-from uuid import UUID
 from typing import List
-from flask_restx import Namespace, Resource, fields
-from flask import request
+from uuid import UUID
 
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
+from flask import request
+from flask_restx import Namespace, Resource, fields
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 psu_namespace = Namespace("PSUs", description="Operações relacionadas à PSUs.")
 psu_model = psu_namespace.model(
     "PSU",
     {
         "_id": fields.String(description="Identificador da PSU."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da PSU."),
         "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da PSU"),
@@ -35,12 +36,14 @@ class PSUList(Resource):
     @psu_namespace.marshal_list_with(psu_model)
     def get(self):
         _psus = message_bus.handle(ListComponentsByType.PSU())
+        for _psu in _psus:
+            _psu.type = _psu.type._name_
         return _psus
 
     @psu_namespace.expect(psu_model)
     def post(self):
         body = request.json
-        psu = dict((key, body[key]) for key in list(psu_model.keys())[1:])
+        psu = dict((key, body[key]) for key in list(psu_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildPSU(**psu))
             return psu, 201

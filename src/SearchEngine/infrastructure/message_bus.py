@@ -5,5 +5,5 @@ from ..application.unit_of_work import SQLAlchemyUnitOfWork, MockUnitOfWork
 __all__ = ["se_message_bus"]
 
 se_message_bus = get_message_bus(
-    SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, MockUnitOfWork
+    SE_EVENT_HANDLER_MAPPER, SE_COMMAND_HANDLER_MAPPER, SQLAlchemyUnitOfWork
 )

@@ -1,24 +1,25 @@
-from uuid import UUID
 from typing import List
+from uuid import UUID
+
 from flask import request
 from flask_restx import Namespace, Resource, fields
-
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 gpu_namespace = Namespace("GPUs", description="Operações relacionadas à GPUs.")
 gpu_model = gpu_namespace.model(
     "GPU",
     {
         "_id": fields.String(description="Identificador da GPU."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(required=True, description="Fabricante da GPU."),
         "type": fields.String(required=True, description="Tipo do componente."),
         "model": fields.String(required=True, description="Modelo da GPU"),
@@ -39,12 +40,14 @@ class GPUList(Resource):
     @gpu_namespace.marshal_list_with(gpu_model)
     def get(self):
         _gpus = message_bus.handle(ListComponentsByType.GPU())
+        for _gpu in _gpus:
+            _gpu.type = _gpu.type._name_
         return _gpus
 
     @gpu_namespace.expect(gpu_model)
     def post(self):
         body: dict = request.json
-        gpu = dict((key, body[key]) for key in list(gpu_model.keys())[1:])
+        gpu = dict((key, body[key]) for key in list(gpu_model.keys())[2:])
         try:
             _ = message_bus.handle(AddComponent.buildGPU(**gpu))
             return gpu, 201

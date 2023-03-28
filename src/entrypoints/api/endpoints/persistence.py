@@ -1,18 +1,18 @@
-from uuid import UUID
 from typing import List
-from flask_restx import Namespace, Resource, fields
-from flask import request
+from uuid import UUID
 
-from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
-from SearchEngine.domain.repositories import (
-    EntityUIDNotFoundException,
-    EntityUIDCollisionException,
-)
+from flask import request
+from flask_restx import Namespace, Resource, fields
 from SearchEngine.domain.commands import (
     AddComponent,
-    ListComponentsByType,
     GetComponentByUID,
+    ListComponentsByType,
 )
+from SearchEngine.domain.repositories import (
+    EntityUIDCollisionException,
+    EntityUIDNotFoundException,
+)
+from SearchEngine.infrastructure.message_bus import se_message_bus as message_bus
 
 persistence_namespace = Namespace(
     "Persistences", description="Operações relacionadas à Persistência."
@@ -21,6 +21,7 @@ persistence_model = persistence_namespace.model(
     "persistence",
     {
         "_id": fields.String(description="Identificador da Persistência."),
+        "type": fields.String(description="Tipo do componente."),
         "manufacturer": fields.String(
             required=True, description="Fabricante da Persistência."
         ),
@@ -44,13 +45,15 @@ class persistenceList(Resource):
     @persistence_namespace.marshal_list_with(persistence_model)
     def get(self):
         _persistences = message_bus.handle(ListComponentsByType.Persistence())
+        for _persistence in _persistences:
+            _persistence.type = _persistence.type._name_
         return _persistences
 
     @persistence_namespace.expect(persistence_model)
     def post(self):
         body = request.json
         persistence = dict(
-            (key, body[key]) for key in list(persistence_model.keys())[1:]
+            (key, body[key]) for key in list(persistence_model.keys())[2:]
         )
         try:
             _ = message_bus.handle(AddComponent.buildPersistence(**persistence))

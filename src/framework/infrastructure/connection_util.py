@@ -10,14 +10,13 @@ from framework.infrastructure.db_management.db_creation import create_db
 from framework.application.uow import AbstractDBUnitOfWork
 from framework.application.handler import MessageBus
 
-# from config import db_username, db_password, db_address, db_port, db_name
+from config import db_username, db_password, db_address, db_port, db_name
 
 
 def _get_engine() -> Engine:
-    # engine = create_new_engine(db_username, db_password, db_address, db_port, db_name)
-    # create_db(engine)
-    # return engine
-    pass
+    engine = create_new_engine(db_username, db_password, db_address, db_port, db_name)
+    create_db(engine)
+    return engine
 
 
 def get_message_bus(
